@@ -7,4 +7,4 @@ tags: first post
 categories: misc
 ---
 
-I arranged my research blog for my future AI studies. 
+I arranged my research blog for my future AI studies.

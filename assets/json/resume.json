@@ -47,12 +47,7 @@
       "name": "Web Development",
       "level": "Full stack",
       "icon": "fa-solid fa-hashtag",
-      "keywords": [
-        "React",
-        "Next.js",
-        "Express.js",
-        "Vercel"
-      ]
+      "keywords": ["React", "Next.js", "Express.js", "Vercel"]
     }
   ],
   "languages": [
@@ -76,16 +71,12 @@
     {
       "name": "Internal Representations",
       "icon": "fa-solid fa-tag",
-      "keywords": [
-        "Qualia of an agent"
-      ]
+      "keywords": ["Qualia of an agent"]
     },
     {
       "name": "Algorithmic Neural Network",
       "icon": "fa-solid fa-tag",
-      "keywords": [
-        "Explainability"
-      ]
+      "keywords": ["Explainability"]
     }
   ]
 }

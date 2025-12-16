@@ -24,6 +24,6 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I am a AI research graduate student based in GIST DS Lab, South Korea. I am interested in philosophic designs of AI foundations. My research goal is to build an AGI model that is domain-agnostic, conscious, self-driven. I am interested in designing internal representations for an agent manipulate as the building block of their reasoning. 
+I am a AI research graduate student based in GIST DS Lab, South Korea. I am interested in philosophic designs of AI foundations. My research goal is to build an AGI model that is domain-agnostic, conscious, self-driven. I am interested in designing internal representations for an agent manipulate as the building block of their reasoning.
 
 I am also interested in designing consciousness of an agent. I am aiming to give self-directedness (or urge) that fuels and navigates their reasoning streams.
