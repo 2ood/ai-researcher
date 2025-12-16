@@ -1,7 +1,7 @@
 ---
 layout: post
 title: First Post
-date: 2025-12-16 13:30:00
+date: 2025-12-16
 description: I arranged my ai research blog.
 tags: first post
 categories: misc
