@@ -1,6 +1,6 @@
 ---
-layout: book-shelf
-title: Paper readings
+layout: readings-review
+title: Readings
 permalink: /readings/
 nav: true
 collection: readings
