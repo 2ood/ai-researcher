@@ -1,5 +1,5 @@
 ---
-layout: readings-review
+layout: readings
 title: Readings
 permalink: /readings/
 nav: true
