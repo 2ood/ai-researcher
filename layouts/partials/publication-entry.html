@@ -1,21 +1,21 @@
 {{/*
-  Single publication entry for the publications list.
-  Expects: (dict "pub" <publication record from data/publications.yml>)
-  data-type drives the client-side filter in static/js/main.js.
+  One publication row on the list page.
+  Expects: (dict "page" <generated publication Page>)
+  Title links to the publication's dedicated page; data-type drives the client-side filter.
 */}}
-{{ $pub := .pub }}
-<div class="pub-entry" data-type="{{ $pub.type | lower }}">
-  <h3 class="pub-title"><a href="{{ $pub.paperUrl }}">{{ $pub.title }}</a></h3>
-  <div class="pub-authors">{{ $pub.authors | markdownify }}</div>
+{{ $p := .page }}
+<div class="pub-entry" data-type="{{ $p.Params.type | lower }}">
+  <h3 class="pub-title"><a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a></h3>
+  <div class="pub-authors">{{ $p.Params.authors | markdownify }}</div>
   <div class="pub-meta">
-    <span class="pub-venue">{{ $pub.venue }} · {{ $pub.year }}</span>
-    <span class="pub-badge">{{ $pub.type }}</span>
-    {{ with $pub.award }}<span class="pub-award">🏆 {{ . }}</span>{{ end }}
+    <span class="pub-venue">{{ $p.Params.venue }} · {{ $p.Params.year }}</span>
+    <span class="pub-badge">{{ $p.Params.type }}</span>
+    {{ with $p.Params.award }}<span class="pub-award">🏆 {{ . }}</span>{{ end }}
   </div>
   <div class="pub-links">
-    {{ with $pub.paperUrl }}<a class="link-pill" href="{{ . }}">Paper</a>{{ end }}
-    {{ with $pub.codeUrl }}<a class="link-pill" href="{{ . }}">Code</a>{{ end }}
-    {{ with $pub.dataUrl }}<a class="link-pill" href="{{ . }}">Data</a>{{ end }}
-    {{ with $pub.projectUrl }}<a class="link-pill" href="{{ . }}">Project Website</a>{{ end }}
+    {{ with $p.Params.paperUrl }}<a class="link-pill" href="{{ . }}">Paper</a>{{ end }}
+    {{ with $p.Params.codeUrl }}<a class="link-pill" href="{{ . }}">Code</a>{{ end }}
+    {{ with $p.Params.dataUrl }}<a class="link-pill" href="{{ . }}">Data</a>{{ end }}
+    {{ with $p.Params.projectUrl }}<a class="link-pill" href="{{ . }}">Project Website</a>{{ end }}
   </div>
 </div>

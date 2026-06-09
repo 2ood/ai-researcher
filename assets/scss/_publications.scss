@@ -57,11 +57,23 @@
   &.hidden {
     display: none;
   }
+
 }
 
 .pub-title {
   margin: 0 0 0.25rem 0;
   font-size: 1.1rem;
+  color : $carbon;
+  
+  a {
+    color: $carbon;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+      color: $forest;
+    }
+  }
 }
 
 .pub-authors {
@@ -125,4 +137,11 @@
     color: $tangerine;
     background-color: rgba($tangerine, 0.06);
   }
+}
+
+// Dedicated single publication page
+.pub-single {
+  .pub-authors { margin-bottom: 0.75rem; }
+  .pub-meta { margin-bottom: 1rem; }
+  .pub-abstract { margin-top: 2rem; max-width: 65ch; }
 }

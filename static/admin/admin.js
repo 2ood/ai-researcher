@@ -179,6 +179,7 @@ const EDITORS = {
       { key: 'codeUrl', type: 'text', label: 'Code URL' },
       { key: 'dataUrl', type: 'text', label: 'Data URL' },
       { key: 'projectUrl', type: 'text', label: 'Project URL' },
+      { key: 'abstract', type: 'textarea', label: 'Abstract / notes (optional, shown on the publication page)' },
     ],
   },
   news: {
