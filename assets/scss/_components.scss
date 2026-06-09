@@ -25,7 +25,9 @@
 }
 
 .btn--outline:hover {
-  background: rgba($forest, 0.1);
+  border-color: $tangerine;
+  color: $tangerine;
+  background: rgba($tangerine, 0.08);
 }
 
 .card {
