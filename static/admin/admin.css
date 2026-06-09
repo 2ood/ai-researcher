@@ -190,6 +190,34 @@ code {
 .field-row { display: flex; gap: 1rem; flex-wrap: wrap; }
 .field-row > .field { flex: 1; min-width: 160px; }
 
+/* ---- Emoji picker (News icon) ---- */
+.emoji-field { position: relative; display: flex; gap: 0.5rem; align-items: center; }
+.emoji-field input { width: auto !important; flex: 1 1 160px; }
+.emoji-pop {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 2px;
+  padding: 0.5rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+.emoji-pick {
+  font-size: 1.25rem;
+  line-height: 1;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+}
+.emoji-pick:hover { background: rgba(27, 27, 27, 0.08); }
+
 /* ---- Nested list editor (papers, cv sections) ---- */
 .list-block { margin-bottom: 1.5rem; }
 .list-block > .list-head {

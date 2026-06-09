@@ -156,6 +156,15 @@ function setByPath(obj, path, val) {
 // ===========================================================================
 const PUB_TYPES = ['Conference', 'Workshop', 'Journal', 'Preprint'];
 
+// Curated palette for the News icon picker (academic / announcement themed).
+const EMOJIS = [
+  '🎓', '🏆', '🥇', '📝', '📄', '📚', '💡', '🔬',
+  '🧪', '🧠', '🤖', '📊', '📈', '🎉', '🎊', '✨',
+  '🚀', '✈️', '🌍', '🌏', '📢', '📌', '🗓️', '⭐',
+  '🔥', '💬', '🤝', '👥', '🏛️', '☕', '📰', '🎙️',
+  '🇰🇷', '🇨🇦', '🇺🇸', '🇬🇧', '🇯🇵', '🇨🇳', '🇪🇺', '🇩🇪',
+];
+
 const EDITORS = {
   publications: {
     file: 'data/publications.yml', label: 'Publications', root: 'list',
@@ -176,8 +185,16 @@ const EDITORS = {
     file: 'data/news.yml', label: 'News', root: 'list',
     fields: [
       { key: 'date', type: 'text', label: 'Date (YYYY-MM-DD)' },
-      { key: 'icon', type: 'text', label: 'Icon (emoji)' },
+      { key: 'icon', type: 'emoji', label: 'Icon (emoji)' },
       { key: 'text', type: 'textarea', label: 'Text ([markdown links](url) supported)' },
+    ],
+  },
+  research_interests: {
+    file: 'data/research_interests.yml', label: 'Research Interests', root: 'list',
+    fields: [
+      { key: 'title', type: 'text', label: 'Title' },
+      { key: 'summary', type: 'textarea', label: 'Summary (shown on home)' },
+      { key: 'details', type: 'textarea', label: 'Details (markdown, shown on the dedicated page)' },
     ],
   },
   research_tracks: {
@@ -224,6 +241,15 @@ const EDITORS = {
 
 function fieldHtml(field, value, path) {
   const v = value == null ? '' : value;
+  if (field.type === 'emoji') {
+    const palette = EMOJIS.map(em => `<button type="button" class="emoji-pick">${em}</button>`).join('');
+    return `<div class="field"><label>${esc(field.label)}</label>
+      <div class="emoji-field">
+        <input type="text" data-path="${path}" value="${esc(v)}">
+        <button type="button" class="btn btn--ghost btn--sm emoji-toggle" aria-label="Pick emoji">😀 Pick</button>
+        <div class="emoji-pop hidden">${palette}</div>
+      </div></div>`;
+  }
   if (field.type === 'textarea') {
     return `<div class="field"><label>${esc(field.label)}</label>
       <textarea rows="3" data-path="${path}">${esc(v)}</textarea></div>`;
@@ -295,6 +321,22 @@ function onFieldInput(e) {
   setByPath(state.model, parsePath(t.dataset.path), v);
 }
 function onEditorClick(e) {
+  // Emoji picker toggle / selection
+  const toggle = e.target.closest('.emoji-toggle');
+  if (toggle) {
+    toggle.parentElement.querySelector('.emoji-pop').classList.toggle('hidden');
+    return;
+  }
+  const pick = e.target.closest('.emoji-pick');
+  if (pick) {
+    const wrap = pick.closest('.emoji-field');
+    const input = wrap.querySelector('input[data-path]');
+    input.value = pick.textContent;
+    setByPath(state.model, parsePath(input.dataset.path), pick.textContent);
+    wrap.querySelector('.emoji-pop').classList.add('hidden');
+    return;
+  }
+
   const btn = e.target.closest('button[data-arr]');
   if (!btn) return;
   let arr = btn.dataset.arr === '' ? state.model : getByPath(state.model, parsePath(btn.dataset.arr));
