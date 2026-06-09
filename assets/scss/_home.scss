@@ -102,6 +102,11 @@
   .interest-title {
     font-size: 1.1rem;
     margin-bottom: 0.2rem;
+
+    a {
+      color: $carbon;
+      &:hover { color: $tangerine; }
+    }
   }
 
   .interest-summary {

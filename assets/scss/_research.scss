@@ -16,6 +16,11 @@
   .interest-title {
     font-size: 1.4rem;
     margin-bottom: 0.4rem;
+
+    a {
+      color: $carbon;
+      &:hover { color: $tangerine; }
+    }
   }
 
   .interest-summary {
@@ -39,3 +44,18 @@
     }
   }
 }
+
+// Dedicated single interest page
+.interest-single {
+  .interest-lead {
+    font-size: 1.15rem;
+    color: $walnut;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    max-width: 65ch;
+  }
+
+  .interest-body { max-width: 65ch; }
+}
+
+.back-link { margin-top: 2.5rem; }
