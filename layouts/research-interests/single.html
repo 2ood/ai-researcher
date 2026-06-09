@@ -9,6 +9,21 @@
   </header>
   {{ with .Params.summary }}<p class="interest-lead">{{ . }}</p>{{ end }}
   {{ with .Content }}<div class="interest-body post-content">{{ . }}</div>{{ end }}
+
+  {{ with where site.Data.publications "interest" .Title }}
+  <section class="related-pubs">
+    <h2>Related publications</h2>
+    <ul>
+      {{ range . }}
+      <li>
+        <a class="rp-title" href="{{ (printf "publications/%s/" (.title | urlize)) | relLangURL }}">{{ .title }}</a>
+        <span class="rp-venue">{{ .venue }} · {{ .year }}</span>
+      </li>
+      {{ end }}
+    </ul>
+  </section>
+  {{ end }}
+
   <p class="back-link"><a class="see-all-link" href="{{ "research-interests/" | relLangURL }}">← All research interests</a></p>
 </article>
 {{ end }}

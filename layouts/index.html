@@ -1,7 +1,7 @@
 {{/*
   Home page. Renders:
     - profile hero (content/_index.md body = bio)
-    - selected publications grouped by research track (data/research_tracks.yml)
+    - flat list of selected publications (data/publications.yml, selected: true)
     - latest 5 news entries (data/news.yml)
     - condensed CV: education + awards (data/cv.yml)
 */}}
@@ -41,29 +41,18 @@
   <a href="{{ "research-interests/" | relLangURL }}" class="see-all-link">All research interests →</a>
 </section>
 
-{{/* ---- Selected publications (research tracks) ---- */}}
+{{/* ---- Selected publications (flat list of entries flagged selected: true) ---- */}}
 <section class="home-section">
   <h2>Selected Publications</h2>
-  <div class="tracks-list">
-    {{ range site.Data.research_tracks }}
-    <div class="track-item">
-      <span class="track-num">{{ .num }}</span>
-      <div class="track-content">
-        <h3 class="track-title">{{ .title }}</h3>
-        <p class="track-desc">{{ .description }}</p>
-        <ul class="track-papers">
-          {{ range .papers }}
-          <li>
-            <a class="paper-title" href="{{ .url }}">{{ .title }}</a>
-            <span class="paper-venue">{{ .venue }}</span>
-            {{ with .award }}<span class="paper-award">🏆 {{ . }}</span>{{ end }}
-          </li>
-          {{ end }}
-        </ul>
-      </div>
-    </div>
+  <ul class="selected-pubs">
+    {{ range where site.Data.publications "selected" true }}
+    <li>
+      <a class="paper-title" href="{{ (printf "publications/%s/" (.title | urlize)) | relLangURL }}">{{ .title }}</a>
+      <span class="paper-venue">{{ .venue }} · {{ .year }}</span>
+      {{ with .award }}<span class="paper-award">🏆 {{ . }}</span>{{ end }}
+    </li>
     {{ end }}
-  </div>
+  </ul>
   <a href="{{ "publications/" | relLangURL }}" class="see-all-link">See all publications →</a>
 </section>
 
@@ -85,8 +74,8 @@
     <h3>Education</h3>
     {{ range site.Data.cv.education }}
     <div class="cv-summary-entry">
-      <strong>{{ .institution }}</strong>
-      <div class="cv-meta">{{ .degree }}{{ with .advisor }} · {{ . }}{{ end }}{{ with .period }} · {{ . }}{{ end }}</div>
+      <div class="cv-title"><strong>{{ .institution }}</strong>{{ with .period }} · {{ . }}{{ end }}</div>
+      <div class="cv-meta">{{ .degree }}{{ with .advisor }} · {{ . }}{{ end }}</div>
     </div>
     {{ end }}
   </div>

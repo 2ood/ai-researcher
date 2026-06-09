@@ -22,6 +22,7 @@ const state = {
   model: null,     // parsed YAML for the active data file
   sha: null,       // sha of the active file (data editor or blog post)
   path: null,      // path of the active file
+  interestTitles: [], // interest titles, for the publications "interest" dropdown
 };
 
 // ---- Elements -------------------------------------------------------------
@@ -174,6 +175,8 @@ const EDITORS = {
       { key: 'venue', type: 'text', label: 'Venue' },
       { key: 'year', type: 'number', label: 'Year' },
       { key: 'type', type: 'select', label: 'Type', options: PUB_TYPES },
+      { key: 'selected', type: 'checkbox', label: 'Show on home (Selected Publications)' },
+      { key: 'interest', type: 'select', dynamicOptions: 'interests', label: 'Research interest (links this paper on the interest page)' },
       { key: 'award', type: 'text', label: 'Award (optional)' },
       { key: 'paperUrl', type: 'text', label: 'Paper URL' },
       { key: 'codeUrl', type: 'text', label: 'Code URL' },
@@ -196,20 +199,6 @@ const EDITORS = {
       { key: 'title', type: 'text', label: 'Title' },
       { key: 'summary', type: 'textarea', label: 'Summary (shown on home)' },
       { key: 'details', type: 'textarea', label: 'Details (markdown, shown on the dedicated page)' },
-    ],
-  },
-  research_tracks: {
-    file: 'data/research_tracks.yml', label: 'Research Tracks', root: 'list',
-    fields: [
-      { key: 'num', type: 'text', label: 'Number (e.g. 01)' },
-      { key: 'title', type: 'text', label: 'Title' },
-      { key: 'description', type: 'textarea', label: 'Description' },
-      { key: 'papers', type: 'list', label: 'Papers', fields: [
-        { key: 'title', type: 'text', label: 'Title' },
-        { key: 'venue', type: 'text', label: 'Venue' },
-        { key: 'url', type: 'text', label: 'URL' },
-        { key: 'award', type: 'text', label: 'Award (optional)' },
-      ] },
     ],
   },
   cv: {
@@ -251,12 +240,19 @@ function fieldHtml(field, value, path) {
         <div class="emoji-pop hidden">${palette}</div>
       </div></div>`;
   }
+  if (field.type === 'checkbox') {
+    return `<div class="field field--inline">
+      <input type="checkbox" data-path="${path}" data-type="checkbox"${v ? ' checked' : ''}>
+      <label>${esc(field.label)}</label></div>`;
+  }
   if (field.type === 'textarea') {
     return `<div class="field"><label>${esc(field.label)}</label>
       <textarea rows="3" data-path="${path}">${esc(v)}</textarea></div>`;
   }
   if (field.type === 'select') {
-    const opts = field.options.map(o =>
+    const list = field.dynamicOptions === 'interests' ? (state.interestTitles || []) : field.options;
+    let opts = field.dynamicOptions ? '<option value="">— none —</option>' : '';
+    opts += list.map(o =>
       `<option value="${esc(o)}"${o === v ? ' selected' : ''}>${esc(o)}</option>`).join('');
     return `<div class="field"><label>${esc(field.label)}</label>
       <select data-path="${path}">${opts}</select></div>`;
@@ -319,6 +315,7 @@ function onFieldInput(e) {
   if (!t.dataset || t.dataset.path == null) return;
   let v = t.value;
   if (t.dataset.type === 'number') v = v.trim() === '' ? '' : Number(v);
+  if (t.dataset.type === 'checkbox') v = t.checked;
   setByPath(state.model, parsePath(t.dataset.path), v);
 }
 function onEditorClick(e) {
@@ -354,6 +351,14 @@ async function loadDataEditor(section) {
   el.view.innerHTML = `<p class="loading">Loading…</p>`;
   const cfg = EDITORS[section];
   try {
+    if (section === 'publications') {
+      // Populate the "interest" dropdown from data/research_interests.yml.
+      try {
+        const ri = await getFile('data/research_interests.yml');
+        state.interestTitles = (jsyaml.load(ri.text, { schema: Y_SCHEMA }) || [])
+          .map(x => x && x.title).filter(Boolean);
+      } catch (e) { state.interestTitles = []; }
+    }
     const { text, sha } = await getFile(cfg.file);
     state.model = jsyaml.load(text, { schema: Y_SCHEMA }) || (cfg.root === 'list' ? [] : {});
     state.sha = sha;

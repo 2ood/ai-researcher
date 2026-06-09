@@ -20,6 +20,9 @@
     {{ with .Params.projectUrl }}<a class="link-pill" href="{{ . }}">Project Website</a>{{ end }}
   </div>
   {{ with .Content }}<div class="pub-abstract post-content">{{ . }}</div>{{ end }}
+  {{ with .Params.interest }}
+  <p class="pub-interest">Research interest: <a href="{{ (printf "research-interests/%s/" (. | urlize)) | relLangURL }}">{{ . }}</a></p>
+  {{ end }}
   <p class="back-link"><a class="see-all-link" href="{{ "publications/" | relLangURL }}">← All publications</a></p>
 </article>
 {{ end }}
