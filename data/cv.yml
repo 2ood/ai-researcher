@@ -1,14 +1,13 @@
 education:
-  - institution: "GIST (Gwangju Institute of Science and Technology)"
-    degree: "Data Science Lab, EECS"
-    advisor: "Advised by Prof. Sundong Kim"
-    period: "Present"
-  - institution: "GIST (Gwangju Institute of Science and Technology)"
-    degree: "B.S., Electrical Engineering and Computer Science"
-    advisor: "Advised by Prof. Sundong Kim"
-    period: "Mar 2019 – Feb 2023"
-
+  - institution: GIST (Gwangju Institute of Science and Technology)
+    degree: Data Science Lab, AI Convergence
+    advisor: Advised by Prof. Sundong Kim
+    period: Present
+  - institution: GIST (Gwangju Institute of Science and Technology)
+    degree: B.S., Electrical Engineering and Computer Science
+    advisor: Advised by Prof. Sundong Kim
+    period: Mar 2020 - Feb 2026
 awards:
-  - title: "Great Thesis Award (2026)"
+  - title: Great Thesis Award (2026)
     year: 2026
-    description: "Awarded for outstanding bachelor's thesis work in the field of AI at GIST."
+    description: Awarded for outstanding bachelor's thesis work in the field of AI at GIST.
