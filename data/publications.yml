@@ -1,0 +1,10 @@
+# Owner's name (**Kyungmin Choi**) is wrapped in markdown bold so the entry partial highlights it.
+- title: "GIFARC: Synthetic Dataset for Leveraging Human-Intuitive Analogies to Elevate AI Reasoning"
+  authors: "Woochang Sim, Hyunseok Ryu, **Kyungmin Choi**, Sungwon Han, Sundong Kim"
+  venue: "arXiv"
+  year: 2025
+  type: "Preprint"
+  paperUrl: "https://arxiv.org/abs/2505.20672"
+  codeUrl: ""
+  dataUrl: ""
+  projectUrl: ""

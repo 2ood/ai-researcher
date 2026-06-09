@@ -1,0 +1,9 @@
+# Numbered research theme clusters for the home page.
+# Each track: num, title, description, and a list of papers (title, venue, url, optional award).
+- num: "01"
+  title: "Abstract Reasoning & Human-Intuitive AI"
+  description: "Building datasets and methods that align machine reasoning with human intuition, with a focus on abstraction and analogy (ARC-style tasks)."
+  papers:
+    - title: "GIFARC: Synthetic Dataset for Leveraging Human-Intuitive Analogies to Elevate AI Reasoning"
+      venue: "arXiv 2025"
+      url: "https://arxiv.org/abs/2505.20672"
