@@ -8,6 +8,8 @@
 main.container {
   padding-top: $spacing-xl;
   flex: 1 0 auto; // grow to fill remaining height, pushing the footer down
+  width: 100%;    // fill the width (up to max-width); without this, auto margins
+                  // on a flex item shrink the container to its content
 }
 
 .section {
