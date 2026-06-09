@@ -1,0 +1,43 @@
+{{/*
+  Renders one CV section (Education / Awards / Service / Teaching).
+  Expects: (dict "title" <heading> "items" <list from data/cv.yml>)
+  Each item shape differs per section; we branch on a distinctive key.
+*/}}
+<section class="cv-section">
+  <h2>{{ .title }}</h2>
+  <div class="cv-entries">
+    {{ range .items }}
+    <div class="cv-entry">
+      {{ if .degree }}
+        {{/* Education */}}
+        <div class="cv-entry-date">{{ .period }}</div>
+        <div class="cv-entry-content">
+          <h3 class="cv-entry-title">{{ .institution }}</h3>
+          <div class="cv-entry-subtitle">{{ .degree }}</div>
+          {{ with .advisor }}<div class="cv-entry-desc">{{ . }}</div>{{ end }}
+        </div>
+      {{ else if .course }}
+        {{/* Teaching */}}
+        <div class="cv-entry-date">{{ .period }}</div>
+        <div class="cv-entry-content">
+          <h3 class="cv-entry-title">{{ .course }}</h3>
+          <div class="cv-entry-subtitle">{{ .role }}{{ with .institution }} · {{ . }}{{ end }}</div>
+        </div>
+      {{ else if .role }}
+        {{/* Service */}}
+        <div class="cv-entry-date"></div>
+        <div class="cv-entry-content">
+          <h3 class="cv-entry-title">{{ .role }}</h3>
+          {{ with .detail }}<div class="cv-entry-subtitle">{{ . }}</div>{{ end }}
+        </div>
+      {{ else }}
+        {{/* Awards */}}
+        <div class="cv-entry-date">{{ .year }}</div>
+        <div class="cv-entry-content">
+          <h3 class="cv-entry-title">{{ .title }}</h3>
+        </div>
+      {{ end }}
+    </div>
+    {{ end }}
+  </div>
+</section>

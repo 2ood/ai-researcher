@@ -1,0 +1,21 @@
+{{/*
+  Single publication entry for the publications list.
+  Expects: (dict "pub" <publication record from data/publications.yml>)
+  data-type drives the client-side filter in static/js/main.js.
+*/}}
+{{ $pub := .pub }}
+<div class="pub-entry" data-type="{{ $pub.type | lower }}">
+  <h3 class="pub-title"><a href="{{ $pub.paperUrl }}">{{ $pub.title }}</a></h3>
+  <div class="pub-authors">{{ $pub.authors | markdownify }}</div>
+  <div class="pub-meta">
+    <span class="pub-venue">{{ $pub.venue }} · {{ $pub.year }}</span>
+    <span class="pub-badge">{{ $pub.type }}</span>
+    {{ with $pub.award }}<span class="pub-award">🏆 {{ . }}</span>{{ end }}
+  </div>
+  <div class="pub-links">
+    {{ with $pub.paperUrl }}<a class="link-pill" href="{{ . }}">Paper</a>{{ end }}
+    {{ with $pub.codeUrl }}<a class="link-pill" href="{{ . }}">Code</a>{{ end }}
+    {{ with $pub.dataUrl }}<a class="link-pill" href="{{ . }}">Data</a>{{ end }}
+    {{ with $pub.projectUrl }}<a class="link-pill" href="{{ . }}">Project Website</a>{{ end }}
+  </div>
+</div>

@@ -1,0 +1,15 @@
+{{/*
+  Blog index — reverse-chronological list of posts.
+*/}}
+{{ define "main" }}
+<div class="blog-list-page">
+  <header class="page-header">
+    <h1>Blog</h1>
+  </header>
+  <div class="blog-entries">
+    {{ range .Pages.ByDate.Reverse }}
+      {{ partial "blog-entry.html" (dict "post" .) }}
+    {{ end }}
+  </div>
+</div>
+{{ end }}

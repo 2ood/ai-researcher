@@ -1,0 +1,213 @@
+// Home Page Styles
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 4rem;
+  
+  @media (min-width: $tablet) {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 3rem;
+  }
+}
+
+.profile-photo {
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  
+  @media (min-width: $tablet) {
+    margin: 0;
+  }
+  
+  .img-circle {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+}
+
+.profile-bio {
+  h1 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+  }
+  
+  .affiliation {
+    color: rgba($carbon, 0.7);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  
+  a {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid rgba($carbon, 0.1);
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    color: $carbon;
+    
+    &:hover {
+      border-color: $forest;
+      color: $forest;
+      background-color: rgba($forest, 0.05);
+    }
+  }
+}
+
+.home-section {
+  margin-bottom: 4rem;
+  
+  h2 {
+    font-size: 1.5rem;
+    border-bottom: 1px solid rgba($carbon, 0.1);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.see-all-link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+// Research Tracks
+.tracks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.track-item {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.track-num {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: rgba($carbon, 0.1);
+  line-height: 1;
+}
+
+.track-content {
+  .track-title {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+  }
+  
+  .track-desc {
+    color: rgba($carbon, 0.8);
+    margin-bottom: 1rem;
+  }
+}
+
+.track-papers {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  li {
+    margin-bottom: 0.75rem;
+    padding-left: 1rem;
+    border-left: 2px solid rgba($carbon, 0.1);
+  }
+  
+  .paper-title {
+    font-weight: 500;
+    margin-right: 0.5rem;
+  }
+  
+  .paper-venue {
+    color: rgba($carbon, 0.6);
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+  }
+  
+  .paper-award {
+    color: $tangerine;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+}
+
+// News
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.news-entry {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  
+  @media (max-width: #{$tablet - 1px}) {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
+
+.news-date {
+  flex-shrink: 0;
+  width: 100px;
+  white-space: nowrap;
+  color: rgba($carbon, 0.5);
+  font-size: 0.9rem;
+}
+
+.news-content {
+  p {
+    display: inline;
+    margin: 0;
+  }
+}
+
+// CV Summary
+.cv-subsection {
+  margin-bottom: 2rem;
+  
+  h3 {
+    font-size: 1.1rem;
+    color: $walnut;
+    margin-bottom: 1rem;
+  }
+}
+
+.cv-summary-entry {
+  margin-bottom: 1rem;
+
+  strong {
+    display: block;
+  }
+
+  .cv-meta {
+    color: rgba($carbon, 0.6);
+    font-size: 0.9rem;
+  }
+}
+
+.awards-list {
+  padding-left: 1.25rem;
+  margin: 0;
+  
+  li {
+    margin-bottom: 0.5rem;
+  }
+}

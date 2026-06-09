@@ -1,0 +1,26 @@
+{{/*
+  Full CV page. Renders data/cv.yml sections via the cv-section partial.
+*/}}
+{{ define "main" }}
+<section class="cv-page">
+  <header class="cv-header">
+    <h1>Curriculum Vitae</h1>
+    {{ with site.Params.cvPdf }}
+      <a href="{{ . | relURL }}" class="download-btn">Open PDF ↓</a>
+    {{ end }}
+  </header>
+
+  {{ with site.Data.cv.education }}
+    {{ partial "cv-section.html" (dict "title" "Education" "items" .) }}
+  {{ end }}
+  {{ with site.Data.cv.awards }}
+    {{ partial "cv-section.html" (dict "title" "Awards" "items" .) }}
+  {{ end }}
+  {{ with site.Data.cv.service }}
+    {{ partial "cv-section.html" (dict "title" "Academic Service" "items" .) }}
+  {{ end }}
+  {{ with site.Data.cv.teaching }}
+    {{ partial "cv-section.html" (dict "title" "Teaching" "items" .) }}
+  {{ end }}
+</section>
+{{ end }}

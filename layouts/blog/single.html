@@ -1,0 +1,24 @@
+{{/*
+  Single blog post — prose content with reading time + tags.
+*/}}
+{{ define "main" }}
+<article class="blog-post">
+  <header class="post-header">
+    <h1 class="post-title">{{ .Title }}</h1>
+    <div class="post-meta">
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+      · {{ .ReadingTime }} min read
+    </div>
+    {{ with .Params.tags }}
+    <div class="post-tags">
+      {{ range . }}
+        <a href="{{ (printf "tags/%s/" (. | urlize)) | relLangURL }}" class="tag-pill">{{ . }}</a>
+      {{ end }}
+    </div>
+    {{ end }}
+  </header>
+  <div class="post-content">
+    {{ .Content }}
+  </div>
+</article>
+{{ end }}

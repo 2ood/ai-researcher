@@ -1,0 +1,53 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $primary-font;
+  line-height: 1.6;
+  color: $carbon;
+  background-color: $porcelain;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: $forest;
+  margin-bottom: $spacing-md;
+}
+
+a {
+  color: $forest;
+  text-decoration: none;
+}
+
+a:hover {
+  color: darken($forest, 10%);
+}
+
+code {
+  font-family: $mono-font;
+  background: #f0f0f0;
+  padding: $spacing-sm;
+  border-radius: 4px;
+}
+
+.container {
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+}
+
+@media (max-width: $tablet) {
+  .container {
+    padding: 0 $spacing-md;
+  }
+}
+
+@media (max-width: $mobile) {
+  .container {
+    padding: 0 $spacing-sm;
+  }
+}

@@ -1,0 +1,90 @@
+{{/*
+  Home page. Renders:
+    - profile hero (content/_index.md body = bio)
+    - selected publications grouped by research track (data/research_tracks.yml)
+    - latest 5 news entries (data/news.yml)
+    - condensed CV: education + awards (data/cv.yml)
+*/}}
+{{ define "main" }}
+
+{{/* ---- Profile hero ---- */}}
+<section class="profile-section">
+  <div class="profile-photo">
+    <img class="img-circle" src="{{ site.Params.profileImage | relURL }}" alt="{{ site.Title }}">
+  </div>
+  <div class="profile-bio">
+    <h1>{{ site.Title }}</h1>
+    <p class="affiliation">{{ site.Params.description }}</p>
+    <p class="one-liner">Researching abstract reasoning and human-intuitive AI in the GIST Data Science Lab.</p>
+    {{ with .Content }}<div class="bio">{{ . }}</div>{{ end }}
+    <div class="social-links">
+      <a href="mailto:{{ site.Params.email }}">Email</a>
+      <a href="{{ site.Params.googleScholar }}">Google Scholar</a>
+      <a href="{{ site.Params.github }}">GitHub</a>
+      <a href="{{ site.Params.linkedin }}">LinkedIn</a>
+      <a href="{{ site.Params.cvPdf | relURL }}">CV</a>
+    </div>
+  </div>
+</section>
+
+{{/* ---- Selected publications (research tracks) ---- */}}
+<section class="home-section">
+  <h2>Selected Publications</h2>
+  <div class="tracks-list">
+    {{ range site.Data.research_tracks }}
+    <div class="track-item">
+      <span class="track-num">{{ .num }}</span>
+      <div class="track-content">
+        <h3 class="track-title">{{ .title }}</h3>
+        <p class="track-desc">{{ .description }}</p>
+        <ul class="track-papers">
+          {{ range .papers }}
+          <li>
+            <a class="paper-title" href="{{ .url }}">{{ .title }}</a>
+            <span class="paper-venue">{{ .venue }}</span>
+            {{ with .award }}<span class="paper-award">🏆 {{ . }}</span>{{ end }}
+          </li>
+          {{ end }}
+        </ul>
+      </div>
+    </div>
+    {{ end }}
+  </div>
+  <a href="{{ "publications/" | relLangURL }}" class="see-all-link">See all publications →</a>
+</section>
+
+{{/* ---- News (latest 5) ---- */}}
+<section class="home-section">
+  <h2>News</h2>
+  <div class="news-list">
+    {{ range first 5 site.Data.news }}
+      {{ partial "news-entry.html" (dict "news" .) }}
+    {{ end }}
+  </div>
+  <a href="{{ "news/" | relLangURL }}" class="see-all-link">See all news →</a>
+</section>
+
+{{/* ---- CV summary: education + awards ---- */}}
+<section class="home-section">
+  <h2>CV</h2>
+  <div class="cv-subsection">
+    <h3>Education</h3>
+    {{ range site.Data.cv.education }}
+    <div class="cv-summary-entry">
+      <strong>{{ .institution }}</strong>
+      <div class="cv-meta">{{ .degree }}{{ with .advisor }} · {{ . }}{{ end }}{{ with .period }} · {{ . }}{{ end }}</div>
+    </div>
+    {{ end }}
+  </div>
+  <div class="cv-subsection">
+    <h3>Awards</h3>
+    <ul class="awards-list">
+      {{ range site.Data.cv.awards }}
+      <li>{{ .title }}{{ with .year }} ({{ . }}){{ end }}</li>
+      {{ end }}
+    </ul>
+  </div>
+  <a href="{{ "cv/" | relLangURL }}" class="see-all-link">Full CV →</a>
+</section>
+
+{{ end }}

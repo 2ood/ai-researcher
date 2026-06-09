@@ -1,0 +1,52 @@
+/* Reusable components */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-md;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s;
+  text-decoration: none;
+  gap: $spacing-xs;
+}
+
+.btn--primary {
+  background: $forest;
+  color: $porcelain;
+}
+
+.btn--primary:hover {
+  background: darken($forest, 10%);
+}
+
+.btn--outline {
+  border: 1px solid $forest;
+  color: $forest;
+}
+
+.btn--outline:hover {
+  background: rgba($forest, 0.1);
+}
+
+.card {
+  background: $porcelain;
+  border: 1px solid rgba($carbon, 0.1);
+  border-radius: 8px;
+  padding: $spacing-md;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba($carbon, 0.1);
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba($forest, 0.1);
+  color: $forest;
+}

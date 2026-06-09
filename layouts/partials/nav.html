@@ -1,0 +1,25 @@
+<header class="site-header">
+  <div class="container nav-container">
+    <a href="{{ site.Home.RelPermalink }}" class="nav-brand">{{ site.Title }}</a>
+    
+    <nav class="nav-links">
+      <a href="{{ site.Home.RelPermalink }}" {{ if .IsHome }}class="active"{{ end }}>Home</a>
+      <a href="{{ "publications/" | relLangURL }}" {{ if eq .Section "publications" }}class="active"{{ end }}>Publications</a>
+      <a href="{{ "blog/" | relLangURL }}" {{ if eq .Section "blog" }}class="active"{{ end }}>Blog</a>
+      <a href="{{ "news/" | relLangURL }}" {{ if eq .Section "news" }}class="active"{{ end }}>News</a>
+      <a href="{{ "cv/" | relLangURL }}" {{ if eq .Section "cv" }}class="active"{{ end }}>CV</a>
+    </nav>
+    
+    <button class="mobile-menu-btn" aria-label="Menu" aria-expanded="false">
+      ☰
+    </button>
+  </div>
+  
+  <nav class="mobile-nav">
+    <a href="{{ site.Home.RelPermalink }}" {{ if .IsHome }}class="active"{{ end }}>Home</a>
+    <a href="{{ "publications/" | relLangURL }}" {{ if eq .Section "publications" }}class="active"{{ end }}>Publications</a>
+    <a href="{{ "blog/" | relLangURL }}" {{ if eq .Section "blog" }}class="active"{{ end }}>Blog</a>
+    <a href="{{ "news/" | relLangURL }}" {{ if eq .Section "news" }}class="active"{{ end }}>News</a>
+    <a href="{{ "cv/" | relLangURL }}" {{ if eq .Section "cv" }}class="active"{{ end }}>CV</a>
+  </nav>
+</header>

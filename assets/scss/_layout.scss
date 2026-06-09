@@ -1,0 +1,49 @@
+/* Layout components */
+.container {
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+}
+
+main.container {
+  padding-top: $spacing-xl;
+}
+
+.section {
+  padding: $spacing-xl 0;
+}
+
+.section--tight {
+  padding: $spacing-lg 0;
+}
+
+.flex {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.flex--center {
+  justify-content: center;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  gap: $spacing-md;
+}
+
+.grid--cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: $tablet) {
+  .grid--cols-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $mobile) {
+  .container {
+    padding: 0 $spacing-sm;
+  }
+}

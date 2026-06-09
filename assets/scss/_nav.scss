@@ -1,0 +1,85 @@
+/* Sticky top navigation (markup: layouts/partials/nav.html) */
+.site-header {
+  position: sticky;
+  top: 0;
+  background: $porcelain;
+  border-bottom: 1px solid rgba($carbon, 0.1);
+  z-index: 100;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: $spacing-sm;
+  padding-bottom: $spacing-sm;
+}
+
+.nav-brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: $forest;
+}
+
+.nav-links {
+  display: flex;
+  gap: $spacing-lg;
+
+  a {
+    color: $carbon;
+    font-weight: 400;
+
+    &:hover {
+      color: $forest;
+    }
+
+    &.active {
+      color: $forest;
+      font-weight: 500;
+    }
+  }
+}
+
+/* Hamburger — hidden on desktop, shown on mobile */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: $carbon;
+  cursor: pointer;
+}
+
+/* Mobile slide-down nav — hidden until toggled open via JS */
+.mobile-nav {
+  display: none;
+  flex-direction: column;
+  padding: $spacing-sm $spacing-lg $spacing-md;
+  border-top: 1px solid rgba($carbon, 0.1);
+
+  a {
+    padding: $spacing-sm 0;
+    color: $carbon;
+    font-weight: 400;
+
+    &.active {
+      color: $forest;
+      font-weight: 500;
+    }
+  }
+
+  &.open {
+    display: flex;
+  }
+}
+
+@media (max-width: $mobile) {
+  .nav-links {
+    display: none;
+  }
+
+  .mobile-menu-btn {
+    display: block;
+  }
+}

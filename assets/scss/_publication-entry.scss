@@ -1,0 +1,1 @@
+/* Publication entry styles */ .publication-entry { border-left: 2px solid rgba($carbon, 0.1); padding: $spacing-md; margin-bottom: $spacing-md; } .publication-badge { @extend .badge; } .award-badge { @extend .badge; } .link-button { @extend .btn--primary; }

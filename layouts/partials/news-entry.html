@@ -1,0 +1,8 @@
+{{ $news := .news }}
+<div class="news-entry">
+  <div class="news-date">{{ $news.date | time.Format "2006-01-02" }}</div>
+  <div class="news-content">
+    <span class="news-icon">{{ $news.icon }}</span>
+    <span class="news-text">{{ $news.text | markdownify }}</span>
+  </div>
+</div>

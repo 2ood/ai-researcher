@@ -1,0 +1,126 @@
+// Publications Page Styles
+
+.page-header {
+  margin-bottom: 2rem;
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 3rem;
+}
+
+.filter-btn {
+  background: transparent;
+  border: 1px solid rgba($carbon, 0.1);
+  border-radius: 9999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+  color: rgba($carbon, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba($carbon, 0.05);
+    color: $carbon;
+  }
+  
+  &.active {
+    background: $carbon;
+    color: $porcelain;
+    border-color: $carbon;
+  }
+}
+
+.year-heading {
+  font-size: 2rem;
+  color: rgba($carbon, 0.15);
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.05em;
+}
+
+.pub-entry {
+  border-left: 2px solid rgba($carbon, 0.1);
+  padding-left: 1.5rem;
+  margin-bottom: 2.5rem;
+  
+  // For JS filtering
+  &.hidden {
+    display: none;
+  }
+}
+
+.pub-title {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+}
+
+.pub-authors {
+  font-size: 0.95rem;
+  color: rgba($carbon, 0.7);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+  
+  strong {
+    font-style: normal;
+    color: $carbon;
+  }
+}
+
+.pub-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.pub-venue {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.pub-badge {
+  background-color: rgba($walnut, 0.1);
+  color: $walnut;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.pub-award {
+  color: $tangerine;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.pub-links {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid rgba($carbon, 0.15);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  color: rgba($carbon, 0.8);
+  
+  &:hover {
+    border-color: $forest;
+    color: $forest;
+    background-color: rgba($forest, 0.05);
+  }
+}

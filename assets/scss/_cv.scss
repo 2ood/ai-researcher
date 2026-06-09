@@ -1,0 +1,107 @@
+// CV Page Styles
+
+.cv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid rgba($carbon, 0.1);
+  padding-bottom: 1rem;
+  margin-bottom: 3rem;
+  
+  h1 {
+    margin: 0;
+  }
+}
+
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: $carbon;
+  color: $porcelain;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  
+  &:hover {
+    background-color: lighten($carbon, 15%);
+    color: $porcelain;
+  }
+}
+
+.cv-section {
+  margin-bottom: 4rem;
+  
+  h2 {
+    font-size: 1.5rem;
+    color: $walnut;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+.cv-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cv-entry {
+  display: flex;
+  flex-direction: column;
+  
+  @media (min-width: $tablet) {
+    flex-direction: row;
+    gap: 2rem;
+  }
+}
+
+.cv-entry-date {
+  flex-shrink: 0;
+  width: 160px;
+  white-space: nowrap;
+  font-weight: 500;
+  color: rgba($carbon, 0.6);
+  margin-bottom: 0.25rem;
+  
+  @media (min-width: $tablet) {
+    margin-bottom: 0;
+    text-align: right;
+  }
+}
+
+.cv-entry-content {
+  flex-grow: 1;
+}
+
+.cv-entry-title {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+}
+
+.cv-entry-subtitle {
+  font-size: 1rem;
+  color: rgba($carbon, 0.8);
+  margin-bottom: 0.25rem;
+}
+
+.cv-entry-desc {
+  font-size: 0.95rem;
+  color: rgba($carbon, 0.6);
+}
+
+// News page reuse
+.full-list {
+  gap: 1.5rem;
+  
+  .news-entry {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba($carbon, 0.05);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}

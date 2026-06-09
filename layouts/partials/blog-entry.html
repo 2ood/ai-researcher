@@ -1,0 +1,17 @@
+{{/*
+  Single blog entry for the blog index.
+  Expects: (dict "post" <Page>)
+*/}}
+{{ $post := .post }}
+<article class="blog-entry">
+  <div class="blog-entry-meta">{{ $post.Date.Format "Jan 2, 2006" }} · {{ $post.ReadingTime }} min</div>
+  <div class="blog-entry-content">
+    <h2 class="blog-entry-title"><a href="{{ $post.RelPermalink }}">{{ $post.Title }}</a></h2>
+    <p class="blog-entry-desc">{{ $post.Description | default $post.Summary }}</p>
+    <div class="blog-tags">
+      {{ range $post.Params.tags }}
+        <a href="{{ (printf "tags/%s/" (. | urlize)) | relLangURL }}" class="tag-pill">{{ . }}</a>
+      {{ end }}
+    </div>
+  </div>
+</article>

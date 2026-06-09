@@ -1,0 +1,10 @@
+{{ define "main" }}
+<section class="section news-page">
+  <h1>News</h1>
+  <div class="news-list full-list">
+    {{ range site.Data.news }}
+      {{ partial "news-entry.html" (dict "news" .) }}
+    {{ end }}
+  </div>
+</section>
+{{ end }}
