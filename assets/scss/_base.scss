@@ -11,6 +11,12 @@ body {
   color: $carbon;
   background-color: $porcelain;
   padding: 0;
+
+  // Sticky footer: full-height column so the footer is pushed to the
+  // bottom of the viewport when page content is short.
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -38,6 +44,10 @@ code {
   max-width: $max-width;
   margin: 0 auto;
   padding: 0 $spacing-lg;
+}
+
+.page-header h1 {
+  color : $forest;
 }
 
 @media (max-width: $tablet) {
