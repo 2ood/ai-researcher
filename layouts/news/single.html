@@ -1,10 +1,15 @@
+{{/*
+  Full news page. Renders all entries from data/news.yml (newest first).
+*/}}
 {{ define "main" }}
-<section class="section news-page">
-  <h1>News</h1>
+<div class="news-page">
+  <header class="page-header">
+    <h1>News</h1>
+  </header>
   <div class="news-list full-list">
     {{ range site.Data.news }}
       {{ partial "news-entry.html" (dict "news" .) }}
     {{ end }}
   </div>
-</section>
+</div>
 {{ end }}

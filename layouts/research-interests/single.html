@@ -1,0 +1,21 @@
+{{/*
+  Dedicated Research Interests page. Renders data/research_interests.yml with
+  full markdown `details` bodies. Optional intro from the content/research-interests.md body.
+*/}}
+{{ define "main" }}
+<div class="research-interests-page">
+  <header class="page-header">
+    <h1>Research Interests</h1>
+  </header>
+  {{ with .Content }}<div class="page-intro">{{ . }}</div>{{ end }}
+  <div class="interests-detail-list">
+    {{ range site.Data.research_interests }}
+    <section class="interest-detail">
+      <h2 class="interest-title">{{ .title }}</h2>
+      <p class="interest-summary">{{ .summary }}</p>
+      {{ with .details }}<div class="interest-body">{{ . | markdownify }}</div>{{ end }}
+    </section>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

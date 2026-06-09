@@ -1,0 +1,41 @@
+// Research Interests — dedicated page (layouts/research-interests/single.html)
+
+.page-intro {
+  color: rgba($carbon, 0.8);
+  margin-bottom: 2.5rem;
+  max-width: 65ch;
+}
+
+.interests-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.interest-detail {
+  .interest-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .interest-summary {
+    color: $walnut;
+    font-style: italic;
+    margin-bottom: 1rem;
+  }
+
+  .interest-body {
+    line-height: 1.7;
+    max-width: 65ch;
+
+    p { margin-bottom: 1rem; }
+
+    a {
+      color: $forest;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+
+      &:hover { color: $tangerine; }
+    }
+  }
+}

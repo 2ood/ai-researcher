@@ -60,9 +60,9 @@
     color: $carbon;
     
     &:hover {
-      border-color: $forest;
-      color: $forest;
-      background-color: rgba($forest, 0.05);
+      border-color: $tangerine;
+      color: $tangerine;
+      background-color: rgba($tangerine, 0.06);
     }
   }
 }
@@ -72,7 +72,7 @@
   
   h2 {
     font-size: 1.5rem;
-    border-bottom: 1px solid rgba($carbon, 0.1);
+    border-bottom: 1px solid rgba($walnut, 0.25);
     padding-bottom: 0.5rem;
     margin-bottom: 1.5rem;
   }
@@ -83,6 +83,30 @@
   margin-top: 1rem;
   font-weight: 500;
   font-size: 0.95rem;
+
+  &:hover { color: $tangerine; }
+}
+
+// Research Interests (home summary)
+.interests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.interest-item {
+  padding-left: 1rem;
+  border-left: 2px solid rgba($tangerine, 0.55);
+
+  .interest-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .interest-summary {
+    color: rgba($carbon, 0.75);
+    margin: 0;
+  }
 }
 
 // Research Tracks
@@ -100,7 +124,7 @@
 .track-num {
   font-size: 2.5rem;
   font-weight: 700;
-  color: rgba($carbon, 0.1);
+  color: rgba($walnut, 0.4);
   line-height: 1;
 }
 

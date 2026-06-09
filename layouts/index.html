@@ -27,6 +27,20 @@
   </div>
 </section>
 
+{{/* ---- Research interests ---- */}}
+<section class="home-section">
+  <h2>Research Interests</h2>
+  <div class="interests-list">
+    {{ range site.Data.research_interests }}
+    <div class="interest-item">
+      <h3 class="interest-title">{{ .title }}</h3>
+      <p class="interest-summary">{{ .summary }}</p>
+    </div>
+    {{ end }}
+  </div>
+  <a href="{{ "research-interests/" | relLangURL }}" class="see-all-link">Read more about my research →</a>
+</section>
+
 {{/* ---- Selected publications (research tracks) ---- */}}
 <section class="home-section">
   <h2>Selected Publications</h2>
