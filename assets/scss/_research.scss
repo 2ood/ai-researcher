@@ -10,9 +10,26 @@
   display: flex;
   flex-direction: column;
   gap: 3rem;
+
+  a {
+    transition: background-color 0.3s ease;
+  }
+
+  a:hover {
+    background-color: rgba($tangerine, 0.1);
+    transition: background-color 0.3s ease;
+
+    .interest-title { color: $tangerine; }
+  }
 }
 
 .interest-detail {
+
+  border: 1px solid rgba($carbon, 0.3);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba($carbon, 0.2);
+
   .interest-title {
     font-size: 1.4rem;
     margin-bottom: 0.4rem;

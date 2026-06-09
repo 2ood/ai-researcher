@@ -7,6 +7,6 @@
   selected: true              # shown in the home "Selected Publications" list
   interest: "Human-Intuitive Analogy"  # must match a title in data/research_interests.yml
   paperUrl: "https://arxiv.org/abs/2505.20672"
-  codeUrl: ""
-  dataUrl: ""
-  projectUrl: ""
+  codeUrl: "https://anonymous.4open.science/r/GIFARC-FEF5/README.md"
+  dataUrl: "https://huggingface.co/datasets/DumDev/gif_arc"
+  projectUrl: "https://gifarc.vercel.app/"

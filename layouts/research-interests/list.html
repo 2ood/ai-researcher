@@ -8,10 +8,12 @@
   </header>
   <div class="interests-detail-list">
     {{ range .Pages }}
+    <a href="{{ .RelPermalink }}">
     <section class="interest-detail">
-      <h2 class="interest-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+      <h2 class="interest-title">{{ .Title }}</h2>
       {{ with .Params.summary }}<p class="interest-summary">{{ . }}</p>{{ end }}
     </section>
+    </a>
     {{ end }}
   </div>
 </div>
