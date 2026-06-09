@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Content Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <!-- Admin-only dependencies (not part of the Hugo site build) -->
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+</head>
+<body>
+
+  <!-- Login screen -->
+  <section id="login" class="login hidden">
+    <div class="login-card">
+      <h1>Content Dashboard</h1>
+      <p class="login-help">
+        Paste a GitHub <strong>fine-grained personal access token</strong> with
+        <em>Contents: Read and write</em> permission on this repository.
+        The token is stored only in this browser (localStorage) and never leaves it except to call the GitHub API.
+      </p>
+      <input id="token-input" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false">
+      <button id="connect-btn" class="btn btn--primary">Connect</button>
+      <p id="login-error" class="error hidden"></p>
+      <p class="login-meta">Repository: <code id="repo-label"></code></p>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <div id="app" class="app hidden">
+    <header class="topbar">
+      <span class="topbar-brand">Content Dashboard</span>
+      <nav class="topbar-nav" id="section-nav">
+        <button class="tab" data-section="blog">Blog</button>
+        <button class="tab" data-section="publications">Publications</button>
+        <button class="tab" data-section="news">News</button>
+        <button class="tab" data-section="research_tracks">Research</button>
+        <button class="tab" data-section="cv">CV</button>
+      </nav>
+      <div class="topbar-right">
+        <a class="topbar-link" id="view-site-link" href="../" target="_blank" rel="noopener">View site ↗</a>
+        <button id="signout-btn" class="btn btn--ghost">Sign out</button>
+      </div>
+    </header>
+
+    <main id="view" class="view"></main>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
