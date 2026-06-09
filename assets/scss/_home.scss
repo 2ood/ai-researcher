@@ -36,6 +36,7 @@
     margin-top: 0;
     margin-bottom: 0.5rem;
     font-size: 2rem;
+    color: $forest;
   }
   
   .affiliation {
@@ -72,7 +73,7 @@
   
   h2 {
     font-size: 1.5rem;
-    border-bottom: 1px solid rgba($walnut, 0.25);
+    border-bottom: 2px solid rgba($tangerine, 0.4);
     padding-bottom: 0.5rem;
     margin-bottom: 1.5rem;
   }
@@ -124,7 +125,7 @@
 .track-num {
   font-size: 2.5rem;
   font-weight: 700;
-  color: rgba($walnut, 0.4);
+  color: $tangerine;
   line-height: 1;
 }
 
