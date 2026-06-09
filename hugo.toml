@@ -1,0 +1,24 @@
+baseURL = "https://2ood.github.io/ai-researcher/"
+languageCode = "en"
+title = "Kyungmin Choi"
+
+[taxonomies]
+  tag = "tags"
+
+[markup]
+  [markup.highlight]
+    style = "github"
+    lineNos = false
+    noClasses = false
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[params]
+  description = "AI Researcher · GIST Data Science Lab"
+  profileImage = "images/profile_square.png"
+  email = "youvegotmail@gm.gist.ac.kr"
+  googleScholar = "https://scholar.google.com/citations?user=T035RyUAAAAJ&hl=en"
+  github = "https://github.com/2ood"
+  linkedin = "https://linkedin.com/in/"
+  cvPdf = "cv.pdf"
