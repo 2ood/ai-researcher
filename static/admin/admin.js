@@ -10,6 +10,8 @@ const REPO = 'ai-researcher';
 const BRANCH = 'main';
 const API = 'https://api.github.com';
 const TOKEN_KEY = 'gh_token';
+const TOKEN_EXP_KEY = 'gh_token_exp';
+const TOKEN_TTL_MS = 2 * 24 * 60 * 60 * 1000; // localStorage token self-expires after 2 days
 
 // YAML: JSON schema keeps dates/ids as strings (no surprise Date objects) and ints as numbers.
 const Y_SCHEMA = jsyaml.JSON_SCHEMA;
@@ -17,7 +19,7 @@ const Y_DUMP = { schema: Y_SCHEMA, lineWidth: -1, noRefs: true };
 
 // ---- State ----------------------------------------------------------------
 const state = {
-  token: localStorage.getItem(TOKEN_KEY) || '',
+  token: '',       // set from loadToken() in init()
   local: false,    // true when served by cms-server.go (commits locally, no token)
   section: 'blog',
   model: null,     // parsed YAML for the active data file
@@ -136,6 +138,24 @@ async function deleteFile(path, message, sha) {
   return gh('DELETE', contentPath(path), { message, sha, branch: BRANCH });
 }
 
+// ---- Token storage (localStorage with a short TTL) ------------------------
+// The PAT is kept in localStorage so it survives reloads, but self-expires after
+// TOKEN_TTL_MS, so a leaked browser profile only exposes it briefly. The PAT should
+// also carry a short GitHub-side expiration as the primary safeguard.
+function loadToken() {
+  const exp = Number(localStorage.getItem(TOKEN_EXP_KEY) || 0);
+  if (!exp || Date.now() > exp) { clearToken(); return ''; }
+  return localStorage.getItem(TOKEN_KEY) || '';
+}
+function saveToken(token) {
+  localStorage.setItem(TOKEN_KEY, token);
+  localStorage.setItem(TOKEN_EXP_KEY, String(Date.now() + TOKEN_TTL_MS));
+}
+function clearToken() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(TOKEN_EXP_KEY);
+}
+
 // ---- Auth -----------------------------------------------------------------
 async function validateToken() {
   // Throws if the token can't read the repo.
@@ -149,7 +169,7 @@ async function connect() {
   el.loginError.classList.add('hidden');
   try {
     await validateToken();
-    localStorage.setItem(TOKEN_KEY, token);
+    saveToken(token);
     showApp();
   } catch (e) {
     state.token = '';
@@ -160,7 +180,7 @@ async function connect() {
   }
 }
 function signout() {
-  localStorage.removeItem(TOKEN_KEY);
+  clearToken();
   state.token = '';
   el.tokenInput.value = '';
   el.app.classList.add('hidden');
@@ -783,6 +803,7 @@ async function init() {
     }
   } catch (e) { /* no local backend → use the GitHub API flow below */ }
 
+  state.token = loadToken();
   if (state.token) {
     // Verify the saved token still works before showing the app.
     validateToken().then(showApp).catch(() => {
