@@ -11,7 +11,4 @@
 - title: Reasoning & the Philosophy of Science
   summary: What the history of physics can teach us about interpreting learned representations.
   details: |
-    Deep learning often feels like an empirical science still waiting for its
-    theory. I'm interested in what the conceptual upheavals of early quantum
-    mechanics suggest about how we should interpret — and trust — the
-    high-dimensional representations our models learn.
+    Deep learning often feels like an empirical science still waiting for its theory. I'm interested in what the conceptual upheavals of early quantum mechanics suggest about how we should interpret (and trust) the high-dimensional representations our models learn.
