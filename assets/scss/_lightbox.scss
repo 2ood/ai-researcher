@@ -1,0 +1,38 @@
+// Image lightbox — click a content image to view it full-screen.
+// The overlay element is created in static/js/main.js (behavior 3).
+
+.post-content img {
+  cursor: zoom-in;
+}
+
+.img-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+  background: rgba($carbon, 0.88);
+  cursor: zoom-out;
+
+  // Fade via opacity (display can't transition). visibility is held until the
+  // fade-out finishes so the overlay stays clickable while closing, then drops
+  // out of the pointer/a11y tree.
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease, visibility 0s linear 0s;
+  }
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+}

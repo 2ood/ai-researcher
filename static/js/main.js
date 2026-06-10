@@ -1,4 +1,4 @@
-// Vanilla JS — two behaviors only: (1) publication filter tabs, (2) mobile nav toggle.
+// Vanilla JS — behaviors: (1) publication filter tabs, (2) mobile nav toggle, (3) image lightbox.
 
 document.addEventListener('DOMContentLoaded', function () {
   // (1) Publication filter tabs
@@ -28,4 +28,25 @@ document.addEventListener('DOMContentLoaded', function () {
       menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
   }
+
+  // (3) Image lightbox — click a content image to view it full-screen.
+  var overlay = document.createElement('div');
+  overlay.className = 'img-overlay';
+  overlay.innerHTML = '<img alt="">';
+  document.body.appendChild(overlay);
+  var overlayImg = overlay.querySelector('img');
+
+  document.addEventListener('click', function (e) {
+    var img = e.target.closest('.post-content img');
+    if (img) {
+      overlayImg.src = img.currentSrc || img.src;
+      overlayImg.alt = img.alt;
+      overlay.classList.add('open');
+    } else if (overlay.contains(e.target)) {
+      overlay.classList.remove('open'); // click anywhere on the overlay closes it
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') overlay.classList.remove('open');
+  });
 });
