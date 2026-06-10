@@ -14,6 +14,7 @@ In many ways, this mirrors the early days of quantum mechanics. Just as physicis
 
 This is just a placeholder post. I will write more on this topic in the future.
 
-![Placeholder image. Botanic Garden. Writing gibberish to make it line break into multiples.](/images/uploads/244792c2f065c36c.jpg)
+![Placeholder image. Botanic Garden. Writing gibberish to make it line break into multiples. Just as physicists had to invent new mathematical tools to describe the probabilistic nature of subatomic particles,](/images/uploads/244792c2f065c36c.jpg)
+
 
 
