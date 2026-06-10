@@ -14,7 +14,10 @@ When the admin page can't reach this server (e.g. the copy deployed on GitHub
 Pages) it falls back to its original GitHub-API behavior, so the deployed
 dashboard is unaffected.
 """
+import base64
+import binascii
 import json
+import mimetypes
 import os
 import posixpath
 import subprocess
@@ -67,12 +70,18 @@ class Handler(SimpleHTTPRequestHandler):
             return self._get(parse_qs(u.query))
         if u.path.startswith("/api/"):
             return self._json(404, {"error": "not found"})
+        # Serve repo static images so the editor preview can render pasted uploads
+        # (the admin UI itself is served from ADMIN_DIR; /images/ lives elsewhere).
+        if u.path.startswith("/images/"):
+            return self._serve_static(u.path)
         return super().do_GET()
 
     def do_POST(self):
         u = urlparse(self.path)
         if u.path == "/api/save":
             return self._save()
+        if u.path == "/api/upload":
+            return self._upload()
         if u.path == "/api/delete":
             return self._delete()
         return self._json(404, {"error": "not found"})
@@ -125,6 +134,51 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json(200, {"sha": "", "noop": True})
             return self._json(500, {"error": out.strip()})
         return self._json(200, {"sha": ""})
+
+    def _upload(self):
+        # Binary upload (pasted images). Body: {path, content_b64, message}.
+        # Hash-named files dedupe naturally: re-uploading identical bytes is a
+        # git no-op, so no redundant commit is made.
+        req = self._read_json()
+        if req is None:
+            return
+        try:
+            rel, full = resolve(req.get("path", ""))
+        except ValueError as e:
+            return self._json(400, {"error": str(e)})
+        try:
+            raw = base64.b64decode(req.get("content_b64", ""), validate=True)
+        except (ValueError, binascii.Error):
+            return self._json(400, {"error": "bad base64"})
+        os.makedirs(os.path.dirname(full), exist_ok=True)
+        with open(full, "wb") as f:
+            f.write(raw)
+        msg = req.get("message") or ("content(admin): add " + rel)
+        code, out = git("add", "--", rel)
+        if code != 0:
+            return self._json(500, {"error": out.strip()})
+        code, out = git("commit", "-m", msg, "--", rel)
+        if code != 0:
+            if is_no_change(out):
+                return self._json(200, {"noop": True})
+            return self._json(500, {"error": out.strip()})
+        return self._json(200, {"ok": True})
+
+    def _serve_static(self, urlpath):
+        try:
+            _, full = resolve("static" + urlpath)  # urlpath starts with "/images/"
+        except ValueError as e:
+            return self._json(400, {"error": str(e)})
+        if not os.path.isfile(full):
+            return self.send_error(404, "not found")
+        ctype = mimetypes.guess_type(full)[0] or "application/octet-stream"
+        with open(full, "rb") as f:
+            data = f.read()
+        self.send_response(200)
+        self.send_header("Content-Type", ctype)
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
 
     def _delete(self):
         req = self._read_json()

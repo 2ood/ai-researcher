@@ -421,7 +421,86 @@ function wireMdSplit() {
   const preview = document.getElementById('preview');
   const render = () => { preview.innerHTML = marked.parse(bodyEl.value || ''); };
   bodyEl.addEventListener('input', render);
+  bodyEl.addEventListener('paste', e => {
+    const items = (e.clipboardData && e.clipboardData.items) || [];
+    for (const it of items) {
+      if (it.kind === 'file' && it.type.startsWith('image/')) {
+        const file = it.getAsFile();
+        if (file) { e.preventDefault(); pasteImage(bodyEl, file); return; }
+      }
+    }
+  });
   render();
+}
+
+// ---- Pasted-image upload ---------------------------------------------------
+// On Ctrl+V of an image into the markdown textarea: hash the bytes, upload to
+// static/images/uploads/<hash>.<ext>, and insert a root-relative ![](…) link at
+// the cursor (matching the base-path-aware link convention used site-wide).
+const UPLOAD_DIR = 'static/images/uploads';
+const EXT_BY_MIME = {
+  'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif',
+  'image/webp': 'webp', 'image/svg+xml': 'svg', 'image/bmp': 'bmp',
+};
+let uploadSeq = 0;
+
+async function sha256Hex(buf) {
+  const digest = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+function bytesToBase64(bytes) {
+  let bin = '';
+  const chunk = 0x8000; // chunk to avoid String.fromCharCode arg-count limits
+  for (let i = 0; i < bytes.length; i += chunk) {
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  return btoa(bin);
+}
+async function uploadImage(path, bytes) {
+  const content_b64 = bytesToBase64(bytes);
+  if (state.local) {
+    await localApi('POST', '/api/upload', { path, content_b64, message: `content(admin): add ${path}` });
+    return;
+  }
+  // GitHub mode: hash-named, so if it already exists the content is identical — skip.
+  try { await gh('GET', contentPath(path) + '?ref=' + BRANCH); return; } catch (e) { /* not there → upload */ }
+  await gh('PUT', contentPath(path), { message: `content(admin): add ${path}`, content: content_b64, branch: BRANCH });
+}
+
+async function pasteImage(ta, file) {
+  const buf = await file.arrayBuffer();
+  const bytes = new Uint8Array(buf);
+  const hash = (await sha256Hex(buf)).slice(0, 16);
+  const ext = EXT_BY_MIME[file.type] || 'png';
+  const name = `${hash}.${ext}`;
+  const mdLink = `![](/images/uploads/${name})`;
+
+  // Insert a unique placeholder at the cursor so the async upload can swap it in
+  // place even if the caret moves while the upload is in flight.
+  const token = `![uploading…#${++uploadSeq}]()`;
+  const at = ta.selectionStart;
+  ta.value = ta.value.slice(0, at) + token + ta.value.slice(ta.selectionEnd);
+  ta.selectionStart = ta.selectionEnd = at + token.length;
+  ta.dispatchEvent(new Event('input'));
+
+  try {
+    await uploadImage(`${UPLOAD_DIR}/${name}`, bytes);
+    swapToken(ta, token, mdLink, true);
+    toast('Image uploaded', 'ok');
+  } catch (e) {
+    swapToken(ta, token, '', false);
+    toast('Image upload failed: ' + e.message, 'error');
+  }
+}
+function swapToken(ta, token, replacement, focusAfter) {
+  const i = ta.value.indexOf(token);
+  if (i < 0) return;
+  ta.value = ta.value.slice(0, i) + replacement + ta.value.slice(i + token.length);
+  if (focusAfter) {
+    ta.focus();
+    ta.selectionStart = ta.selectionEnd = i + replacement.length;
+  }
+  ta.dispatchEvent(new Event('input'));
 }
 
 function splitFrontmatter(text) {
