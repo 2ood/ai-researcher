@@ -26,19 +26,27 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
 ADDR = ("127.0.0.1", 8787)
+ALLOWED_HOSTS = {"127.0.0.1:%d" % ADDR[1], "localhost:%d" % ADDR[1]}
 REPO_ROOT = os.getcwd()
 ADMIN_DIR = os.path.join(REPO_ROOT, "static", "admin")
 
 
 def resolve(p):
     """Repo-relative path -> (forward-slash rel, absolute fs path). Rejects escapes."""
-    if not p or "\x00" in p:
+    if not p or "\x00" in p or ":" in p:  # ":" blocks Windows drive letters (e.g. C:/…)
         raise ValueError("invalid path")
     p = p.replace("\\", "/")
     clean = posixpath.normpath("/" + p).lstrip("/")  # rooting at "/" collapses any ".." escape
     if not clean or clean == ".":
         raise ValueError("invalid path")
-    full = os.path.join(REPO_ROOT, *clean.split("/"))
+    full = os.path.realpath(os.path.join(REPO_ROOT, *clean.split("/")))
+    root = os.path.realpath(REPO_ROOT)
+    try:
+        inside = os.path.commonpath([root, full]) == root  # authoritative containment check
+    except ValueError:  # different drives, etc.
+        inside = False
+    if not inside:
+        raise ValueError("path escapes repo root")
     return clean, full
 
 
@@ -59,8 +67,22 @@ class Handler(SimpleHTTPRequestHandler):
     def log_message(self, fmt, *args):
         pass  # quiet
 
+    def _local_only(self):
+        # This server is strictly for local use. Reject non-loopback clients and
+        # foreign Host headers — the latter guards against DNS-rebinding, where a
+        # malicious site resolves a hostname to 127.0.0.1 to reach this server.
+        if self.client_address[0] not in ("127.0.0.1", "::1"):
+            self._json(403, {"error": "local only"})
+            return False
+        if self.headers.get("Host", "") not in ALLOWED_HOSTS:
+            self._json(403, {"error": "bad host"})
+            return False
+        return True
+
     # ---- routing ----
     def do_GET(self):
+        if not self._local_only():
+            return
         u = urlparse(self.path)
         if u.path == "/api/ping":
             return self._json(200, {"ok": True})
@@ -77,6 +99,8 @@ class Handler(SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
+        if not self._local_only():
+            return
         u = urlparse(self.path)
         if u.path == "/api/save":
             return self._save()
