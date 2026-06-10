@@ -75,7 +75,8 @@ The owner prefers clear organization over minimal file count. Having a dedicated
 | **JavaScript** | Vanilla JS only, minimal | Only for: publication filter tabs, mobile nav toggle, image lightbox. No frameworks, no build step |
 
 ### Explicit non-goals
-- No CMS (Decap, Forestry, etc.) — content managed via git
+- No hosted/third-party CMS (Decap, Forestry, etc.) — content is managed via git,
+  edited directly or through the local `cms-server.py` dashboard
 - No JavaScript framework (React, Svelte, etc.)
 - No Tailwind CSS or PostCSS pipeline
 - No Node.js dependency whatsoever — the build is Hugo binary only

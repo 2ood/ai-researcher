@@ -60,6 +60,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 - **Hugo deprecation** — replaced the deprecated `.Site.LanguageCode` template
   access and `languageCode` config key with `.Language.Locale` and `locale`
   (the `<html lang>` attribute still renders `en`).
+- **Hugo deprecation** — replaced `.Site.Data` with `hugo.Data` across all
+  templates and content adapters.
 - **CV download 404 on production** — the CV asset was named `CV.pdf` while the
   link points to `cv.pdf`. Renamed to `cv.pdf` to match; the previous casing
   worked only on case-insensitive local filesystems and would 404 on
