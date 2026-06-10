@@ -7,17 +7,17 @@ session-by-session changes live in [CHANGELOG.md](CHANGELOG.md).
 - _(nothing active)_
 
 ## Planned
-- [ ] Mobile side padding is too tight — `.container` drops to `$spacing-sm` (8px)
-      per side below 640px (desktop 24px → tablet 16px → mobile 8px). Bump mobile to
-      ~`$spacing-md` (16px). Note: `.container` is currently defined twice (both
-      `_base.scss` and `_layout.scss`, each with its own media queries) — consolidate
-      to one rule while fixing, or the change won't fully take.
 - [ ] Optional: order the News and Interests lists by date inside the admin editor
       (display is already sorted on the site; the editor shows file order).
 - [ ] Optional: toggle for full-width metadata in the split editor (currently the
       metadata block is capped while the editor panes go edge-to-edge).
 
 ## Completed
+- [x] 2026-06-10 — Widened mobile/tablet side padding (`.container` now 16px below
+      1024px, was 8px on mobile) and consolidated the duplicate `.container` rule.
+- [x] 2026-06-10 — Security pass: stop advertising `/admin` in robots.txt + SRI-pin
+      admin CDN deps; 2-day TTL on the stored admin token; locked `cms-server.py` to
+      local-only (Host/loopback check + hardened path resolver).
 - [x] 2026-06-10 — End-to-end image support: paste-to-upload in the Markdown editor
       (hashed filenames → `static/images/uploads/`, link inserted at the cursor),
       base-path-aware image render hook, alt-text captions, full-width content images,
