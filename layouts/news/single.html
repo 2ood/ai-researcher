@@ -7,7 +7,7 @@
     <h1>News</h1>
   </header>
   <div class="news-list full-list">
-    {{ range sort site.Data.news "date" "desc" }}
+    {{ range sort hugo.Data.news "date" "desc" }}
       {{ partial "news-entry.html" (dict "news" .) }}
     {{ end }}
   </div>

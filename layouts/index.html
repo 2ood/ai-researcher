@@ -31,7 +31,7 @@
 <section class="home-section">
   <h2>Research Interests</h2>
   <div class="interests-list">
-    {{ range first 3 site.Data.research_interests }}
+    {{ range first 3 hugo.Data.research_interests }}
     <div class="interest-item">
       <h3 class="interest-title"><a href="{{ (printf "research-interests/%s/" (.title | urlize)) | relLangURL }}">{{ .title }}</a></h3>
       <p class="interest-summary">{{ .summary }}</p>
@@ -45,7 +45,7 @@
 <section class="home-section">
   <h2>Publications</h2>
   <ul class="selected-pubs">
-    {{ range where site.Data.publications "selected" true }}
+    {{ range where hugo.Data.publications "selected" true }}
     <li>
       <a class="paper-title" href="{{ (printf "publications/%s/" (.title | urlize)) | relLangURL }}">{{ .title }}</a>
       <span class="paper-venue">{{ .venue }} · {{ .year }}</span>
@@ -60,7 +60,7 @@
 <section class="home-section">
   <h2>News</h2>
   <div class="news-list">
-    {{ range first 5 (sort site.Data.news "date" "desc") }}
+    {{ range first 5 (sort hugo.Data.news "date" "desc") }}
       {{ partial "news-entry.html" (dict "news" .) }}
     {{ end }}
   </div>
@@ -72,7 +72,7 @@
   <h2>CV</h2>
   <div class="cv-subsection">
     <h3>Education</h3>
-    {{ range site.Data.cv.education }}
+    {{ range hugo.Data.cv.education }}
     <div class="cv-summary-entry">
       <div class="cv-title"><strong>{{ .institution }}</strong>{{ with .period }} · {{ . }}{{ end }}</div>
       <div class="cv-meta">{{ .degree }}{{ with .advisor }} · {{ . }}{{ end }}</div>
@@ -82,7 +82,7 @@
   <div class="cv-subsection">
     <h3>Awards</h3>
     <ul class="awards-list">
-      {{ range site.Data.cv.awards }}
+      {{ range hugo.Data.cv.awards }}
       <li>{{ .title }}{{ with .year }} ({{ . }}){{ end }}</li>
       {{ end }}
     </ul>

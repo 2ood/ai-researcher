@@ -10,16 +10,16 @@
     {{ end }}
   </header>
 
-  {{ with site.Data.cv.education }}
+  {{ with hugo.Data.cv.education }}
     {{ partial "cv-section.html" (dict "title" "Education" "items" .) }}
   {{ end }}
-  {{ with site.Data.cv.awards }}
+  {{ with hugo.Data.cv.awards }}
     {{ partial "cv-section.html" (dict "title" "Awards" "items" .) }}
   {{ end }}
-  {{ with site.Data.cv.service }}
+  {{ with hugo.Data.cv.service }}
     {{ partial "cv-section.html" (dict "title" "Academic Service" "items" .) }}
   {{ end }}
-  {{ with site.Data.cv.teaching }}
+  {{ with hugo.Data.cv.teaching }}
     {{ partial "cv-section.html" (dict "title" "Teaching" "items" .) }}
   {{ end }}
 </section>
