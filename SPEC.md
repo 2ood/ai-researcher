@@ -40,7 +40,7 @@ No decorative elements. No icons for the sake of icons. No color unless it encod
 
 ### 5. Paper-like warmth
 
-The porcelain background (#FEFEFA) is deliberately off-white — warmer than a screen's default #FFFFFF, evoking the feel of quality uncoated paper. The carbon text (#1B1B1B) is softer than true black. The walnut accent (#704214) grounds the palette in natural warmth. Together these should make the site feel like a physical object — a printed page, a well-bound thesis — rather than a glowing screen. Avoid anything that breaks this illusion: harsh color contrasts, neon highlights, pure black on pure white.
+The porcelain background (#FFFEFC) is deliberately off-white — warmer than a screen's default #FFFFFF, evoking the feel of quality uncoated paper. The carbon text (#1B1B1B) is softer than true black. The walnut accent (#704214) grounds the palette in natural warmth. Together these should make the site feel like a physical object — a printed page, a well-bound thesis — rather than a glowing screen. Avoid anything that breaks this illusion: harsh color contrasts, neon highlights, pure black on pure white.
 
 ---
 
@@ -55,7 +55,7 @@ The owner prefers clear organization over minimal file count. Having a dedicated
 - **File organization over cleverness.** A 20-line partial that's easy to find and understand is better than a 5-line template that uses three levels of nested `partial` calls. Name files descriptively: `publication-entry.html` not `pub.html`
 - **SCSS structure.** One `_variables.scss` as the single source of truth for all design tokens. Component partials import nothing — they rely on variables being available via the main entry point's import order. BEM-lite naming: `.publication-entry`, `.publication-entry__title`, `.filter-tab--active`
 - **Go templates.** The owner finds Go template syntax unpleasant (the `{{ }}` verbosity was explicitly called out). Mitigate this by: keeping templates short and well-commented, extracting repeated logic into partials, using `with` blocks to reduce dot-context confusion, and adding a brief comment at the top of each template file explaining what it renders and what data it expects
-- **JavaScript.** Absolute minimum. Vanilla only, no build step, no modules. If a behavior can be achieved with CSS (`:target`, `<details>`, `:hover`), use CSS. JS is reserved strictly for: (1) publication filter tabs, (2) mobile nav toggle. Total JS should fit in a single file under 50 lines
+- **JavaScript.** Absolute minimum. Vanilla only, no build step, no modules. If a behavior can be achieved with CSS (`:target`, `<details>`, `:hover`), use CSS. JS is reserved strictly for: (1) publication filter tabs, (2) mobile nav toggle, (3) image lightbox. Total JS should fit in a single file, kept minimal (~55 lines)
 - **Content authoring.** Blog posts are written in a local Markdown editor (Obsidian or Typora), committed to git, and pushed. The workflow is: write → preview locally with `hugo server` → push to main → GitHub Actions deploys automatically. No CMS, no admin panel, no build-time API calls
 - **Git discipline.** Conventional commits: `feat:` for new features/pages, `content:` for new blog posts or data updates, `style:` for CSS changes, `fix:` for bugs, `chore:` for config/tooling. One logical change per commit
 
@@ -72,7 +72,7 @@ The owner prefers clear organization over minimal file count. Having a dedicated
 | **Data files** | YAML (for structured data: publications, news, CV) | Stored in `data/` directory, rendered via Go templates |
 | **Deployment** | GitHub Pages via GitHub Actions | Static output from `hugo --minify`, deployed on push to `main` |
 | **Local writing** | Any Markdown editor (Obsidian, Typora recommended) | WYSIWYG preview; files committed and pushed manually via git |
-| **JavaScript** | Vanilla JS only, minimal | Only for: publication filter tabs, mobile nav toggle. No frameworks, no build step |
+| **JavaScript** | Vanilla JS only, minimal | Only for: publication filter tabs, mobile nav toggle, image lightbox. No frameworks, no build step |
 
 ### Explicit non-goals
 - No CMS (Decap, Forestry, etc.) — content managed via git
@@ -131,7 +131,7 @@ Note: Chiron GoRound TC supports both Korean (Hangul) and Latin scripts — the 
 |---|---|---|---|
 | `$forest` | Forest Green | `#228B22` | Primary brand color. Headings, nav links, text links, active states |
 | `$carbon` | Carbon Black | `#1B1B1B` | Primary body text color |
-| `$porcelain` | Porcelain | `#FEFEFA` | Page background |
+| `$porcelain` | Porcelain | `#FFFEFC` | Page background |
 | `$walnut` | Walnut | `#704214` | Warm accent. Used for scholarly/subtle highlights — tags, section labels, borders |
 | `$tangerine` | Vivid Tangerine | `#FF8000` | Hot accent. Used sparingly for awards, call-to-action hover states, important badges |
 
@@ -526,7 +526,7 @@ See **Coding Preferences** section above for the philosophy behind these rules.
 
 - **SCSS:** BEM-lite naming. Max 2 levels of nesting. All colors via `$variables`, never hardcoded hex in component files. One partial per page/component
 - **Go templates:** Use `partial` for reusable HTML. Use `range` + `where` for data filtering. Use `markdownify` for inline Markdown from data files. Add a comment header to every template explaining its purpose and expected data
-- **JavaScript:** Vanilla only. Single file `static/js/main.js`. No bundler. Under 50 lines total. Only two behaviors: publication filter tabs + mobile nav toggle
+- **JavaScript:** Vanilla only. Single file `static/js/main.js`. No bundler. Kept minimal (~55 lines). Three behaviors: publication filter tabs + mobile nav toggle + image lightbox
 - **Content files:** Blog posts in `kebab-case` with optional date prefix: `2024-11-modular-gnn.md`. Data files in YAML (not JSON, not TOML)
 - **Git commits:** `feat:`, `fix:`, `chore:`, `content:`, `style:`
 - **Zero external dependencies** beyond Hugo Extended binary and Google Fonts CDN

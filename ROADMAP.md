@@ -7,14 +7,18 @@ session-by-session changes live in [CHANGELOG.md](CHANGELOG.md).
 - _(nothing active)_
 
 ## Planned
-- [ ] Image render hook for root-relative image paths — links are base-path aware,
-      but `![alt](/images/...)` in content still bypasses the rewrite.
 - [ ] Optional: order the News and Interests lists by date inside the admin editor
       (display is already sorted on the site; the editor shows file order).
 - [ ] Optional: toggle for full-width metadata in the split editor (currently the
       metadata block is capped while the editor panes go edge-to-edge).
 
 ## Completed
+- [x] 2026-06-10 — End-to-end image support: paste-to-upload in the Markdown editor
+      (hashed filenames → `static/images/uploads/`, link inserted at the cursor),
+      base-path-aware image render hook, alt-text captions, full-width content images,
+      and a click-to-zoom lightbox with a fade transition.
+- [x] 2026-06-10 — Brighter page background (`$porcelain` `#FEFEFA` → `#FFFEFC`) and
+      an emoji 🌲 favicon.
 - [x] 2026-06-10 — Local CMS backend (`cms-server.py`): commits content edits to the
       local repo for bulk push; GitHub-API fallback when deployed.
 - [x] 2026-06-10 — Full-width split markdown editor (preview left, textarea right),
@@ -33,7 +37,7 @@ session-by-session changes live in [CHANGELOG.md](CHANGELOG.md).
   local clone, and bulk/controlled publishing was the priority.
 
 ## Known Limitations
-- The CMS does not handle binary uploads; `static/cv.pdf` is updated manually in
-  the repo.
+- The CMS uploads binaries only via image paste in the Markdown editor; there is no
+  file picker, and non-content binaries like `static/cv.pdf` are updated manually.
 - The admin UI loads `js-yaml`/`marked` from a CDN, so it needs internet even in
   local mode (the git operations themselves are fully local).
