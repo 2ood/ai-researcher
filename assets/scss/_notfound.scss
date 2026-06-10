@@ -1,0 +1,23 @@
+// 404 page (layouts/404.html)
+.notfound {
+  text-align: center;
+  padding: $spacing-xl 0;
+
+  &-code {
+    font-size: 5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: $forest;
+    margin-bottom: $spacing-sm;
+  }
+
+  &-title {
+    font-size: 1.6rem;
+    margin-bottom: $spacing-sm;
+  }
+
+  &-text {
+    color: rgba($carbon, 0.7);
+    margin-bottom: $spacing-lg;
+  }
+}

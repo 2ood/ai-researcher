@@ -1,0 +1,9 @@
+{{/* Custom 404. Builds to public/404.html, which GitHub Pages serves for unknown URLs. */}}
+{{ define "main" }}
+<section class="notfound">
+  <p class="notfound-code">404</p>
+  <h1 class="notfound-title">Page not found</h1>
+  <p class="notfound-text">The page you’re looking for doesn’t exist or may have moved.</p>
+  <a class="btn btn--primary" href="{{ site.Home.RelPermalink }}">← Back home</a>
+</section>
+{{ end }}
