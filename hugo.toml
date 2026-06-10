@@ -1,5 +1,5 @@
 baseURL = "https://2ood.github.io/ai-researcher/"
-languageCode = "en"
+locale = "en"
 title = "Kyungmin Choi"
 
 [taxonomies]
