@@ -1,0 +1,13 @@
+{{- /*
+  Link render hook. Root-relative destinations like "/blog/first-post/" are
+  rewritten through relURL so they pick up the site's base path, resolving
+  correctly both locally and under the deployed subpath (…/ai-researcher/…).
+  The leading slash is stripped first because relURL only injects the base path
+  for paths that are NOT already root-absolute. External, protocol-relative
+  ("//"), anchor ("#"), and page-relative links pass through unchanged.
+*/ -}}
+{{- $dest := .Destination -}}
+{{- if and (hasPrefix $dest "/") (not (hasPrefix $dest "//")) -}}
+  {{- $dest = $dest | strings.TrimPrefix "/" | relURL -}}
+{{- end -}}
+<a href="{{ $dest }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text | safeHTML }}</a>
