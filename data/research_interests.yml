@@ -2,7 +2,7 @@
   summary: How can machines acquire the kind of fluid, compositional reasoning that ARC-style tasks demand?
   details: |
     The Abstraction and Reasoning Corpus (ARC) resists the pattern-matching that powers most modern models: each task is novel, few-shot, and solvable only by composing a small set of human-intuitive priors. I study how to give models
-    those priors explicitly and how to evaluate genuine reasoning rather than memorization.
+    those priors explicitly and how to evaluate genuine reasoning rather than memorization. testing [link](/research-interests/)
 - title: Human-Intuitive Analogy
   summary: Aligning a model's problem-solving with the analogies humans reach for first.
   details: |
