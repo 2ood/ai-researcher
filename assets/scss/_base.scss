@@ -40,24 +40,6 @@ code {
   border-radius: 4px;
 }
 
-.container {
-  max-width: $max-width;
-  margin: 0 auto;
-  padding: 0 $spacing-lg;
-}
-
 .page-header h1 {
   color : $forest;
-}
-
-@media (max-width: $tablet) {
-  .container {
-    padding: 0 $spacing-md;
-  }
-}
-
-@media (max-width: $mobile) {
-  .container {
-    padding: 0 $spacing-sm;
-  }
 }

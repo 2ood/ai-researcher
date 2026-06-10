@@ -45,8 +45,10 @@ main.container {
   }
 }
 
-@media (max-width: $mobile) {
+// Tighter horizontal padding on tablet and below (this also covers mobile,
+// where the previous $spacing-sm / 8px was uncomfortably tight to read against).
+@media (max-width: $tablet) {
   .container {
-    padding: 0 $spacing-sm;
+    padding: 0 $spacing-md;
   }
 }
