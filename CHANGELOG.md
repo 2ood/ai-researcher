@@ -46,6 +46,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 - **Downloadable CV** at `static/cv.pdf`, wired to the existing CV button.
 
 ### Changed
+- **Mobile/tablet side padding** widened from 8px to 16px (`.container`), which was
+  uncomfortably tight to read against on phones. The `.container` rule, previously
+  duplicated across `_base.scss` and `_layout.scss`, is consolidated into one
+  definition so future padding edits take fully.
 - **Content images** now fill the content column (full width, height auto) on both
   blog posts and research-interest pages.
 - **Page background** brightened: `$porcelain` `#FEFEFA` → `#FFFEFC`, trimming the warm
@@ -66,3 +70,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
   link points to `cv.pdf`. Renamed to `cv.pdf` to match; the previous casing
   worked only on case-insensitive local filesystems and would 404 on
   case-sensitive hosting (GitHub Pages).
+
+### Security
+- **Admin token TTL** — the GitHub token kept in `localStorage` now self-expires
+  after 2 days (client-side), in addition to its GitHub-side expiration, so a leaked
+  browser profile only exposes it briefly.
+- **`cms-server.py` restricted to local-only** — rejects non-loopback clients and
+  foreign `Host` headers (guards against DNS-rebinding), and the path resolver now
+  rejects Windows drive-letter paths and verifies every path is contained within the
+  repo root (via `realpath` + `commonpath`), not just by collapsing `..`.
+- **Admin CDN dependencies pinned** — `js-yaml` and `marked` now load with
+  Subresource Integrity (SRI) hashes and `crossorigin`, so a compromised CDN cannot
+  inject code (and steal the token) into the dashboard.
+- **Stopped advertising `/admin`** — removed the `Disallow: /admin/` line from
+  `robots.txt` (it disclosed the path to anyone reading the file while doing nothing
+  against malicious bots); the admin page keeps its `noindex` meta.

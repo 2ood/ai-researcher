@@ -57,7 +57,10 @@ Content can be edited two ways:
    caption, and content images open in a click-to-zoom lightbox on the site.
 
    When the dashboard is served from GitHub Pages instead, it falls back to
-   committing through the GitHub API (requires a fine-grained token).
+   committing through the GitHub API. Use a **fine-grained token** scoped to this
+   repo (Contents: read/write) with a **short expiration** — the dashboard also
+   self-expires the stored token after 2 days. The local `cms-server.py` only
+   accepts loopback requests and refuses to run as a public server.
 
 ## Deployment
 
