@@ -4,12 +4,14 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-bottom: 2px solid rgba($tangerine, 0.4);
+  border-bottom: 2px solid rgba($forest, 0.4);
   padding-bottom: 1rem;
   margin-bottom: 3rem;
   
   h1 {
     margin: 0;
+    color : $forest;
+    font-size: 2rem;
   }
 }
 
