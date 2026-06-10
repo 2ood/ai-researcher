@@ -123,6 +123,9 @@ code {
   margin: 0 auto;
   padding: 2rem 1.5rem 4rem;
 }
+/* Full-width editor mode (blog post / research interest), with a split preview. */
+.view--wide { max-width: none; }
+.editor-meta { max-width: 760px; }
 
 .view-head {
   display: flex;
@@ -247,12 +250,39 @@ code {
 }
 .sub-list { margin-top: 0.5rem; padding-left: 1rem; border-left: 2px solid var(--line); }
 
-/* ---- Blog editor ---- */
+/* ---- Markdown split editor (blog body, interest details) ---- */
 .editor-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
 @media (min-width: 880px) {
   .editor-grid.with-preview { grid-template-columns: 1fr 1fr; }
+  /* Split the viewport: edge-to-edge, no gaps, tall columns. The panes break
+     past the view's 1.5rem side padding and share a single divider line. */
+  .md-split {
+    height: calc(100vh - 300px);
+    min-height: 440px;
+    gap: 0;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+  }
+  .md-split .preview, .md-split .body-area { border-radius: 0; }
+  .md-split .body-area { border-left: none; }
 }
-.body-area { min-height: 380px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92rem; }
+/* The textarea lives outside a .field wrapper, so it styles itself to mirror
+   the preview pane (same border, radius, padding) for a symmetric split. */
+.body-area {
+  min-height: 380px;
+  width: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--field-bg);
+  color: var(--carbon);
+}
+.body-area:focus { outline: 2px solid rgba(34, 139, 34, 0.35); border-color: var(--forest); }
+.md-split .body-area { min-height: 0; height: 100%; resize: none; }
+.md-split .preview { height: 100%; }
 .preview {
   border: 1px solid var(--line);
   border-radius: 6px;

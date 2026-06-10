@@ -18,11 +18,14 @@ const Y_DUMP = { schema: Y_SCHEMA, lineWidth: -1, noRefs: true };
 // ---- State ----------------------------------------------------------------
 const state = {
   token: localStorage.getItem(TOKEN_KEY) || '',
+  local: false,    // true when served by cms-server.go (commits locally, no token)
   section: 'blog',
   model: null,     // parsed YAML for the active data file
   sha: null,       // sha of the active file (data editor or blog post)
   path: null,      // path of the active file
   interestTitles: [], // interest titles, for the publications "interest" dropdown
+  interests: [],   // parsed research_interests.yml list (interests editor)
+  interestsSha: null, // sha of research_interests.yml
 };
 
 // ---- Elements -------------------------------------------------------------
@@ -88,20 +91,48 @@ async function gh(method, path, body) {
 }
 const contentPath = p => `/repos/${OWNER}/${REPO}/contents/${p}`;
 
+// ---- Local backend (cms-server.go) ----------------------------------------
+// When the page is served by the local Go backend, saves commit to the local
+// git repo instead of pushing to GitHub. state.local is set in init() after a
+// /api/ping probe; when false, every function below falls back to the GitHub API.
+async function localApi(method, path, body) {
+  const res = await fetch(path, {
+    method,
+    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    let detail = res.statusText;
+    try { detail = (await res.json()).error || detail; } catch (e) {}
+    throw new Error(detail + ' (HTTP ' + res.status + ')');
+  }
+  return res.status === 204 ? null : res.json();
+}
+
 async function listDir(dir) {
+  if (state.local) return localApi('GET', '/api/list?dir=' + encodeURIComponent(dir));
   return gh('GET', contentPath(dir) + '?ref=' + BRANCH);
 }
 async function getFile(path) {
+  if (state.local) {
+    const d = await localApi('GET', '/api/get?path=' + encodeURIComponent(path));
+    return { text: d.text, sha: d.sha };
+  }
   const data = await gh('GET', contentPath(path) + '?ref=' + BRANCH);
   return { text: fromBase64(data.content), sha: data.sha };
 }
 async function putFile(path, text, message, sha) {
+  if (state.local) {
+    const d = await localApi('POST', '/api/save', { path, text, message });
+    return d.sha;
+  }
   const body = { message, content: toBase64(text), branch: BRANCH };
   if (sha) body.sha = sha;
   const res = await gh('PUT', contentPath(path), body);
   return res.content.sha;
 }
 async function deleteFile(path, message, sha) {
+  if (state.local) return localApi('POST', '/api/delete', { path, message });
   return gh('DELETE', contentPath(path), { message, sha, branch: BRANCH });
 }
 
@@ -191,14 +222,6 @@ const EDITORS = {
       { key: 'date', type: 'text', label: 'Date (YYYY-MM-DD)' },
       { key: 'icon', type: 'emoji', label: 'Icon (emoji)' },
       { key: 'text', type: 'textarea', label: 'Text ([markdown links](url) supported)' },
-    ],
-  },
-  research_interests: {
-    file: 'data/research_interests.yml', label: 'Research Interests', root: 'list',
-    fields: [
-      { key: 'title', type: 'text', label: 'Title' },
-      { key: 'summary', type: 'textarea', label: 'Summary (shown on home)' },
-      { key: 'details', type: 'textarea', label: 'Details (markdown, shown on the dedicated page)' },
     ],
   },
   cv: {
@@ -348,6 +371,7 @@ function onEditorClick(e) {
 }
 
 async function loadDataEditor(section) {
+  el.view.classList.remove('view--wide');
   el.view.innerHTML = `<p class="loading">Loading…</p>`;
   const cfg = EDITORS[section];
   try {
@@ -384,6 +408,22 @@ async function saveDataFile() {
 // ===========================================================================
 const BLOG_DIR = 'content/blog';
 
+// Shared full-width markdown editor: rendered preview (left) + textarea (right).
+// Reuses #f-body / #preview, so only one such editor is on screen at a time.
+function mdSplitHtml(value) {
+  return `<div class="editor-grid with-preview md-split">
+    <div id="preview" class="preview"></div>
+    <textarea id="f-body" class="body-area">${esc(value || '')}</textarea>
+  </div>`;
+}
+function wireMdSplit() {
+  const bodyEl = document.getElementById('f-body');
+  const preview = document.getElementById('preview');
+  const render = () => { preview.innerHTML = marked.parse(bodyEl.value || ''); };
+  bodyEl.addEventListener('input', render);
+  render();
+}
+
 function splitFrontmatter(text) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
   if (!m) return { fm: {}, body: text };
@@ -395,6 +435,7 @@ function buildPost(fm, body) {
 }
 
 async function loadBlogList() {
+  el.view.classList.remove('view--wide');
   el.view.innerHTML = `<p class="loading">Loading posts…</p>`;
   try {
     const items = await listDir(BLOG_DIR);
@@ -452,40 +493,34 @@ async function openBlogEditor(path) {
   }
   const tags = Array.isArray(fm.tags) ? fm.tags.join(', ') : (fm.tags || '');
 
+  el.view.classList.add('view--wide');
   el.view.innerHTML = `
     <div class="view-head">
       <h2>${path ? 'Edit post' : 'New post'}</h2>
       <div class="view-actions"><button id="back-blog" class="btn btn--ghost">← Back</button></div>
     </div>
-    <div class="field"><label>Title</label><input id="f-title" type="text" value="${esc(fm.title)}"></div>
-    <div class="field-row">
-      <div class="field"><label>Filename (slug, no .md)</label>
-        <input id="f-name" type="text" value="${esc(filename)}" ${path ? 'readonly' : ''} placeholder="auto from title"></div>
-      <div class="field"><label>Date</label><input id="f-date" type="text" value="${esc(fm.date)}"></div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Tags (comma-separated)</label><input id="f-tags" type="text" value="${esc(tags)}"></div>
-      <div class="field field--inline" style="align-self:end;padding-bottom:.5rem">
-        <input id="f-draft" type="checkbox" ${fm.draft ? 'checked' : ''}><label for="f-draft">Draft</label></div>
-    </div>
-    <div class="field"><label>Description</label><input id="f-desc" type="text" value="${esc(fm.description)}"></div>
-    <div class="field"><label>Body (Markdown)</label>
-      <div class="editor-grid with-preview">
-        <textarea id="f-body" class="body-area">${esc(body)}</textarea>
-        <div id="preview" class="preview"></div>
+    <div class="editor-meta">
+      <div class="field"><label>Title</label><input id="f-title" type="text" value="${esc(fm.title)}"></div>
+      <div class="field-row">
+        <div class="field"><label>Filename (slug, no .md)</label>
+          <input id="f-name" type="text" value="${esc(filename)}" ${path ? 'readonly' : ''} placeholder="auto from title"></div>
+        <div class="field"><label>Date</label><input id="f-date" type="text" value="${esc(fm.date)}"></div>
       </div>
+      <div class="field-row">
+        <div class="field"><label>Tags (comma-separated)</label><input id="f-tags" type="text" value="${esc(tags)}"></div>
+        <div class="field field--inline" style="align-self:end;padding-bottom:.5rem">
+          <input id="f-draft" type="checkbox" ${fm.draft ? 'checked' : ''}><label for="f-draft">Draft</label></div>
+      </div>
+      <div class="field"><label>Description</label><input id="f-desc" type="text" value="${esc(fm.description)}"></div>
     </div>
+    <div class="field"><label>Body (Markdown)</label></div>
+    ${mdSplitHtml(body)}
     <div class="sticky-actions">
       <button id="back-blog-2" class="btn btn--ghost">Cancel</button>
       <button id="save-post" class="btn btn--primary">${path ? 'Save post' : 'Create post'}</button>
     </div>`;
 
-  const bodyEl = document.getElementById('f-body');
-  const preview = document.getElementById('preview');
-  const renderPreview = () => { preview.innerHTML = marked.parse(bodyEl.value || ''); };
-  bodyEl.addEventListener('input', renderPreview);
-  renderPreview();
-
+  wireMdSplit();
   document.getElementById('back-blog').addEventListener('click', loadBlogList);
   document.getElementById('back-blog-2').addEventListener('click', loadBlogList);
   document.getElementById('save-post').addEventListener('click', () => savePost(path, sha));
@@ -532,12 +567,115 @@ async function removePost(path, sha, name) {
 }
 
 // ===========================================================================
+//  Research Interests (list + split markdown editor, like the blog)
+// ===========================================================================
+const INTERESTS_FILE = 'data/research_interests.yml';
+
+async function loadInterestsList() {
+  el.view.classList.remove('view--wide');
+  el.view.innerHTML = `<p class="loading">Loading…</p>`;
+  try {
+    const { text, sha } = await getFile(INTERESTS_FILE);
+    state.interests = jsyaml.load(text, { schema: Y_SCHEMA }) || [];
+    state.interestsSha = sha;
+  } catch (e) {
+    el.view.innerHTML = `<p class="error">Failed to load ${esc(INTERESTS_FILE)}: ${esc(e.message)}</p>`;
+    return;
+  }
+  const rows = state.interests.map((it, i) => `
+    <div class="row">
+      <div class="row-main">
+        <div class="row-title">${esc(it.title || '(untitled)')}</div>
+        <div class="row-meta">${esc(it.summary || '')}</div>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn--ghost btn--sm" data-edit="${i}">Edit</button>
+        <button class="btn btn--danger btn--sm" data-del="${i}">Delete</button>
+      </div>
+    </div>`).join('') || `<p class="empty">No interests yet. Create your first one.</p>`;
+
+  el.view.innerHTML = `
+    <div class="view-head">
+      <h2>Research Interests</h2>
+      <div class="view-actions"><button id="new-interest" class="btn btn--primary">New interest</button></div>
+    </div>
+    <div class="row-list">${rows}</div>`;
+
+  document.getElementById('new-interest').addEventListener('click', () => openInterestEditor(null));
+  el.view.querySelectorAll('[data-edit]').forEach(b =>
+    b.addEventListener('click', () => openInterestEditor(Number(b.dataset.edit))));
+  el.view.querySelectorAll('[data-del]').forEach(b =>
+    b.addEventListener('click', () => removeInterest(Number(b.dataset.del))));
+}
+
+function openInterestEditor(index) {
+  const it = index == null ? { title: '', summary: '', details: '' } : (state.interests[index] || {});
+  el.view.classList.add('view--wide');
+  el.view.innerHTML = `
+    <div class="view-head">
+      <h2>${index == null ? 'New interest' : 'Edit interest'}</h2>
+      <div class="view-actions"><button id="back-int" class="btn btn--ghost">← Back</button></div>
+    </div>
+    <div class="editor-meta">
+      <div class="field"><label>Title</label><input id="i-title" type="text" value="${esc(it.title)}"></div>
+      <div class="field"><label>Summary (shown on home)</label>
+        <textarea id="i-summary" rows="3">${esc(it.summary)}</textarea></div>
+    </div>
+    <div class="field"><label>Details (markdown, shown on the dedicated page)</label></div>
+    ${mdSplitHtml(it.details)}
+    <div class="sticky-actions">
+      <button id="back-int-2" class="btn btn--ghost">Cancel</button>
+      <button id="save-int" class="btn btn--primary">${index == null ? 'Create interest' : 'Save interest'}</button>
+    </div>`;
+
+  wireMdSplit();
+  document.getElementById('back-int').addEventListener('click', loadInterestsList);
+  document.getElementById('back-int-2').addEventListener('click', loadInterestsList);
+  document.getElementById('save-int').addEventListener('click', () => saveInterest(index));
+}
+
+async function saveInterest(index) {
+  const title = document.getElementById('i-title').value.trim();
+  if (!title) { toast('Title is required', 'error'); return; }
+  const entry = {
+    title,
+    summary: document.getElementById('i-summary').value.trim(),
+    details: document.getElementById('f-body').value,
+  };
+  if (index == null) state.interests.push(entry);
+  else state.interests[index] = entry;
+  try {
+    const yaml = jsyaml.dump(state.interests, Y_DUMP);
+    state.interestsSha = await putFile(INTERESTS_FILE, yaml, `content(admin): update ${INTERESTS_FILE}`, state.interestsSha);
+    toast('Saved ' + INTERESTS_FILE, 'ok');
+    loadInterestsList();
+  } catch (e) {
+    toast('Save failed: ' + e.message, 'error');
+  }
+}
+
+async function removeInterest(index) {
+  const it = state.interests[index] || {};
+  if (!confirm(`Delete "${it.title || 'this interest'}"? This commits a change to the repo.`)) return;
+  state.interests.splice(index, 1);
+  try {
+    const yaml = jsyaml.dump(state.interests, Y_DUMP);
+    state.interestsSha = await putFile(INTERESTS_FILE, yaml, `content(admin): update ${INTERESTS_FILE}`, state.interestsSha);
+    toast('Deleted', 'ok');
+  } catch (e) {
+    toast('Delete failed: ' + e.message, 'error');
+  }
+  loadInterestsList(); // resync from disk (also reverts the local splice on failure)
+}
+
+// ===========================================================================
 //  Routing / init
 // ===========================================================================
 function selectSection(section) {
   state.section = section;
   el.nav.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.section === section));
   if (section === 'blog') loadBlogList();
+  else if (section === 'research_interests') loadInterestsList();
   else loadDataEditor(section);
 }
 function showApp() {
@@ -546,13 +684,25 @@ function showApp() {
   selectSection('blog');
 }
 
-function init() {
+async function init() {
   el.repoLabel.textContent = `${OWNER}/${REPO}`;
   el.connectBtn.addEventListener('click', connect);
   el.tokenInput.addEventListener('keydown', e => { if (e.key === 'Enter') connect(); });
   el.signout.addEventListener('click', signout);
   el.nav.querySelectorAll('.tab').forEach(t =>
     t.addEventListener('click', () => selectSection(t.dataset.section)));
+
+  // Served by the local backend? Then commit locally and skip the token login.
+  try {
+    const ping = await fetch('/api/ping');
+    if (ping.ok) {
+      state.local = true;
+      el.signout.classList.add('hidden');
+      showApp();
+      toast('Local mode — saves commit to your local repo. Push when ready.', 'ok');
+      return;
+    }
+  } catch (e) { /* no local backend → use the GitHub API flow below */ }
 
   if (state.token) {
     // Verify the saved token still works before showing the app.

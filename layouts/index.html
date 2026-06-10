@@ -60,7 +60,7 @@
 <section class="home-section">
   <h2>News</h2>
   <div class="news-list">
-    {{ range first 5 site.Data.news }}
+    {{ range first 5 (sort site.Data.news "date" "desc") }}
       {{ partial "news-entry.html" (dict "news" .) }}
     {{ end }}
   </div>
