@@ -164,9 +164,30 @@
   ul, ol {
     margin-bottom: 1.5rem;
     padding-left: 1.5rem;
-    
+
     li {
       margin-bottom: 0.5rem;
     }
+  }
+
+  // Content images fill the content column; alt text renders as a caption
+  // (see layouts/_default/_markup/render-image.html).
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .md-figure {
+    display: block;
+    margin: 0.5rem 0;
+  }
+  .md-figure img { margin-bottom: 0.5rem; }
+
+  .md-figure__cap {
+    display: block;
+    font-size: 0.9rem;
+    color: rgba($carbon, 0.55);
+    text-align: center;
   }
 }
