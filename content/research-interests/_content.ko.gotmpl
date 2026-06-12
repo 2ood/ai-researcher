@@ -1,0 +1,16 @@
+{{/*
+  Content adapter: generates a dedicated page per entry in data/research_interests.yml.
+  Each page lives at /research-interests/<slug>/ with `summary` as a param and the
+  markdown `details` as the page body. Order follows the data file (via weight).
+*/}}
+{{ range $i, $ri := (index hugo.Data site.Language.Lang).research_interests }}
+  {{ if $ri.title }}
+    {{ $.AddPage (dict
+      "path" ($ri.title | urlize)
+      "title" $ri.title
+      "weight" (add $i 1)
+      "params" (dict "summary" $ri.summary)
+      "content" (dict "mediaType" "text/markdown" "value" (or $ri.details ""))
+    ) }}
+  {{ end }}
+{{ end }}

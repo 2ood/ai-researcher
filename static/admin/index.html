@@ -1,10 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-palette="forest">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
+
+  <!-- Set theme before paint (no flash): shares the site's 'theme' choice. -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('theme');
+        if (t !== 'light' && t !== 'dark') {
+          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+
   <title>Content Dashboard</title>
+
+  <!-- Emoji favicon (default 🌲; admin.js swaps in params.faviconEmoji once loaded). -->
+  <link id="favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌲</text></svg>">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -18,33 +36,50 @@
   <!-- Login screen -->
   <section id="login" class="login hidden">
     <div class="login-card">
-      <h1>Content Dashboard</h1>
-      <p class="login-help">
+      <h1 data-i18n="brand">Content Dashboard</h1>
+      <button id="authorize-btn" class="btn btn--primary" data-i18n="authorize">Authorize with GitHub</button>
+      <p class="login-hint" data-i18n="authorize_hint">
+        Opens GitHub to create a repo-scoped token, then paste it below.
+      </p>
+      <p class="login-help" data-i18n="login_help">
         Paste a GitHub <strong>fine-grained personal access token</strong> with
         <em>Contents: Read and write</em> permission on this repository.
         The token is stored only in this browser (localStorage) and never leaves it except to call the GitHub API.
       </p>
       <input id="token-input" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false">
-      <button id="connect-btn" class="btn btn--primary">Connect</button>
+      <button id="connect-btn" class="btn btn--ghost" data-i18n="connect">Connect</button>
       <p id="login-error" class="error hidden"></p>
-      <p class="login-meta">Repository: <code id="repo-label"></code></p>
+      <p class="login-meta"><span data-i18n="repository">Repository</span>: <code id="repo-label"></code></p>
     </div>
   </section>
 
   <!-- Dashboard -->
   <div id="app" class="app hidden">
     <header class="topbar">
-      <span class="topbar-brand">Content Dashboard</span>
+      <span class="topbar-brand" data-i18n="brand">Content Dashboard</span>
       <nav class="topbar-nav" id="section-nav">
-        <button class="tab" data-section="blog">Blog</button>
-        <button class="tab" data-section="research_interests">Interests</button>
-        <button class="tab" data-section="publications">Publications</button>
-        <button class="tab" data-section="news">News</button>
-        <button class="tab" data-section="cv">CV</button>
+        <button class="tab" data-section="blog" data-i18n="tab_blog">Blog</button>
+        <button class="tab" data-section="research_interests" data-i18n="tab_research_interests">Interests</button>
+        <button class="tab" data-section="publications" data-i18n="tab_publications">Publications</button>
+        <button class="tab" data-section="news" data-i18n="tab_news">News</button>
+        <button class="tab" data-section="cv" data-i18n="tab_cv">CV</button>
+        <button class="tab" data-section="settings" data-i18n="tab_settings">Settings</button>
       </nav>
       <div class="topbar-right">
-        <a class="topbar-link" id="view-site-link" href="../" target="_blank" rel="noopener">View site ↗</a>
-        <button id="signout-btn" class="btn btn--ghost">Sign out</button>
+        <button id="commit-btn" class="btn btn--primary hidden" type="button" title="Commit all staged changes as one commit"></button>
+        <label class="lang-control">
+          <span class="lang-control__label" data-i18n="ui_lang_label">Display</span>
+          <select id="ui-lang-select" class="lang-select" aria-label="Dashboard display language"></select>
+        </label>
+        <label class="lang-control hidden" id="content-lang-control">
+          <span class="lang-control__label" data-i18n="content_lang_label">Content</span>
+          <select id="lang-select" class="lang-select" aria-label="Content language"></select>
+        </label>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light/dark theme">
+          <span class="theme-toggle__icon" aria-hidden="true">●</span>
+        </button>
+        <a class="topbar-link" id="view-site-link" href="../" target="_blank" rel="noopener" data-i18n="view_site">View site ↗</a>
+        <button id="signout-btn" class="btn btn--ghost" data-i18n="signout">Sign out</button>
       </div>
     </header>
 

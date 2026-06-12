@@ -4,7 +4,7 @@
   one routable page each at /publications/<slug>/ with the entry's fields as params
   and the optional `abstract` as the page body.
 */}}
-{{ range $i, $pub := hugo.Data.publications }}
+{{ range $i, $pub := (index hugo.Data site.Language.Lang).publications }}
   {{ if $pub.title }}
     {{ $.AddPage (dict
       "path" ($pub.title | urlize)

@@ -4,10 +4,10 @@
 {{ define "main" }}
 <div class="news-page">
   <header class="page-header">
-    <h1>News</h1>
+    <h1>{{ i18n "news" }}</h1>
   </header>
   <div class="news-list full-list">
-    {{ range sort hugo.Data.news "date" "desc" }}
+    {{ range sort (index hugo.Data site.Language.Lang).news "date" "desc" }}
       {{ partial "news-entry.html" (dict "news" .) }}
     {{ end }}
   </div>

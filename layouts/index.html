@@ -6,6 +6,8 @@
     - condensed CV: education + awards (data/cv.yml)
 */}}
 {{ define "main" }}
+{{ $data := index hugo.Data site.Language.Lang }}
+{{ $s := site.Params.sections | default dict }}
 
 {{/* ---- Profile hero ---- */}}
 <section class="profile-section">
@@ -15,37 +17,40 @@
   <div class="profile-bio">
     <h1>{{ site.Title }}</h1>
     <p class="affiliation">{{ site.Params.description }}</p>
-    <p class="one-liner">Researching abstract reasoning and human-intuitive AI in the GIST Data Science Lab.</p>
+    {{ with site.Params.tagline }}<p class="one-liner">{{ . }}</p>{{ end }}
     {{ with .Content }}<div class="bio">{{ . }}</div>{{ end }}
     <div class="social-links">
-      <a href="mailto:{{ site.Params.email }}">Email</a>
-      <a href="{{ site.Params.googleScholar }}">Google Scholar</a>
-      <a href="{{ site.Params.github }}">GitHub</a>
-      <a href="{{ site.Params.linkedin }}">LinkedIn</a>
-      <a href="{{ site.Params.cvPdf | relURL }}">CV</a>
+      <a href="mailto:{{ site.Params.email }}">{{ i18n "social_email" }}</a>
+      <a href="{{ site.Params.googleScholar }}">{{ i18n "social_scholar" }}</a>
+      <a href="{{ site.Params.github }}">{{ i18n "social_github" }}</a>
+      <a href="{{ site.Params.linkedin }}">{{ i18n "social_linkedin" }}</a>
+      <a href="{{ site.Params.cvPdf | relURL }}">{{ i18n "social_cv" }}</a>
     </div>
   </div>
 </section>
 
 {{/* ---- Research interests ---- */}}
+{{ if ne (index $s "research") false }}
 <section class="home-section">
-  <h2>Research Interests</h2>
+  <h2>{{ i18n "research_interests" }}</h2>
   <div class="interests-list">
-    {{ range first 3 hugo.Data.research_interests }}
+    {{ range first 3 $data.research_interests }}
     <div class="interest-item">
       <h3 class="interest-title"><a href="{{ (printf "research-interests/%s/" (.title | urlize)) | relLangURL }}">{{ .title }}</a></h3>
       <p class="interest-summary">{{ .summary }}</p>
     </div>
     {{ end }}
   </div>
-  <a href="{{ "research-interests/" | relLangURL }}" class="see-all-link">All research interests →</a>
+  <a href="{{ "research-interests/" | relLangURL }}" class="see-all-link">{{ i18n "all_research_interests" }}</a>
 </section>
+{{ end }}
 
 {{/* ---- Publications (flat list of entries flagged selected: true) ---- */}}
+{{ if ne (index $s "publications") false }}
 <section class="home-section">
-  <h2>Publications</h2>
+  <h2>{{ i18n "publications" }}</h2>
   <ul class="selected-pubs">
-    {{ range where hugo.Data.publications "selected" true }}
+    {{ range where $data.publications "selected" true }}
     <li>
       <a class="paper-title" href="{{ (printf "publications/%s/" (.title | urlize)) | relLangURL }}">{{ .title }}</a>
       <span class="paper-venue">{{ .venue }} · {{ .year }}</span>
@@ -53,26 +58,30 @@
     </li>
     {{ end }}
   </ul>
-  <a href="{{ "publications/" | relLangURL }}" class="see-all-link">See all publications →</a>
+  <a href="{{ "publications/" | relLangURL }}" class="see-all-link">{{ i18n "see_all_publications" }}</a>
 </section>
+{{ end }}
 
 {{/* ---- News (latest 5) ---- */}}
+{{ if ne (index $s "news") false }}
 <section class="home-section">
-  <h2>News</h2>
+  <h2>{{ i18n "news" }}</h2>
   <div class="news-list">
-    {{ range first 5 (sort hugo.Data.news "date" "desc") }}
+    {{ range first 5 (sort $data.news "date" "desc") }}
       {{ partial "news-entry.html" (dict "news" .) }}
     {{ end }}
   </div>
-  <a href="{{ "news/" | relLangURL }}" class="see-all-link">See all news →</a>
+  <a href="{{ "news/" | relLangURL }}" class="see-all-link">{{ i18n "see_all_news" }}</a>
 </section>
+{{ end }}
 
 {{/* ---- CV summary: education + awards ---- */}}
+{{ if ne (index $s "cv") false }}
 <section class="home-section">
-  <h2>CV</h2>
+  <h2>{{ i18n "cv" }}</h2>
   <div class="cv-subsection">
-    <h3>Education</h3>
-    {{ range hugo.Data.cv.education }}
+    <h3>{{ i18n "education" }}</h3>
+    {{ range $data.cv.education }}
     <div class="cv-summary-entry">
       <div class="cv-title"><strong>{{ .institution }}</strong>{{ with .period }} · {{ . }}{{ end }}</div>
       <div class="cv-meta">{{ .degree }}{{ with .advisor }} · {{ . }}{{ end }}</div>
@@ -80,14 +89,15 @@
     {{ end }}
   </div>
   <div class="cv-subsection">
-    <h3>Awards</h3>
+    <h3>{{ i18n "awards" }}</h3>
     <ul class="awards-list">
-      {{ range hugo.Data.cv.awards }}
+      {{ range $data.cv.awards }}
       <li>{{ .title }}{{ with .year }} ({{ . }}){{ end }}</li>
       {{ end }}
     </ul>
   </div>
-  <a href="{{ "cv/" | relLangURL }}" class="see-all-link">Full CV →</a>
+  <a href="{{ "cv/" | relLangURL }}" class="see-all-link">{{ i18n "full_cv" }}</a>
 </section>
+{{ end }}
 
 {{ end }}

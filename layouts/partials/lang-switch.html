@@ -1,0 +1,23 @@
+{{/*
+  Language switcher. Renders only when more than one language is configured.
+  For each language, links to the current page's translation when one exists,
+  otherwise to that language's home page. Expects the current page as the context.
+*/}}
+{{ $homes := site.Home.AllTranslations }}
+{{ if gt (len $homes) 1 }}
+  {{ $page := . }}
+  <details class="lang-switch">
+    <summary aria-label="{{ i18n "language" }}">{{ site.Language.Label }}</summary>
+    <div class="lang-menu">
+      {{ range $homes }}
+        {{ $lang := .Language }}
+        {{ $target := .RelPermalink }}
+        {{/* prefer the current page's translation in this language */}}
+        {{ range $page.AllTranslations }}
+          {{ if eq .Language.Lang $lang.Lang }}{{ $target = .RelPermalink }}{{ end }}
+        {{ end }}
+        <a href="{{ $target }}"{{ if eq $lang.Lang site.Language.Lang }} class="active"{{ end }}>{{ $lang.Label }}</a>
+      {{ end }}
+    </div>
+  </details>
+{{ end }}

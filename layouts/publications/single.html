@@ -10,19 +10,19 @@
   <div class="pub-authors">{{ .Params.authors | markdownify }}</div>
   <div class="pub-meta">
     <span class="pub-venue">{{ .Params.venue }} · {{ .Params.year }}</span>
-    <span class="pub-badge">{{ .Params.type }}</span>
+    <span class="pub-badge">{{ or (i18n (printf "type_%s" (lower .Params.type))) .Params.type }}</span>
     {{ with .Params.award }}<span class="pub-award">🏆 {{ . }}</span>{{ end }}
   </div>
   <div class="pub-links">
-    {{ with .Params.paperUrl }}<a class="link-pill" href="{{ . }}">Paper</a>{{ end }}
-    {{ with .Params.codeUrl }}<a class="link-pill" href="{{ . }}">Code</a>{{ end }}
-    {{ with .Params.dataUrl }}<a class="link-pill" href="{{ . }}">Data</a>{{ end }}
-    {{ with .Params.projectUrl }}<a class="link-pill" href="{{ . }}">Project Website</a>{{ end }}
+    {{ with .Params.paperUrl }}<a class="link-pill" href="{{ . }}">{{ i18n "link_paper" }}</a>{{ end }}
+    {{ with .Params.codeUrl }}<a class="link-pill" href="{{ . }}">{{ i18n "link_code" }}</a>{{ end }}
+    {{ with .Params.dataUrl }}<a class="link-pill" href="{{ . }}">{{ i18n "link_data" }}</a>{{ end }}
+    {{ with .Params.projectUrl }}<a class="link-pill" href="{{ . }}">{{ i18n "link_project" }}</a>{{ end }}
   </div>
   {{ with .Content }}<div class="pub-abstract post-content">{{ . }}</div>{{ end }}
   {{ with .Params.interest }}
-  <p class="pub-interest">Research interest: <a href="{{ (printf "research-interests/%s/" (. | urlize)) | relLangURL }}">{{ . }}</a></p>
+  <p class="pub-interest">{{ i18n "research_interest_label" }} <a href="{{ (printf "research-interests/%s/" (. | urlize)) | relLangURL }}">{{ . }}</a></p>
   {{ end }}
-  <p class="back-link"><a class="see-all-link" href="{{ "publications/" | relLangURL }}">← All publications</a></p>
+  <p class="back-link"><a class="see-all-link" href="{{ "publications/" | relLangURL }}">{{ i18n "back_to_publications" }}</a></p>
 </article>
 {{ end }}

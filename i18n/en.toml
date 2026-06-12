@@ -1,0 +1,64 @@
+# UI string translations (English). Referenced via {{ i18n "key" }} in layouts.
+# Add a language by copying this file to i18n/<lang>.toml and translating the values.
+
+# Navigation
+nav_home = "Home"
+nav_research = "Research"
+nav_publications = "Publications"
+nav_blog = "Blog"
+nav_news = "News"
+nav_cv = "CV"
+menu = "Menu"
+language = "Language"
+theme = "Toggle light/dark theme"
+
+# Section headings / shared labels
+research_interests = "Research Interests"
+publications = "Publications"
+news = "News"
+cv = "CV"
+education = "Education"
+awards = "Awards"
+academic_service = "Academic Service"
+teaching = "Teaching"
+curriculum_vitae = "Curriculum Vitae"
+
+# "See all" links
+all_research_interests = "All research interests →"
+see_all_publications = "See all publications →"
+see_all_news = "See all news →"
+full_cv = "Full CV →"
+open_pdf = "Open PDF ↓"
+
+# Profile social links
+social_email = "Email"
+social_scholar = "Google Scholar"
+social_github = "GitHub"
+social_linkedin = "LinkedIn"
+social_cv = "CV"
+
+# Publication filters / type badges
+filter_all = "All"
+type_conference = "Conference"
+type_workshop = "Workshop"
+type_journal = "Journal"
+type_preprint = "Preprint"
+
+# Publication / research detail
+link_paper = "Paper"
+link_code = "Code"
+link_data = "Data"
+link_project = "Project Website"
+research_interest_label = "Research interest:"
+back_to_publications = "← All publications"
+related_publications = "Related publications"
+back_to_research = "← All research interests"
+
+# Blog
+min_read = "min read"
+min = "min"
+
+# 404
+notfound_title = "Page not found"
+notfound_text = "The page you’re looking for doesn’t exist or may have moved."
+back_home = "← Back home"

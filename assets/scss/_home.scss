@@ -40,7 +40,7 @@
   }
   
   .affiliation {
-    color: rgba($carbon, 0.7);
+    color: var(--c-text-70);
     margin-bottom: 1.5rem;
     font-weight: 500;
   }
@@ -55,7 +55,7 @@
   a {
     display: inline-block;
     padding: 0.25rem 0.75rem;
-    border: 1px solid rgba($carbon, 0.1);
+    border: 1px solid var(--c-text-10);
     border-radius: 9999px;
     font-size: 0.875rem;
     color: $carbon;
@@ -63,7 +63,7 @@
     &:hover {
       border-color: $tangerine;
       color: $tangerine;
-      background-color: rgba($tangerine, 0.06);
+      background-color: var(--c-hot-06);
     }
   }
 }
@@ -74,7 +74,7 @@
   h2 {
     color : $forest;
     font-size: 1.5rem;
-    border-bottom: 2px solid rgba($forest, 0.4);
+    border-bottom: 2px solid var(--c-accent-40);
     padding-bottom: 0.5rem;
     margin-bottom: 1.5rem;
   }
@@ -98,7 +98,7 @@
 
 .interest-item {
   padding-left: 1rem;
-  border-left: 2px solid rgba($tangerine, 0.55);
+  border-left: 2px solid var(--c-hot-55);
 
   .interest-title {
     font-size: 1.1rem;
@@ -111,7 +111,7 @@
   }
 
   .interest-summary {
-    color: rgba($carbon, 0.75);
+    color: var(--c-text-75);
     margin: 0;
   }
 }
@@ -125,7 +125,7 @@
   li {
     margin-bottom: 0.85rem;
     padding-left: 1rem;
-    border-left: 2px solid rgba($tangerine, 0.55);
+    border-left: 2px solid var(--c-hot-55);
   }
 
   .paper-title {
@@ -138,7 +138,7 @@
   }
 
   .paper-venue {
-    color: rgba($carbon, 0.6);
+    color: var(--c-text-60);
     font-size: 0.9rem;
     margin-right: 0.5rem;
   }
@@ -172,7 +172,7 @@
   flex-shrink: 0;
   width: 100px;
   white-space: nowrap;
-  color: rgba($carbon, 0.5);
+  color: var(--c-text-50);
   font-size: 0.9rem;
 }
 
@@ -209,7 +209,7 @@
   }
 
   .cv-meta {
-    color: rgba($carbon, 0.6);
+    color: var(--c-text-60);
     font-size: 0.9rem;
   }
 }

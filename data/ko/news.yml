@@ -1,0 +1,13 @@
+# 한국어 뉴스. 구조는 영어와 동일하게 두고 `text`만 번역하세요 (인라인 마크다운 링크 지원).
+- date: 2025-10-02
+  icon: 🍶
+  text: 주모! 연구실 계절 배치가 도수 6.5%로 심사를 통과했습니다 - 한 잔 더 돌립니다.
+- date: 2025-09-15
+  icon: 🎉
+  text: 견고한 양조에 관한 논문이 [BrewNIPS 2025](https://example.com)에 채택되었습니다.
+- date: 2025-06-01
+  icon: ✈️
+  text: ICML Workshop on Fermentation에서 발표합니다.
+- date: 2025-03-01
+  icon: 🎓
+  text: 주막대학교 박사과정을 시작했습니다.

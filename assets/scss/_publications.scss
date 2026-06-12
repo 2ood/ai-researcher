@@ -3,7 +3,7 @@
 .page-header {
   margin-bottom: 2rem;
   padding-bottom: 0.6rem;
-  border-bottom: 2px solid rgba($forest, 0.4);
+  border-bottom: 2px solid var(--c-accent-40);
 
   h1 {
     font-size: 2.5rem;
@@ -20,16 +20,16 @@
 
 .filter-btn {
   background: transparent;
-  border: 1px solid rgba($carbon, 0.1);
+  border: 1px solid var(--c-text-10);
   border-radius: 9999px;
   padding: 0.4rem 1rem;
   font-size: 0.9rem;
-  color: rgba($carbon, 0.7);
+  color: var(--c-text-70);
   cursor: pointer;
   transition: all 0.2s ease;
   
   &:hover {
-    background: rgba($carbon, 0.05);
+    background: var(--c-text-05);
     color: $carbon;
   }
   
@@ -42,14 +42,14 @@
 
 .year-heading {
   font-size: 2rem;
-  color: rgba($carbon, 0.15);
+  color: var(--c-text-15);
   margin-top: 3rem;
   margin-bottom: 1.5rem;
   letter-spacing: 0.05em;
 }
 
 .pub-entry {
-  border-left: 2px solid rgba($carbon, 0.1);
+  border-left: 2px solid var(--c-text-10);
   padding-left: 1.5rem;
   margin-bottom: 2.5rem;
   
@@ -78,7 +78,7 @@
 
 .pub-authors {
   font-size: 0.95rem;
-  color: rgba($carbon, 0.7);
+  color: var(--c-text-70);
   font-style: italic;
   margin-bottom: 0.5rem;
   
@@ -102,7 +102,7 @@
 }
 
 .pub-badge {
-  background-color: rgba($walnut, 0.1);
+  background-color: var(--c-warm-10);
   color: $walnut;
   padding: 0.1rem 0.5rem;
   border-radius: 4px;
@@ -126,16 +126,16 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  border: 1px solid rgba($carbon, 0.15);
+  border: 1px solid var(--c-text-15);
   padding: 0.25rem 0.6rem;
   border-radius: 9999px;
   font-size: 0.8rem;
-  color: rgba($carbon, 0.8);
+  color: var(--c-text-80);
   
   &:hover {
     border-color: $tangerine;
     color: $tangerine;
-    background-color: rgba($tangerine, 0.06);
+    background-color: var(--c-hot-06);
   }
 }
 

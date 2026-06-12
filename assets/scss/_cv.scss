@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-bottom: 2px solid rgba($forest, 0.4);
+  border-bottom: 2px solid var(--c-accent-40);
   padding-bottom: 1rem;
   margin-bottom: 3rem;
   
@@ -27,7 +27,7 @@
   font-weight: 500;
   
   &:hover {
-    background-color: lighten($carbon, 15%);
+    background-color: var(--c-text-light);
     color: $porcelain;
   }
 }
@@ -65,7 +65,7 @@
   width: 160px;
   white-space: nowrap;
   font-weight: 500;
-  color: rgba($carbon, 0.6);
+  color: var(--c-text-60);
   margin-bottom: 0.25rem;
   
   @media (min-width: $tablet) {
@@ -85,13 +85,13 @@
 
 .cv-entry-subtitle {
   font-size: 1rem;
-  color: rgba($carbon, 0.8);
+  color: var(--c-text-80);
   margin-bottom: 0.25rem;
 }
 
 .cv-entry-desc {
   font-size: 0.95rem;
-  color: rgba($carbon, 0.6);
+  color: var(--c-text-60);
 }
 
 // News page reuse
@@ -100,7 +100,7 @@
   
   .news-entry {
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba($carbon, 0.05);
+    border-bottom: 1px solid var(--c-text-05);
     
     &:last-child {
       border-bottom: none;

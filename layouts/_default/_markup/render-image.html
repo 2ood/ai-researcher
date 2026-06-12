@@ -1,7 +1,7 @@
 {{- /*
   Image render hook. Two jobs:
   1. Rewrite root-relative sources ("/images/uploads/abc.png") through relURL so
-     they pick up the site's base path (…/ai-researcher/…), like render-link.html.
+     they pick up the site's base path (…/your-repo/…), like render-link.html.
   2. When alt text is present, render the image as a captioned figure (alt → caption).
   Span-based (not <figure>) so the markup stays valid inside the <p> Goldmark wraps
   a standalone image in; .md-figure is set to display:block in SCSS.

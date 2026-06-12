@@ -1,10 +1,10 @@
 {{/*
-  Blog index — reverse-chronological list of posts.
+  Blog index - reverse-chronological list of posts.
 */}}
 {{ define "main" }}
 <div class="blog-list-page">
   <header class="page-header">
-    <h1>Blog</h1>
+    <h1>{{ i18n "nav_blog" }}</h1>
   </header>
   <div class="blog-entries">
     {{ range .Pages.ByDate.Reverse }}

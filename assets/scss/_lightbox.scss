@@ -1,4 +1,4 @@
-// Image lightbox — click a content image to view it full-screen.
+// Image lightbox - click a content image to view it full-screen.
 // The overlay element is created in static/js/main.js (behavior 3).
 
 .post-content img {
@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: center;
   padding: $spacing-xl;
-  background: rgba($carbon, 0.88);
+  background: var(--c-scrim);
   cursor: zoom-out;
 
   // Fade via opacity (display can't transition). visibility is held until the

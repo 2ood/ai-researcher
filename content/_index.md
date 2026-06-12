@@ -1,6 +1,12 @@
 ---
 title: "Home"
 ---
-I am an AI researcher at the [Gwangju Institute of Science and Technology (GIST)](https://www.gist.ac.kr/), working in the [Data Science Lab](https://sundong.kim) under Prof. Sundong Kim. My research centers on abstract reasoning and analogy - building datasets and methods that align machine reasoning with human intuition (ARC-style tasks).
+I am a Ph.D. candidate at [Jumak National University](https://example.com), brewing in the
+Fermentation & Distillation Lab under Prof. Nuruk. My research centers on makgeolli
+fermentation dynamics and out-of-tavern generalization - crafting brews that stay
+reliable when the drinking conditions drift away from the lab bench.
 
-I am broadly interested in the intersection of machine learning, reasoning, and the philosophy of science, and in what it takes to move from pattern recognition toward genuine, general intelligence.
+I am broadly interested in the foundations of fermentation and in applying double
+distillation to the great unsolved questions of conviviality. When a batch turns out
+well, the lab tradition is to shout **주모!** and pour another round. This is placeholder
+text - replace it with your own short bio.

@@ -3,7 +3,7 @@
   Each page lives at /research-interests/<slug>/ with `summary` as a param and the
   markdown `details` as the page body. Order follows the data file (via weight).
 */}}
-{{ range $i, $ri := hugo.Data.research_interests }}
+{{ range $i, $ri := (index hugo.Data site.Language.Lang).research_interests }}
   {{ if $ri.title }}
     {{ $.AddPage (dict
       "path" ($ri.title | urlize)

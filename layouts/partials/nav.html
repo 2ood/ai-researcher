@@ -1,6 +1,9 @@
 {{/*
   Sticky top navigation. Active state: Home is exact (.IsHome); every other link
   is active when the current page URL is under that link's URL (hasPrefix).
+  Each section link renders unless params.sections.<name> is explicitly false.
+  The language switcher (partials/lang-switch.html) renders only when more than
+  one language is configured.
 */}}
 {{ $cur := .RelPermalink }}
 {{ $research := "research-interests/" | relLangURL }}
@@ -8,31 +11,36 @@
 {{ $blog := "blog/" | relLangURL }}
 {{ $news := "news/" | relLangURL }}
 {{ $cv := "cv/" | relLangURL }}
+{{ $s := site.Params.sections | default dict }}
 
 <header class="site-header">
   <div class="container nav-container">
     <a href="{{ site.Home.RelPermalink }}" class="nav-brand">{{ site.Title }}</a>
 
     <nav class="nav-links">
-      <a href="{{ site.Home.RelPermalink }}" {{ if .IsHome }}class="active"{{ end }}>Home</a>
-      <a href="{{ $research }}" {{ if hasPrefix $cur $research }}class="active"{{ end }}>Research</a>
-      <a href="{{ $pubs }}" {{ if hasPrefix $cur $pubs }}class="active"{{ end }}>Publications</a>
-      <a href="{{ $blog }}" {{ if hasPrefix $cur $blog }}class="active"{{ end }}>Blog</a>
-      <a href="{{ $news }}" {{ if hasPrefix $cur $news }}class="active"{{ end }}>News</a>
-      <a href="{{ $cv }}" {{ if hasPrefix $cur $cv }}class="active"{{ end }}>CV</a>
+      <a href="{{ site.Home.RelPermalink }}" {{ if .IsHome }}class="active"{{ end }}>{{ i18n "nav_home" }}</a>
+      {{ if ne (index $s "research") false }}<a href="{{ $research }}" {{ if hasPrefix $cur $research }}class="active"{{ end }}>{{ i18n "nav_research" }}</a>{{ end }}
+      {{ if ne (index $s "publications") false }}<a href="{{ $pubs }}" {{ if hasPrefix $cur $pubs }}class="active"{{ end }}>{{ i18n "nav_publications" }}</a>{{ end }}
+      {{ if ne (index $s "blog") false }}<a href="{{ $blog }}" {{ if hasPrefix $cur $blog }}class="active"{{ end }}>{{ i18n "nav_blog" }}</a>{{ end }}
+      {{ if ne (index $s "news") false }}<a href="{{ $news }}" {{ if hasPrefix $cur $news }}class="active"{{ end }}>{{ i18n "nav_news" }}</a>{{ end }}
+      {{ if ne (index $s "cv") false }}<a href="{{ $cv }}" {{ if hasPrefix $cur $cv }}class="active"{{ end }}>{{ i18n "nav_cv" }}</a>{{ end }}
+      {{ partial "lang-switch.html" . }}
+      {{ partial "theme-toggle.html" . }}
     </nav>
 
-    <button class="mobile-menu-btn" aria-label="Menu" aria-expanded="false">
+    <button class="mobile-menu-btn" aria-label="{{ i18n "menu" }}" aria-expanded="false">
       ☰
     </button>
   </div>
 
   <nav class="mobile-nav">
-    <a href="{{ site.Home.RelPermalink }}" {{ if .IsHome }}class="active"{{ end }}>Home</a>
-    <a href="{{ $research }}" {{ if hasPrefix $cur $research }}class="active"{{ end }}>Research</a>
-    <a href="{{ $pubs }}" {{ if hasPrefix $cur $pubs }}class="active"{{ end }}>Publications</a>
-    <a href="{{ $blog }}" {{ if hasPrefix $cur $blog }}class="active"{{ end }}>Blog</a>
-    <a href="{{ $news }}" {{ if hasPrefix $cur $news }}class="active"{{ end }}>News</a>
-    <a href="{{ $cv }}" {{ if hasPrefix $cur $cv }}class="active"{{ end }}>CV</a>
+    <a href="{{ site.Home.RelPermalink }}" {{ if .IsHome }}class="active"{{ end }}>{{ i18n "nav_home" }}</a>
+    {{ if ne (index $s "research") false }}<a href="{{ $research }}" {{ if hasPrefix $cur $research }}class="active"{{ end }}>{{ i18n "nav_research" }}</a>{{ end }}
+    {{ if ne (index $s "publications") false }}<a href="{{ $pubs }}" {{ if hasPrefix $cur $pubs }}class="active"{{ end }}>{{ i18n "nav_publications" }}</a>{{ end }}
+    {{ if ne (index $s "blog") false }}<a href="{{ $blog }}" {{ if hasPrefix $cur $blog }}class="active"{{ end }}>{{ i18n "nav_blog" }}</a>{{ end }}
+    {{ if ne (index $s "news") false }}<a href="{{ $news }}" {{ if hasPrefix $cur $news }}class="active"{{ end }}>{{ i18n "nav_news" }}</a>{{ end }}
+    {{ if ne (index $s "cv") false }}<a href="{{ $cv }}" {{ if hasPrefix $cur $cv }}class="active"{{ end }}>{{ i18n "nav_cv" }}</a>{{ end }}
+    {{ partial "lang-switch.html" . }}
+    {{ partial "theme-toggle.html" . }}
   </nav>
 </header>

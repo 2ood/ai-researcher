@@ -1,0 +1,17 @@
+{{/*
+  Content adapter: generates a dedicated page per entry in data/publications.yml.
+  The YAML stays the single source of truth (and stays CMS-editable); this builds
+  one routable page each at /publications/<slug>/ with the entry's fields as params
+  and the optional `abstract` as the page body.
+*/}}
+{{ range $i, $pub := (index hugo.Data site.Language.Lang).publications }}
+  {{ if $pub.title }}
+    {{ $.AddPage (dict
+      "path" ($pub.title | urlize)
+      "title" $pub.title
+      "weight" (add $i 1)
+      "params" $pub
+      "content" (dict "mediaType" "text/markdown" "value" (or $pub.abstract ""))
+    ) }}
+  {{ end }}
+{{ end }}

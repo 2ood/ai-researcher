@@ -2,9 +2,9 @@
     background: $porcelain;
     padding: $spacing-xl 0;
     text-align: center;
-    border-top: 1px solid rgba($carbon, 0.1);
+    border-top: 1px solid var(--c-text-10);
   }
   .footer-container {
-    color: rgba($carbon, 0.6);
+    color: var(--c-text-60);
     font-size: 0.9rem;
   }

@@ -10,9 +10,9 @@
   {{ with .Params.summary }}<p class="interest-lead">{{ . }}</p>{{ end }}
   {{ with .Content }}<div class="interest-body post-content">{{ . }}</div>{{ end }}
 
-  {{ with where hugo.Data.publications "interest" .Title }}
+  {{ with where (index hugo.Data site.Language.Lang).publications "interest" .Title }}
   <section class="related-pubs">
-    <h2>Related publications</h2>
+    <h2>{{ i18n "related_publications" }}</h2>
     <ul>
       {{ range . }}
       <li>
@@ -24,6 +24,6 @@
   </section>
   {{ end }}
 
-  <p class="back-link"><a class="see-all-link" href="{{ "research-interests/" | relLangURL }}">← All research interests</a></p>
+  <p class="back-link"><a class="see-all-link" href="{{ "research-interests/" | relLangURL }}">{{ i18n "back_to_research" }}</a></p>
 </article>
 {{ end }}

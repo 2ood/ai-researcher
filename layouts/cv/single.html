@@ -4,23 +4,24 @@
 {{ define "main" }}
 <section class="cv-page">
   <header class="cv-header">
-    <h1>Curriculum Vitae</h1>
+    <h1>{{ i18n "curriculum_vitae" }}</h1>
     {{ with site.Params.cvPdf }}
-      <a href="{{ . | relURL }}" class="download-btn">Open PDF ↓</a>
+      <a href="{{ . | relURL }}" class="download-btn">{{ i18n "open_pdf" }}</a>
     {{ end }}
   </header>
 
-  {{ with hugo.Data.cv.education }}
-    {{ partial "cv-section.html" (dict "title" "Education" "items" .) }}
+  {{ $cv := (index hugo.Data site.Language.Lang).cv }}
+  {{ with $cv.education }}
+    {{ partial "cv-section.html" (dict "title" (i18n "education") "items" .) }}
   {{ end }}
-  {{ with hugo.Data.cv.awards }}
-    {{ partial "cv-section.html" (dict "title" "Awards" "items" .) }}
+  {{ with $cv.awards }}
+    {{ partial "cv-section.html" (dict "title" (i18n "awards") "items" .) }}
   {{ end }}
-  {{ with hugo.Data.cv.service }}
-    {{ partial "cv-section.html" (dict "title" "Academic Service" "items" .) }}
+  {{ with $cv.service }}
+    {{ partial "cv-section.html" (dict "title" (i18n "academic_service") "items" .) }}
   {{ end }}
-  {{ with hugo.Data.cv.teaching }}
-    {{ partial "cv-section.html" (dict "title" "Teaching" "items" .) }}
+  {{ with $cv.teaching }}
+    {{ partial "cv-section.html" (dict "title" (i18n "teaching") "items" .) }}
   {{ end }}
 </section>
 {{ end }}

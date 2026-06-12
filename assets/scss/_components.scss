@@ -12,11 +12,11 @@
 
 .btn--primary {
   background: $forest;
-  color: $porcelain;
+  color: var(--c-on-accent);
 }
 
 .btn--primary:hover {
-  background: darken($forest, 10%);
+  background: var(--c-accent-dark);
 }
 
 .btn--outline {
@@ -27,12 +27,12 @@
 .btn--outline:hover {
   border-color: $tangerine;
   color: $tangerine;
-  background: rgba($tangerine, 0.08);
+  background: var(--c-hot-08);
 }
 
 .card {
   background: $porcelain;
-  border: 1px solid rgba($carbon, 0.1);
+  border: 1px solid var(--c-text-10);
   border-radius: 8px;
   padding: $spacing-md;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -40,7 +40,7 @@
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba($carbon, 0.1);
+  box-shadow: 0 4px 12px var(--c-text-10);
 }
 
 .badge {
@@ -49,6 +49,6 @@
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: rgba($forest, 0.1);
+  background: var(--c-accent-10);
   color: $forest;
 }

@@ -1,0 +1,62 @@
+/*
+  Theme tokens. Colors are CSS custom properties so two independent choices apply
+  at runtime: an owner palette (data-palette on <html>, from params.palette) and a
+  visitor light/dark mode (data-theme, toggled in static/js/main.js).
+
+  Translucent and shaded tokens use CSS relative-color syntax
+  (rgb(from …) / hsl(from …)), so flipping a base color in dark mode - or swapping
+  the accent via a palette - automatically updates everything derived from it.
+  Relative color requires a 2023+ browser (Chrome 119, Safari 16.4, Firefox 128).
+*/
+
+:root {
+  /* Base palette (default = "forest"). Palettes below override the accents. */
+  --c-accent: #228B22;   /* links, heading accents, primary buttons */
+  --c-text:   #1B1B1B;   /* body text */
+  --c-bg:     #FFFEFC;   /* page background */
+  --c-warm:   #704214;   /* warm accent: badges, section labels */
+  --c-hot:    #FF8000;   /* hot accent: awards, hover states */
+
+  /* Theme-independent (fixed in both light and dark) */
+  --c-on-accent: #FFFEFC;            /* text on an accent-colored surface */
+  --c-scrim: rgb(0 0 0 / 0.88);      /* lightbox overlay */
+  --c-code-bg: #f0f0f0;              /* inline code background */
+
+  /* Derived from --c-text */
+  --c-text-05: rgb(from var(--c-text) r g b / 0.05);
+  --c-text-10: rgb(from var(--c-text) r g b / 0.1);
+  --c-text-15: rgb(from var(--c-text) r g b / 0.15);
+  --c-text-20: rgb(from var(--c-text) r g b / 0.2);
+  --c-text-30: rgb(from var(--c-text) r g b / 0.3);
+  --c-text-50: rgb(from var(--c-text) r g b / 0.5);
+  --c-text-55: rgb(from var(--c-text) r g b / 0.55);
+  --c-text-60: rgb(from var(--c-text) r g b / 0.6);
+  --c-text-70: rgb(from var(--c-text) r g b / 0.7);
+  --c-text-75: rgb(from var(--c-text) r g b / 0.75);
+  --c-text-80: rgb(from var(--c-text) r g b / 0.8);
+  --c-text-light: hsl(from var(--c-text) h s calc(l + 15));
+
+  /* Derived from accents */
+  --c-accent-10: rgb(from var(--c-accent) r g b / 0.1);
+  --c-accent-15: rgb(from var(--c-accent) r g b / 0.15);
+  --c-accent-40: rgb(from var(--c-accent) r g b / 0.4);
+  --c-accent-dark: hsl(from var(--c-accent) h s calc(l - 10));
+  --c-warm-10: rgb(from var(--c-warm) r g b / 0.1);
+  --c-warm-30: rgb(from var(--c-warm) r g b / 0.3);
+  --c-hot-06: rgb(from var(--c-hot) r g b / 0.06);
+  --c-hot-08: rgb(from var(--c-hot) r g b / 0.08);
+  --c-hot-10: rgb(from var(--c-hot) r g b / 0.1);
+  --c-hot-55: rgb(from var(--c-hot) r g b / 0.55);
+}
+
+/* ---- Owner palettes (override accents only) ---- */
+[data-palette="slate"]   { --c-accent: #3b6ea5; --c-warm: #566072; --c-hot: #d98324; }
+[data-palette="crimson"] { --c-accent: #a4243b; --c-warm: #7a3b2e; --c-hot: #e07a5f; }
+[data-palette="plum"]    { --c-accent: #6b4e8f; --c-warm: #6d5a7a; --c-hot: #d08a5e; }
+
+/* ---- Dark mode (flip surfaces; derived translucents follow automatically) ---- */
+[data-theme="dark"] {
+  --c-text: #ECEAE3;
+  --c-bg:   #1A1A18;
+  --c-code-bg: #2A2A27;
+}

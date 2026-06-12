@@ -9,13 +9,13 @@
   <div class="pub-authors">{{ $p.Params.authors | markdownify }}</div>
   <div class="pub-meta">
     <span class="pub-venue">{{ $p.Params.venue }} · {{ $p.Params.year }}</span>
-    <span class="pub-badge">{{ $p.Params.type }}</span>
+    <span class="pub-badge">{{ or (i18n (printf "type_%s" (lower $p.Params.type))) $p.Params.type }}</span>
     {{ with $p.Params.award }}<span class="pub-award">🏆 {{ . }}</span>{{ end }}
   </div>
   <div class="pub-links">
-    {{ with $p.Params.paperUrl }}<a class="link-pill" href="{{ . }}">Paper</a>{{ end }}
-    {{ with $p.Params.codeUrl }}<a class="link-pill" href="{{ . }}">Code</a>{{ end }}
-    {{ with $p.Params.dataUrl }}<a class="link-pill" href="{{ . }}">Data</a>{{ end }}
-    {{ with $p.Params.projectUrl }}<a class="link-pill" href="{{ . }}">Project Website</a>{{ end }}
+    {{ with $p.Params.paperUrl }}<a class="link-pill" href="{{ . }}">{{ i18n "link_paper" }}</a>{{ end }}
+    {{ with $p.Params.codeUrl }}<a class="link-pill" href="{{ . }}">{{ i18n "link_code" }}</a>{{ end }}
+    {{ with $p.Params.dataUrl }}<a class="link-pill" href="{{ . }}">{{ i18n "link_data" }}</a>{{ end }}
+    {{ with $p.Params.projectUrl }}<a class="link-pill" href="{{ . }}">{{ i18n "link_project" }}</a>{{ end }}
   </div>
 </div>

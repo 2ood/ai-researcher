@@ -1,0 +1,30 @@
+# Curriculum vitae data. Four optional sections - education, awards, service,
+# teaching - each rendered only if present. The cv-section partial detects the
+# section by a distinctive key (degree / course / role / title).
+education:
+  - institution: Jumak National University
+    degree: Ph.D. in Fermentation Science
+    advisor: Advised by Prof. Nuruk
+    period: 2023 - Present
+  - institution: Boribat University
+    degree: B.S. in Brewing Science
+    period: 2019 - 2023
+awards:
+  - title: Outstanding Pour Award, BrewNIPS
+    year: 2025
+  - title: Golden Ladle Fellowship
+    year: 2023
+service:
+  - role: Reviewer
+    detail: BrewNIPS, ICML, ICLR (2024 - 2025)
+  - role: Workshop Organizer
+    detail: Workshop on Fermentation, ICML 2025
+teaching:
+  - course: Introduction to Makgeolli (MG200)
+    role: Teaching Assistant
+    institution: Jumak National University
+    period: 2024
+  - course: Fundamentals of Nuruk (BR101)
+    role: Teaching Assistant
+    institution: Boribat University
+    period: 2022

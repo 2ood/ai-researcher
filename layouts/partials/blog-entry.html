@@ -4,7 +4,7 @@
 */}}
 {{ $post := .post }}
 <article class="blog-entry">
-  <div class="blog-entry-meta">{{ $post.Date.Format "Jan 2, 2006" }} · {{ $post.ReadingTime }} min</div>
+  <div class="blog-entry-meta">{{ $post.Date.Format "Jan 2, 2006" }} · {{ $post.ReadingTime }} {{ i18n "min" }}</div>
   <div class="blog-entry-content">
     <h2 class="blog-entry-title"><a href="{{ $post.RelPermalink }}">{{ $post.Title }}</a></h2>
     <p class="blog-entry-desc">{{ $post.Description | default $post.Summary }}</p>

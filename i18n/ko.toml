@@ -1,0 +1,63 @@
+# UI 문자열 번역 (한국어). 레이아웃에서 {{ i18n "key" }}로 참조됩니다.
+
+# 내비게이션
+nav_home = "홈"
+nav_research = "연구"
+nav_publications = "출판물"
+nav_blog = "블로그"
+nav_news = "소식"
+nav_cv = "이력서"
+menu = "메뉴"
+language = "언어"
+theme = "라이트/다크 테마 전환"
+
+# 섹션 제목 / 공용 라벨
+research_interests = "연구 관심사"
+publications = "출판물"
+news = "소식"
+cv = "이력서"
+education = "학력"
+awards = "수상"
+academic_service = "학술 활동"
+teaching = "강의"
+curriculum_vitae = "이력서"
+
+# "더 보기" 링크
+all_research_interests = "모든 연구 관심사 →"
+see_all_publications = "모든 출판물 보기 →"
+see_all_news = "모든 소식 보기 →"
+full_cv = "전체 이력서 →"
+open_pdf = "PDF 열기 ↓"
+
+# 프로필 소셜 링크
+social_email = "이메일"
+social_scholar = "Google Scholar"
+social_github = "GitHub"
+social_linkedin = "LinkedIn"
+social_cv = "이력서"
+
+# 출판물 필터 / 유형 배지
+filter_all = "전체"
+type_conference = "학회"
+type_workshop = "워크숍"
+type_journal = "저널"
+type_preprint = "프리프린트"
+
+# 출판물 / 연구 상세
+link_paper = "논문"
+link_code = "코드"
+link_data = "데이터"
+link_project = "프로젝트 웹사이트"
+research_interest_label = "연구 관심사:"
+back_to_publications = "← 모든 출판물"
+related_publications = "관련 출판물"
+back_to_research = "← 모든 연구 관심사"
+
+# 블로그
+min_read = "분 분량"
+min = "분"
+
+# 404
+notfound_title = "페이지를 찾을 수 없습니다"
+notfound_text = "찾으시는 페이지가 존재하지 않거나 이동되었을 수 있습니다."
+back_home = "← 홈으로"

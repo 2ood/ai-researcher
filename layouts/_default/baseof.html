@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ site.Language.Locale }}">
+<html lang="{{ site.Language.Locale }}" data-palette="{{ site.Params.palette | default "forest" }}">
 {{ partial "head.html" . }}
 <body>
   {{ partial "nav.html" . }}
@@ -8,6 +8,9 @@
   </main>
   {{ partial "footer.html" . }}
   
-  <script src="{{ "js/main.js" | relURL }}"></script>
+  {{/* Fingerprinted so a content change yields a new URL - new deploys bust the
+       browser cache immediately (the unhashed static/ path cached for ~10 min). */}}
+  {{ $js := resources.Get "js/main.js" | fingerprint }}
+  <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
 </body>
 </html>

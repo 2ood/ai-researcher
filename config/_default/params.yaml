@@ -1,0 +1,16 @@
+description: Ph.D. in Korean Rice wine brewery
+tagline: Double distillation rice wine whiskey
+faviconEmoji: 🍶
+profileImage: images/profile.svg
+email: iamdrunk@pub.street
+googleScholar: https://scholar.google.com/
+github: https://github.com/makguli
+linkedin: https://linkedin.com/in/makguli
+cvPdf: cv.pdf
+palette: plum
+sections:
+  research: true
+  publications: true
+  blog: true
+  news: true
+  cv: true

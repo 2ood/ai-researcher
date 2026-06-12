@@ -1,7 +1,7 @@
 {{- /*
   Link render hook. Root-relative destinations like "/blog/first-post/" are
   rewritten through relURL so they pick up the site's base path, resolving
-  correctly both locally and under the deployed subpath (…/ai-researcher/…).
+  correctly both locally and under a deployed subpath (…/your-repo/…).
   The leading slash is stripped first because relURL only injects the base path
   for paths that are NOT already root-absolute. External, protocol-relative
   ("//"), anchor ("#"), and page-relative links pass through unchanged.

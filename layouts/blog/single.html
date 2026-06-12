@@ -1,5 +1,5 @@
 {{/*
-  Single blog post — prose content with reading time + tags.
+  Single blog post - prose content with reading time + tags.
 */}}
 {{ define "main" }}
 <article class="blog-post">
@@ -7,7 +7,7 @@
     <h1 class="post-title">{{ .Title }}</h1>
     <div class="post-meta">
       <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
-      · {{ .ReadingTime }} min read
+      · {{ .ReadingTime }} {{ i18n "min_read" }}
     </div>
     {{ with .Params.tags }}
     <div class="post-tags">

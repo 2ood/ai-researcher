@@ -17,7 +17,7 @@
   flex-direction: column;
   gap: 0.5rem;
   padding-bottom: 2rem;
-  border-bottom: 1px solid rgba($carbon, 0.05);
+  border-bottom: 1px solid var(--c-text-05);
   
   &:last-child {
     border-bottom: none;
@@ -32,7 +32,7 @@
   flex-shrink: 0;
   width: 150px;
   white-space: nowrap;
-  color: rgba($carbon, 0.5);
+  color: var(--c-text-50);
   font-size: 0.95rem;
 }
 
@@ -55,7 +55,7 @@
 }
 
 .blog-entry-desc {
-  color: rgba($carbon, 0.8);
+  color: var(--c-text-80);
   margin-bottom: 1rem;
 }
 
@@ -83,7 +83,7 @@
 }
 
 .post-meta {
-  color: rgba($carbon, 0.6);
+  color: var(--c-text-60);
   font-size: 0.95rem;
   margin-bottom: 1.5rem;
 }
@@ -96,7 +96,7 @@
 }
 
 .tag-pill {
-  background-color: rgba($forest, 0.1);
+  background-color: var(--c-accent-10);
   color: $forest;
   padding: 0.2rem 0.6rem;
   border-radius: 9999px;
@@ -104,7 +104,7 @@
   font-weight: 500;
   
   &:hover {
-    background-color: rgba($forest, 0.15);
+    background-color: var(--c-accent-15);
   }
 }
 
@@ -127,15 +127,15 @@
     text-underline-offset: 2px;
     
     &:hover {
-      color: darken($forest, 10%);
+      color: var(--c-accent-dark);
     }
   }
   
   blockquote {
-    border-left: 4px solid rgba($walnut, 0.3);
+    border-left: 4px solid var(--c-warm-30);
     margin: 2rem 0;
     padding-left: 1.5rem;
-    color: rgba($carbon, 0.7);
+    color: var(--c-text-70);
     font-style: italic;
   }
   
@@ -146,11 +146,11 @@
     overflow-x: auto;
     font-size: 0.9rem;
     margin-bottom: 1.5rem;
-    border: 1px solid rgba($carbon, 0.05);
+    border: 1px solid var(--c-text-05);
   }
   
   code {
-    background-color: rgba($carbon, 0.05);
+    background-color: var(--c-text-05);
     padding: 0.2em 0.4em;
     border-radius: 3px;
     font-size: 0.9em;
@@ -187,7 +187,7 @@
   .md-figure__cap {
     display: block;
     font-size: 0.9rem;
-    color: rgba($carbon, 0.55);
+    color: var(--c-text-55);
     text-align: center;
   }
 }

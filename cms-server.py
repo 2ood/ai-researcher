@@ -6,9 +6,9 @@ pushing straight to GitHub. Run from the repo root:
 
     python cms-server.py
 
-then open http://localhost:8787/ . Each Save writes the file and makes a local
-commit scoped to just that file; nothing is pushed. Run `git push` yourself when
-you're ready to publish in bulk.
+then open http://localhost:8787/ . Edits are staged in the browser and flushed by
+the dashboard's Commit button as a SINGLE local commit (via /api/commit); nothing
+is pushed. Run `git push` yourself when you're ready to publish in bulk.
 
 When the admin page can't reach this server (e.g. the copy deployed on GitHub
 Pages) it falls back to its original GitHub-API behavior, so the deployed
@@ -69,7 +69,7 @@ class Handler(SimpleHTTPRequestHandler):
 
     def _local_only(self):
         # This server is strictly for local use. Reject non-loopback clients and
-        # foreign Host headers — the latter guards against DNS-rebinding, where a
+        # foreign Host headers - the latter guards against DNS-rebinding, where a
         # malicious site resolves a hostname to 127.0.0.1 to reach this server.
         if self.client_address[0] not in ("127.0.0.1", "::1"):
             self._json(403, {"error": "local only"})
@@ -102,12 +102,10 @@ class Handler(SimpleHTTPRequestHandler):
         if not self._local_only():
             return
         u = urlparse(self.path)
-        if u.path == "/api/save":
-            return self._save()
+        if u.path == "/api/commit":
+            return self._commit()
         if u.path == "/api/upload":
             return self._upload()
-        if u.path == "/api/delete":
-            return self._delete()
         return self._json(404, {"error": "not found"})
 
     # ---- handlers ----
@@ -136,28 +134,40 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(404, {"error": str(e)})
         return self._json(200, {"text": text, "sha": ""})
 
-    def _save(self):
+    def _commit(self):
+        # Bulk commit: write/remove every staged file, then make ONE commit scoped
+        # to exactly those paths. Body: {message, files:[{path, op:'put'|'delete', text}]}.
         req = self._read_json()
         if req is None:
             return
+        files = req.get("files") or []
+        if not files:
+            return self._json(400, {"error": "no files"})
+        rels = []
         try:
-            rel, full = resolve(req.get("path", ""))
+            for f in files:
+                rel, full = resolve(f.get("path", ""))
+                if f.get("op") == "delete":
+                    git("rm", "-f", "--ignore-unmatch", "--", rel)  # stage the removal
+                else:
+                    os.makedirs(os.path.dirname(full), exist_ok=True)
+                    with open(full, "wb") as fh:  # binary: keep LF, no newline translation
+                        fh.write((f.get("text") or "").encode("utf-8"))
+                    code, out = git("add", "--", rel)
+                    if code != 0:
+                        return self._json(500, {"error": out.strip()})
+                rels.append(rel)
         except ValueError as e:
             return self._json(400, {"error": str(e)})
-        os.makedirs(os.path.dirname(full), exist_ok=True)
-        with open(full, "wb") as f:  # binary: keep LF line endings, no translation
-            f.write(req.get("text", "").encode("utf-8"))
-        msg = req.get("message") or ("content(admin): update " + rel)
-        code, out = git("add", "--", rel)
-        if code != 0:
-            return self._json(500, {"error": out.strip()})
-        # Pathspec commit: only `rel` is committed, even if other changes are staged.
-        code, out = git("commit", "-m", msg, "--", rel)
+        msg = req.get("message") or "content(admin): dashboard edits"
+        # Pathspec commit: only the staged paths are committed, even if other
+        # changes are present in the working tree.
+        code, out = git("commit", "-m", msg, "--", *rels)
         if code != 0:
             if is_no_change(out):
-                return self._json(200, {"sha": "", "noop": True})
+                return self._json(200, {"noop": True})
             return self._json(500, {"error": out.strip()})
-        return self._json(200, {"sha": ""})
+        return self._json(200, {"ok": True})
 
     def _upload(self):
         # Binary upload (pasted images). Body: {path, content_b64, message}.
@@ -204,23 +214,6 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
-    def _delete(self):
-        req = self._read_json()
-        if req is None:
-            return
-        try:
-            rel, _ = resolve(req.get("path", ""))
-        except ValueError as e:
-            return self._json(400, {"error": str(e)})
-        code, out = git("rm", "--", rel)
-        if code != 0:
-            return self._json(500, {"error": out.strip()})
-        msg = req.get("message") or ("content(admin): delete " + rel)
-        code, out = git("commit", "-m", msg, "--", rel)
-        if code != 0:
-            return self._json(500, {"error": out.strip()})
-        return self._json(200, {"ok": True})
-
     # ---- io ----
     def _read_json(self):
         try:
@@ -245,7 +238,7 @@ def main():
     httpd = ThreadingHTTPServer(ADDR, Handler)
     print("Content Dashboard (local) -> http://%s:%d/" % ADDR)
     print("Repo: %s" % REPO_ROOT)
-    print("Saves commit locally; run `git push` when ready. Ctrl+C to stop.")
+    print("Commit button makes one local commit; run `git push` when ready. Ctrl+C to stop.")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

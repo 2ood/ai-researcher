@@ -1,7 +1,7 @@
-// Research Interests — dedicated page (layouts/research-interests/single.html)
+// Research Interests - dedicated page (layouts/research-interests/single.html)
 
 .page-intro {
-  color: rgba($carbon, 0.8);
+  color: var(--c-text-80);
   margin-bottom: 2.5rem;
   max-width: 65ch;
 }
@@ -16,7 +16,7 @@
   }
 
   a:hover {
-    background-color: rgba($tangerine, 0.1);
+    background-color: var(--c-hot-10);
     transition: background-color 0.3s ease;
 
     .interest-title { color: $tangerine; }
@@ -25,10 +25,10 @@
 
 .interest-detail {
 
-  border: 1px solid rgba($carbon, 0.3);
+  border: 1px solid var(--c-text-30);
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba($carbon, 0.2);
+  box-shadow: 0 2px 4px var(--c-text-20);
 
   .interest-title {
     font-size: 1.4rem;
@@ -79,7 +79,7 @@
 
   h2 {
     font-size: 1.2rem;
-    border-bottom: 2px solid rgba($forest, 0.4);
+    border-bottom: 2px solid var(--c-accent-40);
     padding-bottom: 0.4rem;
     margin-bottom: 1rem;
   }
@@ -89,7 +89,7 @@
   li {
     margin-bottom: 0.6rem;
     padding-left: 1rem;
-    border-left: 2px solid rgba($tangerine, 0.55);
+    border-left: 2px solid var(--c-hot-55);
   }
 
   .rp-title {
@@ -101,7 +101,7 @@
   }
 
   .rp-venue {
-    color: rgba($carbon, 0.6);
+    color: var(--c-text-60);
     font-size: 0.9rem;
   }
 }
@@ -110,7 +110,7 @@
 .pub-interest {
   margin-top: 1.5rem;
   font-size: 0.95rem;
-  color: rgba($carbon, 0.7);
+  color: var(--c-text-70);
 }
 
 .back-link { margin-top: 2.5rem; }

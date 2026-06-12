@@ -30,12 +30,12 @@ a {
 }
 
 a:hover {
-  color: darken($forest, 10%);
+  color: var(--c-accent-dark);
 }
 
 code {
   font-family: $mono-font;
-  background: #f0f0f0;
+  background: var(--c-code-bg);
   padding: $spacing-sm;
   border-radius: 4px;
 }

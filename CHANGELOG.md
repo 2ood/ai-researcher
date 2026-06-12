@@ -1,87 +1,91 @@
 # Changelog
 
-All notable changes to this project are documented here.
+All notable changes to this template are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com).
 
-## [Unreleased] — 2026-06-10
+## [1.0.0] - First public distribution, Ready for alpha test
 
 ### Added
-- **Paste-to-upload images** in the admin Markdown editor — pressing Ctrl+V with an
-  image on the clipboard hashes the bytes (SHA-256, 16 hex chars), uploads the file to
-  `static/images/uploads/<hash>.<ext>`, and inserts a `![](…)` link at the cursor.
-  Identical images dedupe automatically (same hash → no redundant commit). Backed by a
-  new `POST /api/upload` endpoint in `cms-server.py`; falls back to the GitHub Contents
-  API when not served locally.
-- **Image render hook** (`layouts/_default/_markup/render-image.html`) — rewrites
-  root-relative image sources (`/images/...`) through the site's base path so they
-  resolve under the deployed subpath (`…/ai-researcher/…`), mirroring the link hook.
-- **Image captions** — when an image has alt text, it renders as a captioned figure;
-  the caption is centered and semi-transparent carbon.
-- **Click-to-zoom lightbox** — clicking any content image opens it full-screen in a
-  fading overlay (Esc or click anywhere to close). Adds a third vanilla-JS behavior in
-  `static/js/main.js`, plus a new `assets/scss/_lightbox.scss` partial.
-- **Live image preview in local mode** — `cms-server.py` now serves repo `static/`
-  images under `/images/`, so pasted images appear immediately in the editor preview.
-- **Emoji favicon** (🌲) as an inline SVG data URI in the page `<head>`.
-- **Local CMS backend** (`cms-server.py`) — a zero-dependency Python server that
-  serves the admin dashboard and commits content edits to the **local** git repo
-  instead of pushing to GitHub. Edits accumulate as local commits and are pushed
-  in bulk manually. Commits are scoped to the edited file so unrelated staged
-  changes are never swept in. When the dashboard isn't served by this backend
-  (e.g. the copy deployed on GitHub Pages), it falls back to its original
-  GitHub-API behavior.
-- **Full-width split markdown editor** in the admin dashboard — rendered preview
-  on the left, textarea on the right, edge-to-edge with no gaps. Shared by the
-  blog and research-interest editors.
-- **Research Interests** admin section rebuilt as a list → single-editor flow
-  (like the blog): rows with Edit/Delete/New, and the split markdown editor for
-  the `details` body.
-- **Relative-link support in content** — a link render hook
-  (`layouts/_default/_markup/render-link.html`) rewrites root-relative
-  destinations such as `/blog/first-post/` through the site's base path, so
-  internal links written without the domain work both locally and under the
-  deployed subpath (`…/ai-researcher/…`).
-- **Custom 404 page** (`layouts/404.html` + `assets/scss/_notfound.scss`) using
-  the site chrome; served by GitHub Pages for unknown URLs.
-- **Downloadable CV** at `static/cv.pdf`, wired to the existing CV button.
+- **Dashboard bulk commit ("Save & Exit").** Editor saves now **stage** changes in
+  the browser instead of committing one-by-one; a single **Commit (N)** button in
+  the nav bar flushes the whole batch as **one** commit (shown only when there are
+  pending changes). Reads overlay the staging area, so editors and lists always
+  reflect staged-but-uncommitted work (a staged new post appears, a staged delete
+  disappears); a `beforeunload` and sign-out guard warn before discarding pending
+  edits. Local mode commits via a new `/api/commit` endpoint (one pathspec commit);
+  the deployed Pages dashboard builds the same single commit with the GitHub Git
+  Data API. Image pastes still commit immediately (hash-named, deduped). This ends
+  the noisy one-commit-per-save / per-auto-translated-file history.
+- **Dashboard auto-translation (free, keyless).** A "⤳ Translate from …" button in
+  the Publications/News/CV, blog-post, and research-interest editors pulls content
+  from another language and loads a machine translation **into the editor you're
+  in** - it never commits on its own, so you review the draft and save like any
+  other edit. The source is the default language (or the first other language when
+  you're editing the default). Uses MyMemory entirely client-side (no API key, no
+  backend, CORS) so it works locally and on the deployed Pages dashboard. It is
+  **field-aware** (only prose is translated - titles, authors, venues, URLs, dates,
+  and slugs stay identical across languages), **markdown-safe** (links/code/images/
+  bare URLs kept verbatim; `**bold**`/`*italic*`/`~~strike~~` markers preserved,
+  inner text translated; long text chunked under MyMemory's 500-byte limit), and
+  **gap-fill by default** so existing hand-edits in the editor are never overwritten
+  (it asks before a full re-translate). Conventional MT yields a reviewable draft,
+  not final prose.
+- **`init.py` - post-clone setup.** A zero-dependency, cross-platform Python
+  prompt that personalizes `config/_default/hugo.toml` (title, baseURL) and
+  `params.yaml` (affiliation, social links, palette, favicon). Surgical line
+  edits - comments, structure, and the language list are preserved; re-runnable.
+- **Dashboard: "Authorize with GitHub".** A login button that deep-links to
+  GitHub's fine-grained token page pre-filled (name/description), then the user
+  pastes the scoped token back. Stays backendless (a static site can't run the
+  OAuth secret exchange).
+- **Dashboard palette, light/dark, and i18n.** The admin chrome now mirrors the
+  site's `data-palette` (read from `params.yaml`) and `data-theme` (shares the
+  site's `theme` choice via a header toggle, pre-paint so there's no flash), and
+  its own UI strings are translatable (EN/KO) via a dashboard-language switch.
+- **Labeled language selectors.** The two header dropdowns are now captioned
+  **Display** (dashboard chrome) vs **Content** (which language you're editing),
+  so they're no longer ambiguous; captions follow the display language.
+- **Dashboard favicon.** The admin page uses the same emoji favicon as the site
+  (`params.faviconEmoji`, default 🌲).
 
 ### Changed
-- **Mobile/tablet side padding** widened from 8px to 16px (`.container`), which was
-  uncomfortably tight to read against on phones. The `.container` rule, previously
-  duplicated across `_base.scss` and `_layout.scss`, is consolidated into one
-  definition so future padding edits take fully.
-- **Content images** now fill the content column (full width, height auto) on both
-  blog posts and research-interest pages.
-- **Page background** brightened: `$porcelain` `#FEFEFA` → `#FFFEFC`, trimming the warm
-  yellow cast for a crisper look while staying off-white (SPEC.md reconciled to match).
-- **News** entries now render newest-first via a template-level date sort (both
-  the home "latest" list and the full news page), independent of file order.
-- **Research-interest detail** body now fills the content column (removed the
-  `65ch` cap) so its width matches the rest of the page.
-- **CV header** styling: forest accent border and restyled heading.
+- **Cache-busting JS.** `main.js` moved to `assets/js/` and is fingerprinted in
+  `baseof.html` (content-hashed URL, like the CSS), so a deploy invalidates the
+  browser cache for it immediately. (GitHub Pages still imposes its own ~10-min
+  CDN cache on the HTML itself, which the repo can't override.)
+- **Themed demo content.** The placeholder persona is now a coherent, playful
+  demo - *Joomo Makguli*, a makgeolli-fermentation researcher at Jumak National
+  University - across the bio, research interests, publications, news, CV, and
+  blog (EN + KO). Shows off the template with real cross-links intact rather than
+  generic lorem-ipsum.
 
-### Fixed
-- **Hugo deprecation** — replaced the deprecated `.Site.LanguageCode` template
-  access and `languageCode` config key with `.Language.Locale` and `locale`
-  (the `<html lang>` attribute still renders `en`).
-- **Hugo deprecation** — replaced `.Site.Data` with `hugo.Data` across all
-  templates and content adapters.
-- **CV download 404 on production** — the CV asset was named `CV.pdf` while the
-  link points to `cv.pdf`. Renamed to `cv.pdf` to match; the previous casing
-  worked only on case-insensitive local filesystems and would 404 on
-  case-sensitive hosting (GitHub Pages).
+### Documentation
+- **Landing README + bilingual docs.** Rewrote `README.md` as a landing page -
+  hero, a "why this template" list, a feature table, a 5-minute quickstart, a
+  live-demo link, and palette/dashboard screenshots (titled "a No-Code Hugo
+  template"). Added `QUICKSTART.md` with hands-on walkthroughs: first deploy
+  (including *deploy via GitHub Actions, not a branch*), writing a post, editing
+  publications/news/CV, adding a language, configuring from the dashboard, and
+  common gotchas. Added Korean siblings `README.ko.md` and `QUICKSTART.ko.md` with
+  a language switcher.
 
-### Security
-- **Admin token TTL** — the GitHub token kept in `localStorage` now self-expires
-  after 2 days (client-side), in addition to its GitHub-side expiration, so a leaked
-  browser profile only exposes it briefly.
-- **`cms-server.py` restricted to local-only** — rejects non-loopback clients and
-  foreign `Host` headers (guards against DNS-rebinding), and the path resolver now
-  rejects Windows drive-letter paths and verifies every path is contained within the
-  repo root (via `realpath` + `commonpath`), not just by collapsing `..`.
-- **Admin CDN dependencies pinned** — `js-yaml` and `marked` now load with
-  Subresource Integrity (SRI) hashes and `crossorigin`, so a compromised CDN cannot
-  inject code (and steal the token) into the dashboard.
-- **Stopped advertising `/admin`** — removed the `Disallow: /admin/` line from
-  `robots.txt` (it disclosed the path to anyone reading the file while doing nothing
-  against malicious bots); the admin page keeps its `noindex` meta.
+## [0.0.0] - Initial template release
+
+The portfolio, generalized into a reusable Hugo template.
+
+### Added
+- **Multilingual support** - Hugo `[languages]` (English default + Korean demo),
+  UI strings in `i18n/*.toml`, per-language content (`.<lang>.md`) and data
+  (`data/<lang>/`), and a header language dropdown.
+- **Owner configuration** in `config/_default/params.yaml` - identity, social links,
+  color palette, and per-section enable toggles (gating nav tabs and home sections).
+- **Color palettes + light/dark mode** - named palettes (forest/slate/crimson/plum)
+  and a visitor light/dark toggle, both via CSS custom properties; the owner palette
+  is set from config, the theme choice persists per browser with no flash on load.
+- **Site Settings dashboard** - the `/admin/` content editor gained a Settings panel
+  (edits `params.yaml`) and a content-language selector for per-language editing.
+- **MIT license** and template documentation.
+
+### Notes
+- Theming uses CSS relative-color syntax (2023+ browsers).
+- Ships with neutral placeholder content (a demo persona) so it builds complete.
