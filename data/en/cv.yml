@@ -1,30 +1,13 @@
-# Curriculum vitae data. Four optional sections - education, awards, service,
-# teaching - each rendered only if present. The cv-section partial detects the
-# section by a distinctive key (degree / course / role / title).
 education:
-  - institution: Jumak National University
-    degree: Ph.D. in Fermentation Science
-    advisor: Advised by Prof. Nuruk
-    period: 2023 - Present
-  - institution: Boribat University
-    degree: B.S. in Brewing Science
-    period: 2019 - 2023
+  - institution: Gwangju Institute of Science and Technology (GIST)
+    degree: Data Science Lab, M.S. + Ph.D Integrated student
+    advisor: Advised by Prof. Sundong Kim
+    period: Present
+  - institution: Gwangju Institute of Science and Technology (GIST)
+    degree: B.S., Electrical Engineering and Computer Science
+    advisor: Advised by Prof. Sundong Kim
+    period: Mar 2020 - Feb 2026
 awards:
-  - title: Outstanding Pour Award, BrewNIPS
-    year: 2025
-  - title: Golden Ladle Fellowship
-    year: 2023
-service:
-  - role: Reviewer
-    detail: BrewNIPS, ICML, ICLR (2024 - 2025)
-  - role: Workshop Organizer
-    detail: Workshop on Fermentation, ICML 2025
-teaching:
-  - course: Introduction to Makgeolli (MG200)
-    role: Teaching Assistant
-    institution: Jumak National University
-    period: 2024
-  - course: Fundamentals of Nuruk (BR101)
-    role: Teaching Assistant
-    institution: Boribat University
-    period: 2022
+  - title: Great Thesis Award (2026)
+    year: 2026
+    description: Awarded for outstanding bachelor's thesis work in the field of AI at GIST.

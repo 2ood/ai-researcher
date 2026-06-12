@@ -1,9 +1,9 @@
 # Structural site configuration. Owner-editable settings (identity, social links,
 # palette, enabled sections) live in params.yaml so the /admin dashboard can edit
 # them as YAML. Per-language param overrides stay here under [languages.<lang>.params].
-baseURL = "https://2ood.github.io/hugo-academic-portfolio/"
+baseURL = "https://2ood.github.io/ai-researcher/"
 locale = "en"
-title = "Joomo Makguli"
+title = "Kyungmin Choi"
 defaultContentLanguage = "en"
 
 [taxonomies]
@@ -29,5 +29,5 @@ defaultContentLanguage = "en"
     locale = "ko"
     weight = 2
     [languages.ko.params]
-      description = "박사과정 · 주막대학교 발효·증류 연구실"
-      tagline = "막걸리 이중 증류와 술청 밖 일반화를 연구합니다."
+      description = "GIST 데이터사이언스 연구실 · AI 연구자"
+      tagline = "추상적 추론과 유추를 통해 일반 지능으로"

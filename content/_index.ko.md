@@ -1,11 +1,6 @@
 ---
-title: "홈"
+title: "Home"
 ---
-저는 [주막대학교](https://example.com) 발효·증류 연구실의 박사과정 학생이며,
-누룩 교수님(Prof. Nuruk)의 지도를 받고 있습니다. 제 연구는 막걸리 발효 동역학과
-술청 밖 일반화에 초점을 맞추고 있습니다 - 실험실 작업대를 벗어나 마시는 환경이
-달라져도 한결같이 맛있는 술을 빚는 것입니다.
+I am an AI researcher at the [Gwangju Institute of Science and Technology (GIST)](https://www.gist.ac.kr/), working in the [Data Science Lab](https://sundong.kim) under Prof. Sundong Kim. My research centers on abstract reasoning and analogy - building datasets and methods that align machine reasoning with human intuition (ARC-style tasks).
 
-발효의 근본 원리와 이중 증류를 흥(興)의 오랜 난제에 적용하는 데 폭넓게 관심이
-있습니다. 한 배치가 잘 익으면 연구실 전통에 따라 **주모!**를 외치고 한 잔 더
-따릅니다. 이 문장은 자리표시자입니다 - 자신의 짧은 소개로 바꾸세요.
+I am broadly interested in the intersection of machine learning, reasoning, and the philosophy of science, and in what it takes to move from pattern recognition toward genuine, general intelligence.

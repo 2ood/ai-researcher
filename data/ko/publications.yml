@@ -1,36 +1,12 @@
-# 한국어 출판물. 제목/저자/학회는 슬러그·연결 안정성을 위해 영어(data/en)와 동일하게 유지하고,
-# `abstract` 등 산문만 번역하세요.
-- title: "Learning Robust Brews from Limited Nuruk"
-  authors: "**Joomo Makguli**, Bo-ri Lee, Han Saemi"
-  venue: "BrewNIPS"
-  year: 2025
-  type: "Conference"
-  selected: true
-  award: "Outstanding Pour Award"
-  interest: "Fermentation Dynamics"
-  paperUrl: "https://example.com/paper"
-  codeUrl: "https://github.com/example/repo"
-  dataUrl: "https://example.com/dataset"
-  projectUrl: "https://example.com/project"
-  abstract: "자리표시자 초록입니다. 논문의 초록으로 바꾸세요 - 이 출판물의 전용 페이지 본문으로 렌더링됩니다. 가을 누룩 한 배치에서 학습한 풍미가 봄·여름 발효로도 바디감 손실 없이 전이됨을 보입니다."
-- title: "On the Generalization of Brews Under Temperature Shift"
-  authors: "Bo-ri Lee, **Joomo Makguli**"
-  venue: "Journal of Makgeolli Learning Research"
-  year: 2024
-  type: "Journal"
-  selected: true
-  paperUrl: "https://example.com/paper"
-  codeUrl: "https://github.com/example/repo"
-- title: "A Simple Baseline for Few-Sip Tasting"
-  authors: "**Joomo Makguli**, Maria Garcia"
-  venue: "ICML Workshop on Fermentation"
-  year: 2024
-  type: "Workshop"
-  paperUrl: "https://example.com/paper"
-- title: "Toward Interpretable Tavern Science"
-  authors: "**Joomo Makguli**, Wei Chen, Sofia Rossi"
+# Owner's name (**Kyungmin Choi**) is wrapped in markdown bold so the entry partial highlights it.
+- title: "GIFARC: Synthetic Dataset for Leveraging Human-Intuitive Analogies to Elevate AI Reasoning"
+  authors: "Woochang Sim, Hyunseok Ryu, **Kyungmin Choi**, Sungwon Han, Sundong Kim"
   venue: "arXiv"
   year: 2025
   type: "Preprint"
-  paperUrl: "https://arxiv.org/abs/0000.00000"
-  codeUrl: "https://github.com/example/repo"
+  selected: true              # shown in the home "Selected Publications" list
+  interest: "Human-Intuitive Analogy"  # must match a title in data/research_interests.yml
+  paperUrl: "https://arxiv.org/abs/2505.20672"
+  codeUrl: "https://anonymous.4open.science/r/GIFARC-FEF5/README.md"
+  dataUrl: "https://huggingface.co/datasets/DumDev/gif_arc"
+  projectUrl: "https://gifarc.vercel.app/"

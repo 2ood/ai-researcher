@@ -1,20 +1,14 @@
-# 한국어 데이터. `title`은 슬러그와 언어 간 연결에 쓰이므로 영어(data/en)와 동일하게 유지하고,
-# 산문(summary, details)만 번역하세요.
-- title: Fermentation Dynamics
-  summary: 누룩 배양이 쌀 배치 간에 풍미를 전이하면서 온도 변화에도 견고하게 유지되려면 어떻게 해야 할까요?
+- title: Abstract Reasoning & ARC
+  summary: How can machines acquire the kind of fluid, compositional reasoning that ARC-style tasks demand?
   details: |
-    자리표시자 설명입니다 - 직접 작성한 내용으로 바꾸세요. 어떤 질문이 이 연구를 이끄는지,
-    왜 중요한지, 당신의 연구가 어떻게 접근하는지를 한두 문단으로 설명하세요. 여기서의 질문은,
-    하나의 누룩 종균을 서늘한 봄 광에서든 찌는 여름 광에서든 똑같이 익게 길들일 수 있는가입니다.
-    **마크다운**, [링크](/publications/), 목록을 사용할 수 있습니다.
-- title: Out-of-Tavern Generalization
-  summary: 실험실에서는 흠잡을 데 없던 술이 바깥 술청에서는 언제, 왜 무너지는지 이해합니다.
+    The Abstraction and Reasoning Corpus (ARC) resists the pattern-matching that powers most modern models: each task is novel, few-shot, and solvable only by composing a small set of human-intuitive priors. I study how to give models
+    those priors explicitly and how to evaluate genuine reasoning rather than memorization. testing [link](/research-interests/)
+- title: Human-Intuitive Analogy
+  summary: Aligning a model's problem-solving with the analogies humans reach for first.
   details: |
-    자리표시자 설명입니다 - 직접 작성한 내용으로 바꾸세요. 실험실 시음대에서 만점을 받던 막걸리도
-    실제 술자리 - 더운 방, 시끌벅적한 일행, 수상한 안주 - 앞에서는 곧잘 무너집니다.
-    그 이유와 대응 방법을 연구합니다.
-- title: Distillation for the Sciences
-  summary: 이중 증류를 쌀술 과학 전반의 발견 - 그리고 흥 - 을 가속하는 데 맞게 적용합니다.
+    People solve unfamiliar problems by mapping them onto familiar ones. My work (e.g. **GIFARC**) builds datasets and training signals that surface these analogies, so a model's first guess looks more like a human's - fewer brittle
+    shortcuts, more transferable structure.
+- title: Reasoning & the Philosophy of Science
+  summary: What the history of physics can teach us about interpreting learned representations.
   details: |
-    자리표시자 설명입니다 - 직접 작성한 내용으로 바꾸세요. 증류에는 범용 양조가 좀처럼 활용하지
-    못하는 구조와 제약이 있으며, 이를 존중하면서 더 맑은 술까지 얻는 방법을 목표로 합니다.
+    Deep learning often feels like an empirical science still waiting for its theory. I'm interested in what the conceptual upheavals of early quantum mechanics suggest about how we should interpret (and trust) the high-dimensional representations our models learn.

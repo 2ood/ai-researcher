@@ -1,14 +1,12 @@
-# News items, newest-first on the site (sorted by date in the template).
-# `text` supports inline markdown links.
-- date: 2025-10-02
-  icon: 🍶
-  text: 주모! The lab's seasonal batch cleared peer review at 6.5% ABV - another round on us.
-- date: 2025-09-15
-  icon: 🎉
-  text: Our paper on robust brews was accepted to [BrewNIPS 2025](https://example.com).
-- date: 2025-06-01
-  icon: ✈️
-  text: Presenting at the ICML Workshop on Fermentation.
-- date: 2025-03-01
+- date: 2026-02-20
   icon: 🎓
-  text: Started the Ph.D. program at Jumak National University.
+  text: Completed B.S. in EECS at GIST. Resuming Ph.D. studies in Data Science Lab under Prof. Sundong Kim.
+- date: 2025-12-12
+  icon: ✈️
+  text: Trip to San Diego for NeurIPS 2025.
+- date: 2025-03-02
+  icon: 🔬
+  text: Start an undergraduate internship in GIST Data Science Lab.
+- date: 2025-05-28
+  icon: 📝
+  text: My first ever written academic paper, GIFARC, was pre-printed on Arxiv.

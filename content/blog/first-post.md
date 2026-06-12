@@ -1,23 +1,21 @@
 ---
-title: Welcome to Brewhouse
-date: 2025-01-01T09:00:00Z
+title: On the Philosophy of Science in AI
+date: 2024-06-10T12:00:00+09:00
 tags:
-  - meta
+  - philosophy
+  - machine learning
 draft: false
-description: First placeholder post - replace with your own.
+description: A short reflection on how early 20th-century physics might inform our understanding of neural network representations.
 ---
 
-This is a placeholder blog post. Write in Markdown: **Bold**Intro * - Italic*Intro [Link](/),
-Lists, blocks of code, block quotes and tables are all rendered with reasonable typography.
-Default - Suitable for both tasting notes and fermentation logs.
+Deep learning often feels like an empirical science waiting for its theoretical framework. When we train large models, we observe phenomena like grokking or double descent, and we try to retrofit explanations.
 
-```python
-def cheers(name: str) -> str:
-    return f"주모! One more bowl for {name}!"
-```
+In many ways, this mirrors the early days of quantum mechanics. Just as physicists had to invent new mathematical tools to describe the probabilistic nature of subatomic particles, we might need new forms of mathematics to fully describe the high-dimensional geometry of neural representations.
 
-> Paste the image in Ctrl + V into your local admin editor and it will upload automatically.
-> It will then open in a click-to-zoom lightbox on your site. Convenient for taking pictures of batches.
+This is just a placeholder post. I will write more on this topic in the future.
 
-Delete this post when you're ready to publish it.
+![Placeholder image. Botanic Garden.](/images/uploads/244792c2f065c36c.jpg)
+
+
+
 

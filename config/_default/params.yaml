@@ -1,13 +1,13 @@
-description: Ph.D. in Korean Rice wine brewery
-tagline: Double distillation rice wine whiskey
-faviconEmoji: 🍶
-profileImage: images/profile.svg
-email: iamdrunk@pub.street
-googleScholar: https://scholar.google.com/
-github: https://github.com/makguli
-linkedin: https://linkedin.com/in/makguli
+description: AI Researcher · GIST Data Science Lab
+tagline: Abstract reasoning and analogy toward general intelligence
+faviconEmoji: 🧠
+profileImage: images/profile_square.png
+email: youvegotmail@gm.gist.ac.kr
+googleScholar: https://scholar.google.com/citations?user=T035RyUAAAAJ&hl=en
+github: https://github.com/2ood
+linkedin: https://linkedin.com/in/2ood
 cvPdf: cv.pdf
-palette: plum
+palette: slate
 sections:
   research: true
   publications: true

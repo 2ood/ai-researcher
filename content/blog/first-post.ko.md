@@ -1,25 +1,20 @@
 ---
-title: 브루하우스에 오신 것을 환영합니다
-date: 2025-01-01T09:00:00Z
+title: On the Philosophy of Science in AI
+date: 2024-06-10T12:00:00+09:00
 tags:
-  - meta
+  - philosophy
+  - machine learning
 draft: false
-description: 첫 번째 자리 표시자 게시물 - 자신의 게시물로 교체하십시오.
+description: A short reflection on how early 20th-century physics might inform our understanding of neural network representations.
 ---
 
-플레이스홀더 블로그 게시물입니다. 마크다운에 작성: **볼드**소개 * - 기울임꼴 * 소개 [링크](/),
-목록, 코드 블록, 블록 따옴표 및 테이블은 모두 합리적인 타이포그래피로 렌더링됩니다.
-기본값 - 시음 노트와 발효 로그에 모두 적합합니다.
+Deep learning often feels like an empirical science waiting for its theoretical framework. When we train large models, we observe phenomena like grokking or double descent, and we try to retrofit explanations.
 
-```python
-def cheers(name: str) -> str:
-    return f"주모! One more bowl for {name}!"
-```
+In many ways, this mirrors the early days of quantum mechanics. Just as physicists had to invent new mathematical tools to describe the probabilistic nature of subatomic particles, we might need new forms of mathematics to fully describe the high-dimensional geometry of neural representations.
 
-> Ctrl + V에 있는 이미지를 로컬 관리자 편집기에 붙여넣으면 자동으로 업로드됩니다.
-> 그러면 사이트의 클릭 투 줌 라이트박스에서 열립니다. 배치 사진 촬영에 편리합니다.
+This is just a placeholder post. I will write more on this topic in the future.
 
-포스트를 게시할 준비가 되면 이 포스트를 삭제하세요.
+![Placeholder image. Botanic Garden.](/images/uploads/244792c2f065c36c.jpg)
 
 
 
