@@ -21,6 +21,14 @@ jobs:
           hugo-version: 'latest'
           extended: true
       - run: hugo --minify
+      # static/admin/ isn't part of Hugo's asset pipeline (unlike main.js, which
+      # gets fingerprinted), so GitHub Pages' default ~10min Cache-Control on
+      # admin.js/admin.css can otherwise leave a dashboard tab on stale JS after
+      # a deploy. Bust it with the commit SHA instead.
+      - name: Cache-bust admin dashboard assets
+        run: |
+          sed -i "s/admin\.js\"/admin.js?v=${GITHUB_SHA:0:8}\"/" public/admin/index.html
+          sed -i "s/admin\.css\"/admin.css?v=${GITHUB_SHA:0:8}\"/" public/admin/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./public

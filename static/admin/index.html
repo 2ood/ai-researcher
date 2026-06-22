@@ -66,6 +66,7 @@
         <button class="tab" data-section="settings" data-i18n="tab_settings">Settings</button>
       </nav>
       <div class="topbar-right">
+        <a id="pr-link" class="topbar-link hidden" target="_blank" rel="noopener"></a>
         <button id="commit-btn" class="btn btn--primary hidden" type="button" title="Commit all staged changes as one commit"></button>
         <label class="lang-control">
           <span class="lang-control__label" data-i18n="ui_lang_label">Display</span>
@@ -88,6 +89,16 @@
 
   <!-- Toast -->
   <div id="toast" class="toast hidden"></div>
+
+  <!-- Full-page preview overlay: a non-interactive replica of the deployed
+       page chrome (nav + footer), so an editor can sanity-check a draft's
+       real-page appearance before committing. Populated by admin.js. -->
+  <div id="preview-overlay" class="preview-overlay hidden">
+    <div class="preview-overlay-bar">
+      <button id="preview-close" class="btn btn--soft" type="button" data-i18n="preview_close">Close preview</button>
+    </div>
+    <div id="preview-overlay-content"></div>
+  </div>
 
   <script src="admin.js"></script>
 </body>

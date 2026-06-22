@@ -23,6 +23,15 @@ const TOKEN_KEY = 'gh_token';
 const TOKEN_EXP_KEY = 'gh_token_exp';
 const TOKEN_TTL_MS = 2 * 24 * 60 * 60 * 1000; // localStorage token self-expires after 2 days
 
+// ---- Per-session branch (GitHub mode only) ---------------------------------
+// Multiple managers can have the dashboard open at once; committing straight to
+// BRANCH would race on one shared ref. Instead each browser tab gets its own
+// "dashboard/<id>" branch (id in sessionStorage, so a reload resumes the same
+// branch but a closed tab starts fresh) - edits land there, not on BRANCH, until
+// a PR is merged. See ensureSessionBranch/pushToBranch/ensurePr below.
+const SESSION_BRANCH_KEY = 'dashboard_session_branch';
+const AUTOSAVE_DEBOUNCE_MS = 10000;
+
 // ---- Site config ----------------------------------------------------------
 // Keep LANGS / DEFAULT_LANG in sync with config/_default/hugo.toml [languages].
 // PALETTES must match the named palettes in assets/scss/_theme.scss.
@@ -30,7 +39,17 @@ const LANGS = ['en', 'ko'];
 const DEFAULT_LANG = 'en';
 const PALETTES = ['forest', 'slate', 'crimson', 'plum'];
 const PARAMS_FILE = 'config/_default/params.yaml';
+const HUGO_FILE = 'config/_default/hugo.toml';
 const SECTION_KEYS = ['research', 'publications', 'blog', 'news', 'cv'];
+
+// Strings from i18n/en.toml / i18n/ko.toml, duplicated here since the full-page
+// preview overlay replicates the deployed page chrome and can't run Hugo's i18n.
+const LANG_LABELS = { en: 'English', ko: '한국어' };
+const SITE_I18N = {
+  en: { nav_home: 'Home', nav_research: 'Research', nav_publications: 'Publications', nav_blog: 'Blog', nav_news: 'News', nav_cv: 'CV', min_read: 'min read' },
+  ko: { nav_home: '홈', nav_research: '연구', nav_publications: '출판물', nav_blog: '블로그', nav_news: '소식', nav_cv: '이력서', min_read: '분 분량' },
+};
+function siteT(key) { return (SITE_I18N[state.lang] && SITE_I18N[state.lang][key]) || SITE_I18N.en[key] || key; }
 
 // ---- Dashboard UI language (separate from the content language) ------------
 // Translates the dashboard's own chrome. The schema-driven data-editor field
@@ -40,7 +59,7 @@ const UI_LANG_KEY = 'admin_lang';
 const I18N = {
   en: {
     brand: 'Content Dashboard',
-    login_help: 'Paste a GitHub fine-grained personal access token with Contents: Read and write permission on this repository. It is stored only in this browser (localStorage) and never leaves it except to call the GitHub API.',
+    login_help: 'Paste a GitHub fine-grained personal access token with Contents: Read and write AND Pull requests: Read and write permission on this repository (the second is needed to open the PR your edits land in). It is stored only in this browser (localStorage) and never leaves it except to call the GitHub API.',
     authorize: 'Authorize with GitHub',
     authorize_hint: 'Opens GitHub to create a repo-scoped token, then paste it below.',
     connect: 'Connect', repository: 'Repository', signout: 'Sign out', view_site: 'View site ↗',
@@ -61,6 +80,9 @@ const I18N = {
     f_date: 'Date', f_tags: 'Tags (comma-separated)', f_draft: 'Draft', f_description: 'Description',
     f_body: 'Body (Markdown)', i_summary: 'Summary (shown on home)',
     i_details: 'Details (markdown, shown on the dedicated page)',
+    md_source_label: 'Markdown source', md_preview_label: 'Live preview',
+    md_body_ph: 'Write Markdown here…',
+    preview_open: 'Open preview', preview_close: 'Close preview',
     settings_note_a: 'Edits', settings_note_b: '. Your name (site title), baseURL, and the language list live in',
     settings_note_c: 'and are edited by hand. Saving rewrites the file and drops its comments.',
     s_sections_head: 'Sections (navigation & home)', color_palette: 'Color palette',
@@ -79,11 +101,14 @@ const I18N = {
     tr_confirm_overwrite: 'This editor already has content. Re-translate from {lang} and overwrite it?',
     staged: 'Staged — {n} pending', commit_pending: 'Commit ({n})',
     committing: 'Committing…', committed: 'Committed {n} change(s)', commit_failed: 'Commit failed',
+    committed_pr: 'Committed {n} change(s) - opened a pull request',
+    committed_no_pr: 'Committed {n} change(s) to your branch, but could not open a pull request',
+    pr_link: 'PR #{n}', pr_link_manual: 'Open PR manually',
     confirm_signout_pending: 'You have {n} uncommitted change(s). Sign out and discard them?',
   },
   ko: {
     brand: '콘텐츠 대시보드',
-    login_help: '이 저장소에 대해 Contents: 읽기/쓰기 권한을 가진 GitHub 세분화된(fine-grained) 개인 액세스 토큰을 붙여넣으세요. 토큰은 이 브라우저(localStorage)에만 저장되며 GitHub API 호출 외에는 외부로 전송되지 않습니다.',
+    login_help: '이 저장소에 대해 Contents: 읽기/쓰기 권한과 Pull requests: 읽기/쓰기 권한을 가진 GitHub 세분화된(fine-grained) 개인 액세스 토큰을 붙여넣으세요 (두 번째 권한은 편집 내용이 반영될 PR을 여는 데 필요합니다). 토큰은 이 브라우저(localStorage)에만 저장되며 GitHub API 호출 외에는 외부로 전송되지 않습니다.',
     authorize: 'GitHub로 인증',
     authorize_hint: 'GitHub에서 저장소 범위 토큰을 만든 뒤 아래에 붙여넣으세요.',
     connect: '연결', repository: '저장소', signout: '로그아웃', view_site: '사이트 보기 ↗',
@@ -104,6 +129,9 @@ const I18N = {
     f_date: '날짜', f_tags: '태그 (쉼표로 구분)', f_draft: '초안', f_description: '설명',
     f_body: '본문 (마크다운)', i_summary: '요약 (홈에 표시)',
     i_details: '상세 (마크다운, 전용 페이지에 표시)',
+    md_source_label: '마크다운 원본', md_preview_label: '실시간 미리보기',
+    md_body_ph: '여기에 마크다운을 작성하세요…',
+    preview_open: '미리보기 열기', preview_close: '미리보기 닫기',
     settings_note_a: '편집 대상:', settings_note_b: '. 이름(사이트 제목), baseURL, 언어 목록은',
     settings_note_c: '에 있으며 직접 편집합니다. 저장 시 파일이 다시 쓰여 주석이 제거됩니다.',
     s_sections_head: '섹션 (내비게이션 및 홈)', color_palette: '색상 팔레트',
@@ -122,6 +150,9 @@ const I18N = {
     tr_confirm_overwrite: '편집기에 이미 내용이 있습니다. {lang}에서 다시 번역하여 덮어쓸까요?',
     staged: '대기 중 — {n}개', commit_pending: '커밋 ({n})',
     committing: '커밋 중…', committed: '{n}개 변경 커밋됨', commit_failed: '커밋 실패',
+    committed_pr: '{n}개 변경 커밋됨 - Pull Request 생성됨',
+    committed_no_pr: '{n}개 변경을 브랜치에 커밋했지만 Pull Request를 열지 못했습니다',
+    pr_link: 'PR #{n}', pr_link_manual: 'PR 직접 열기',
     confirm_signout_pending: '커밋하지 않은 변경이 {n}개 있습니다. 로그아웃하고 버릴까요?',
   },
 };
@@ -150,6 +181,12 @@ const state = {
   settings: null,  // parsed config/_default/params.yaml (settings editor)
   settingsSha: null,
   pending: new Map(), // staged edits: path -> {op:'put'|'delete', text, message}. Flushed as ONE commit.
+  siteTitle: null, // hugo.toml title, for the preview overlay's nav brand + footer (lazy-loaded)
+  previewKind: null, // 'blog' | 'interest' | null - which article the open preview overlay shows
+  sessionBranch: null, // GitHub mode only: this tab's "dashboard/<id>" branch, once created
+  prUrl: null,     // confirmed open PR for sessionBranch, once one exists
+  prNumber: null,
+  savingInFlight: false, // guards autosave and the explicit Commit button from racing each other
 };
 
 // data/<lang>/<name> path for the active content language.
@@ -174,6 +211,10 @@ const el = {
   authorizeBtn: document.getElementById('authorize-btn'),
   themeToggle: document.getElementById('theme-toggle'),
   favicon: document.getElementById('favicon'),
+  previewOverlay: document.getElementById('preview-overlay'),
+  previewContent: document.getElementById('preview-overlay-content'),
+  previewClose: document.getElementById('preview-close'),
+  prLink: document.getElementById('pr-link'),
 };
 
 // ---- Utilities ------------------------------------------------------------
@@ -250,13 +291,18 @@ async function loadSiteChrome() {
     if (p.faviconEmoji) setFavicon(p.faviconEmoji);
     if (PALETTES.includes(p.palette)) document.documentElement.setAttribute('data-palette', p.palette);
   } catch (e) { /* non-fatal: keep the defaults already in the page */ }
+  try {
+    const { text } = await getFile(HUGO_FILE);
+    const m = text.match(/(?:^|\n)title\s*=\s*"(.*?)"/);
+    state.siteTitle = m ? m[1] : '';
+  } catch (e) { state.siteTitle = ''; } // non-fatal: nav brand / footer just render blank
 }
 
 // "Authorize with GitHub": deep-link to GitHub's fine-grained token page,
 // pre-filled with a name/description. (A static site can't run the OAuth secret
 // exchange, so the user generates a scoped token and pastes it back.)
 function openAuthorize() {
-  const desc = `Content Dashboard for ${OWNER}/${REPO} — Contents: Read and write`;
+  const desc = `Content Dashboard for ${OWNER}/${REPO} — Contents: Read and write, Pull requests: Read and write`;
   const url = 'https://github.com/settings/personal-access-tokens/new?name=' +
     encodeURIComponent(`${REPO}-dashboard`) + '&description=' + encodeURIComponent(desc);
   window.open(url, '_blank', 'noopener');
@@ -283,6 +329,10 @@ async function gh(method, path, body) {
 }
 const contentPath = p => `/repos/${OWNER}/${REPO}/contents/${p}`;
 
+// Reads come from this tab's session branch once one exists (so the editor
+// reflects edits already pushed there), otherwise from BRANCH as normal.
+function activeBranch() { return state.sessionBranch || BRANCH; }
+
 // ---- Local backend (cms-server.go) ----------------------------------------
 // When the page is served by the local Go backend, saves commit to the local
 // git repo instead of pushing to GitHub. state.local is set in init() after a
@@ -307,7 +357,7 @@ async function localApi(method, path, body) {
 async function listDir(dir) {
   const items = state.local
     ? await localApi('GET', '/api/list?dir=' + encodeURIComponent(dir))
-    : await gh('GET', contentPath(dir) + '?ref=' + BRANCH);
+    : await gh('GET', contentPath(dir) + '?ref=' + activeBranch());
   const prefix = dir.replace(/\/$/, '') + '/';
   const byName = new Map(items.map(it => [it.name, it]));
   for (const [path, p] of state.pending) {
@@ -329,20 +379,24 @@ async function getFile(path) {
     const d = await localApi('GET', '/api/get?path=' + encodeURIComponent(path));
     return { text: d.text, sha: d.sha };
   }
-  const data = await gh('GET', contentPath(path) + '?ref=' + BRANCH);
+  const data = await gh('GET', contentPath(path) + '?ref=' + activeBranch());
   return { text: fromBase64(data.content), sha: data.sha };
 }
 
 // ---- Staging + bulk commit ------------------------------------------------
 // Editors stage their edits here instead of committing one-per-save; the global
 // nav Commit button flushes the whole set as a SINGLE commit (see flushPending).
+// GitHub mode also schedules a debounced autosave to this tab's session branch,
+// so a crash/reload never loses more than AUTOSAVE_DEBOUNCE_MS of work.
 function stagePut(path, text, message) {
   state.pending.set(path, { op: 'put', text, message });
   refreshDirty();
+  scheduleAutosave();
 }
 function stageDelete(path, message) {
   state.pending.set(path, { op: 'delete', message });
   refreshDirty();
+  scheduleAutosave();
 }
 function refreshDirty() {
   if (!el.commitBtn) return;
@@ -370,37 +424,168 @@ async function commitLocal(entries, message) {
 
 // GitHub: the Contents API is one-commit-per-file, so build a single commit by
 // hand with the Git Data API — new tree off the base, then move the branch ref.
-async function commitGitHub(entries, message) {
+// Shared by autosave and the explicit Commit button; only the target branch and
+// whether state.pending gets cleared differ between the two.
+//
+// The GET-then-PATCH window here has no server-side locking - the ref can move
+// between reading its tip and moving it (e.g. an autosave landing moments before
+// the explicit Commit reads it), which the Git Data API surfaces as a 422 "not a
+// fast forward" on the final PATCH. That's an ordinary optimistic-concurrency
+// conflict, not data loss - retry by re-reading the now-current tip and rebuilding
+// on top of it, rather than surfacing a transient race as a hard failure.
+const PUSH_RETRY_ATTEMPTS = 3;
+async function pushToBranch(branch, entries, message) {
   const g = `/repos/${OWNER}/${REPO}/git`;
-  const ref = await gh('GET', `${g}/ref/heads/${BRANCH}`);
-  const baseSha = ref.object.sha;
-  const baseCommit = await gh('GET', `${g}/commits/${baseSha}`);
-  const tree = entries.map(([path, p]) =>
-    p.op === 'delete'
-      ? { path, mode: '100644', type: 'blob', sha: null } // null sha removes the path
-      : { path, mode: '100644', type: 'blob', content: p.text });
-  const newTree = await gh('POST', `${g}/trees`, { base_tree: baseCommit.tree.sha, tree });
-  const commit = await gh('POST', `${g}/commits`, { message, tree: newTree.sha, parents: [baseSha] });
-  await gh('PATCH', `${g}/refs/heads/${BRANCH}`, { sha: commit.sha });
+  for (let attempt = 1; ; attempt++) {
+    const ref = await gh('GET', `${g}/ref/heads/${branch}`);
+    const baseSha = ref.object.sha;
+    const baseCommit = await gh('GET', `${g}/commits/${baseSha}`);
+    const tree = entries.map(([path, p]) =>
+      p.op === 'delete'
+        ? { path, mode: '100644', type: 'blob', sha: null } // null sha removes the path
+        : { path, mode: '100644', type: 'blob', content: p.text });
+    const newTree = await gh('POST', `${g}/trees`, { base_tree: baseCommit.tree.sha, tree });
+    const commit = await gh('POST', `${g}/commits`, { message, tree: newTree.sha, parents: [baseSha] });
+    try {
+      await gh('PATCH', `${g}/refs/heads/${branch}`, { sha: commit.sha });
+      return;
+    } catch (e) {
+      if (!/not a fast forward/i.test(e.message) || attempt >= PUSH_RETRY_ATTEMPTS) throw e;
+      // The ref moved since our GET above - back off briefly, then loop around
+      // and rebuild on its new tip.
+      await new Promise(resolve => setTimeout(resolve, 400 * attempt));
+    }
+  }
+}
+
+// Restores this tab's session branch name from sessionStorage (no network) - call
+// at startup so reads resume from a prior reload's branch immediately. Does NOT
+// create the branch; that only happens lazily, on first edit, in ensureSessionBranch.
+function restoreSessionBranch() {
+  if (state.local) return;
+  const id = sessionStorage.getItem(SESSION_BRANCH_KEY);
+  state.sessionBranch = id ? `dashboard/${id}` : null;
+}
+// Lazily creates this tab's "dashboard/<id>" branch off BRANCH's current tip, the
+// first time it's needed. Idempotent - safe to call every time a save happens.
+async function ensureSessionBranch() {
+  if (state.local) return null;
+  if (state.sessionBranch) return state.sessionBranch;
+  let id = sessionStorage.getItem(SESSION_BRANCH_KEY);
+  if (!id) {
+    id = Math.random().toString(16).slice(2, 10);
+    sessionStorage.setItem(SESSION_BRANCH_KEY, id);
+  }
+  const branch = `dashboard/${id}`;
+  try {
+    const ref = await gh('GET', `/repos/${OWNER}/${REPO}/git/ref/heads/${BRANCH}`);
+    await gh('POST', `/repos/${OWNER}/${REPO}/git/refs`, { ref: `refs/heads/${branch}`, sha: ref.object.sha });
+  } catch (e) {
+    if (!/already exists/i.test(e.message)) throw e;
+  }
+  state.sessionBranch = branch;
+  return branch;
+}
+
+// GET-only: populate state.prUrl/prNumber if an open PR already exists for
+// `branch`, without creating one. Safe to call just to refresh the topbar link.
+async function lookupPr(branch) {
+  const found = await gh('GET',
+    `/repos/${OWNER}/${REPO}/pulls?head=${encodeURIComponent(OWNER + ':' + branch)}&state=open`);
+  if (found.length) { state.prUrl = found[0].html_url; state.prNumber = found[0].number; }
+  return state.prUrl;
+}
+// Returns an open PR's URL for `branch`, creating one (branch -> BRANCH) if none
+// exists yet. Only called from the explicit Commit flow, never from autosave -
+// opening a PR is the "hand it to the master manager for review" signal.
+async function ensurePr(branch) {
+  if (state.prUrl) return state.prUrl;
+  if (await lookupPr(branch)) return state.prUrl;
+  const pr = await gh('POST', `/repos/${OWNER}/${REPO}/pulls`, {
+    title: `Dashboard edits (${branch})`,
+    head: branch,
+    base: BRANCH,
+    body: 'Opened automatically by the Content Dashboard - review and merge to publish.',
+  });
+  state.prUrl = pr.html_url;
+  state.prNumber = pr.number;
+  return state.prUrl;
+}
+function updatePrLink() {
+  if (!el.prLink) return;
+  if (state.prUrl) {
+    el.prLink.href = state.prUrl;
+    el.prLink.textContent = t('pr_link').replace('{n}', state.prNumber);
+    el.prLink.classList.remove('hidden');
+  } else {
+    el.prLink.classList.add('hidden');
+  }
+}
+
+// Debounced background save to the session branch: a recovery checkpoint, not a
+// publish action - never touches BRANCH, never opens a PR, never clears pending.
+// Failures retry quietly on the next edit; state.pending in this tab is still the
+// primary copy, this is only the outer safety net against losing the tab itself.
+let autosaveTimer = null;
+function scheduleAutosave() {
+  if (state.local) return;
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(autosaveTick, AUTOSAVE_DEBOUNCE_MS);
+}
+async function autosaveTick() {
+  if (state.savingInFlight || state.pending.size === 0) return;
+  state.savingInFlight = true;
+  try {
+    const branch = await ensureSessionBranch();
+    const entries = Array.from(state.pending.entries());
+    await pushToBranch(branch, entries, `autosave(admin): ${entries.length} pending change(s)`);
+  } catch (e) {
+    console.warn('autosave failed, will retry on next edit:', e.message);
+  } finally {
+    state.savingInFlight = false;
+  }
 }
 
 async function flushPending() {
   const n = state.pending.size;
-  if (!n) return;
+  if (!n || state.savingInFlight) return;
   const entries = Array.from(state.pending.entries());
   const message = buildCommitMessage(entries);
+  state.savingInFlight = true;
+  clearTimeout(autosaveTimer); // the push below already covers anything autosave would have
   el.commitBtn.disabled = true;
   toast(t('committing'));
   try {
-    if (state.local) await commitLocal(entries, message);
-    else await commitGitHub(entries, message);
-    state.pending.clear();
-    refreshDirty();
-    toast(t('committed').replace('{n}', n), 'ok');
+    if (state.local) {
+      await commitLocal(entries, message);
+      state.pending.clear();
+      refreshDirty();
+      toast(t('committed').replace('{n}', n), 'ok');
+    } else {
+      const branch = await ensureSessionBranch();
+      await pushToBranch(branch, entries, message);
+      state.pending.clear();
+      refreshDirty();
+      try {
+        await ensurePr(branch);
+        updatePrLink();
+        toast(t('committed_pr').replace('{n}', n), 'ok');
+      } catch (e) {
+        // Branch push already succeeded - the content is safe. Only the PR
+        // failed (e.g. token missing the Pull requests permission), so offer a
+        // manual fallback instead of hiding the failure inside a generic error.
+        el.prLink.href = `https://github.com/${OWNER}/${REPO}/compare/${BRANCH}...${branch}?expand=1`;
+        el.prLink.textContent = t('pr_link_manual');
+        el.prLink.classList.remove('hidden');
+        toast(t('committed_no_pr').replace('{n}', n) + ': ' + e.message, 'error');
+      }
+    }
     if (state.section) selectSection(state.section); // reload the view from committed state
   } catch (e) {
     refreshDirty(); // restore the button so the user can retry
     toast(t('commit_failed') + ': ' + e.message, 'error');
+  } finally {
+    state.savingInFlight = false;
   }
 }
 
@@ -453,6 +638,13 @@ function signout() {
   clearToken();
   state.token = '';
   el.tokenInput.value = '';
+  // Don't let a different person signing in on this tab inherit this session's
+  // branch/PR - their commits would land somewhere they don't own.
+  sessionStorage.removeItem(SESSION_BRANCH_KEY);
+  state.sessionBranch = null;
+  state.prUrl = null;
+  state.prNumber = null;
+  updatePrLink();
   el.app.classList.add('hidden');
   el.login.classList.remove('hidden');
 }
@@ -716,8 +908,14 @@ function blogFileName(slug) {
 // Reuses #f-body / #preview, so only one such editor is on screen at a time.
 function mdSplitHtml(value) {
   return `<div class="editor-grid with-preview md-split">
-    <div id="preview" class="preview"></div>
-    <textarea id="f-body" class="body-area">${esc(value || '')}</textarea>
+    <div class="md-split-pane">
+      <div class="md-split-label">${t('md_preview_label')}</div>
+      <div id="preview" class="preview"></div>
+    </div>
+    <div class="md-split-pane">
+      <div class="md-split-label">${t('md_source_label')}</div>
+      <textarea id="f-body" class="body-area" placeholder="${esc(t('md_body_ph'))}">${esc(value || '')}</textarea>
+    </div>
   </div>`;
 }
 function wireMdSplit() {
@@ -725,6 +923,7 @@ function wireMdSplit() {
   const preview = document.getElementById('preview');
   const render = () => { preview.innerHTML = marked.parse(bodyEl.value || ''); };
   bodyEl.addEventListener('input', render);
+  bodyEl.addEventListener('input', refreshPreviewIfOpen);
   bodyEl.addEventListener('paste', e => {
     const items = (e.clipboardData && e.clipboardData.items) || [];
     for (const it of items) {
@@ -735,6 +934,111 @@ function wireMdSplit() {
     }
   });
   render();
+}
+
+// ---- Full-page preview overlay --------------------------------------------
+// Renders the current draft inside a hand-ported replica of the deployed page
+// chrome (see the ".preview-overlay" rules in admin.css), so an editor can
+// check a real-page appearance before committing. The chrome is decorative
+// only - see ".preview-overlay .site-header, .footer { pointer-events: none }".
+
+// Matches the real page's `.Date.Format "January 2, 2006"` (always English,
+// regardless of content language - Go's layout-string formatting isn't
+// locale-aware here, and neither is the real template).
+function formatPostDate(iso) {
+  const d = new Date(`${iso || ''}T00:00:00`);
+  if (isNaN(d)) return iso || '';
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+// Rough approximation of Hugo's .ReadingTime (word count / wpm, rounded up).
+// Exact parity isn't the point - this is a visual draft check, not a metric.
+function estimateReadingTime(text) {
+  const words = (text || '').trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+function previewNavHtml(activeSection) {
+  const items = [
+    ['', 'nav_home'], ['research-interests', 'nav_research'], ['publications', 'nav_publications'],
+    ['blog', 'nav_blog'], ['news', 'nav_news'], ['cv', 'nav_cv'],
+  ];
+  const links = items.map(([key, labelKey]) =>
+    `<a${key === activeSection ? ' class="active"' : ''}>${esc(siteT(labelKey))}</a>`).join('');
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  return `
+    <header class="site-header">
+      <div class="container nav-container">
+        <span class="nav-brand">${esc(state.siteTitle || '')}</span>
+        <nav class="nav-links">
+          ${links}
+          <details class="lang-switch"><summary>${esc(LANG_LABELS[state.lang] || state.lang)}</summary></details>
+          <button class="theme-toggle" type="button"><span class="theme-toggle__icon">${dark ? '☀' : '☾'}</span></button>
+        </nav>
+      </div>
+    </header>`;
+}
+function previewFooterHtml() {
+  return `
+    <footer class="footer">
+      <div class="container footer-container">
+        <p>© ${new Date().getFullYear()} ${esc(state.siteTitle || '')}. Built with Hugo.</p>
+      </div>
+    </footer>`;
+}
+function blogPreviewArticleHtml() {
+  const title = document.getElementById('f-title').value.trim();
+  const dateStr = document.getElementById('f-date').value;
+  const tags = document.getElementById('f-tags').value.split(',').map(s => s.trim()).filter(Boolean);
+  const body = document.getElementById('f-body').value;
+  const tagsHtml = tags.length
+    ? `<div class="post-tags">${tags.map(tag => `<a class="tag-pill">${esc(tag)}</a>`).join('')}</div>` : '';
+  return `
+    <article class="blog-post">
+      <header class="post-header">
+        <h1 class="post-title">${esc(title)}</h1>
+        <div class="post-meta">
+          <time>${esc(formatPostDate(dateStr))}</time> · ${estimateReadingTime(body)} ${esc(siteT('min_read'))}
+        </div>
+        ${tagsHtml}
+      </header>
+      <div class="post-content">${marked.parse(body || '')}</div>
+    </article>`;
+}
+function interestPreviewArticleHtml() {
+  const title = document.getElementById('i-title').value.trim();
+  const summary = document.getElementById('i-summary').value.trim();
+  const body = document.getElementById('f-body').value;
+  return `
+    <article class="interest-single">
+      <header class="page-header"><h1>${esc(title)}</h1></header>
+      ${summary ? `<p class="interest-lead">${esc(summary)}</p>` : ''}
+      <div class="interest-body post-content">${marked.parse(body || '')}</div>
+    </article>`;
+}
+function renderPreviewOverlay() {
+  if (!state.previewKind) return;
+  const isBlog = state.previewKind === 'blog';
+  const article = isBlog ? blogPreviewArticleHtml() : interestPreviewArticleHtml();
+  el.previewContent.innerHTML = `
+    <div class="preview-page">
+      ${previewNavHtml(isBlog ? 'blog' : 'research-interests')}
+      <main class="container">${article}</main>
+      ${previewFooterHtml()}
+    </div>`;
+}
+async function openPreviewOverlay(kind) {
+  state.previewKind = kind;
+  if (state.siteTitle == null) await loadSiteChrome();
+  renderPreviewOverlay();
+  el.previewOverlay.classList.remove('hidden');
+}
+function closePreviewOverlay() {
+  state.previewKind = null;
+  el.previewOverlay.classList.add('hidden');
+  el.previewContent.innerHTML = '';
+}
+function refreshPreviewIfOpen() {
+  if (state.previewKind && !el.previewOverlay.classList.contains('hidden')) renderPreviewOverlay();
 }
 
 // ---- Pasted-image upload ---------------------------------------------------
@@ -865,6 +1169,8 @@ async function openBlogEditor(path) {
       const file = await getFile(path);
       const parsed = splitFrontmatter(file.text);
       fm = Object.assign(fm, parsed.fm);
+      // Date input only accepts YYYY-MM-DD - truncate legacy full-timestamp dates (e.g. "2025-01-01T09:00:00Z").
+      fm.date = String(fm.date || '').slice(0, 10);
       body = parsed.body;
       filename = path.split('/').pop().replace(/(\.[a-z]{2})?\.md$/, '');
     } catch (e) {
@@ -885,7 +1191,7 @@ async function openBlogEditor(path) {
       <div class="field-row">
         <div class="field"><label>${t('f_filename')}</label>
           <input id="f-name" type="text" value="${esc(filename)}" ${path ? 'readonly' : ''} placeholder="${t('f_filename_ph')}"></div>
-        <div class="field"><label>${t('f_date')}</label><input id="f-date" type="text" value="${esc(fm.date)}"></div>
+        <div class="field"><label>${t('f_date')}</label><input id="f-date" type="date" value="${esc(fm.date)}"></div>
       </div>
       <div class="field-row">
         <div class="field"><label>${t('f_tags')}</label><input id="f-tags" type="text" value="${esc(tags)}"></div>
@@ -899,12 +1205,16 @@ async function openBlogEditor(path) {
     <div class="sticky-actions">
       <button id="back-blog-2" class="btn btn--ghost">${t('cancel')}</button>
       ${LANGS.length > 1 ? `<button id="tr-post" class="btn btn--ghost">${trBtnLabel()}</button>` : ''}
+      <button id="open-preview" class="btn btn--soft">${t('preview_open')}</button>
       <button id="save-post" class="btn btn--primary">${path ? t('save_post') : t('create_post')}</button>
     </div>`;
 
   wireMdSplit();
   document.getElementById('back-blog').addEventListener('click', loadBlogList);
   document.getElementById('back-blog-2').addEventListener('click', loadBlogList);
+  document.getElementById('open-preview').addEventListener('click', () => openPreviewOverlay('blog'));
+  ['f-title', 'f-date', 'f-tags'].forEach(id =>
+    document.getElementById(id).addEventListener('input', refreshPreviewIfOpen));
   document.getElementById('save-post').addEventListener('click', () => savePost(path));
   const tp = document.getElementById('tr-post');
   if (tp) tp.addEventListener('click', () => {
@@ -1005,12 +1315,16 @@ function openInterestEditor(index) {
     <div class="sticky-actions">
       <button id="back-int-2" class="btn btn--ghost">${t('cancel')}</button>
       ${LANGS.length > 1 ? `<button id="tr-int" class="btn btn--ghost">${trBtnLabel()}</button>` : ''}
+      <button id="open-preview" class="btn btn--soft">${t('preview_open')}</button>
       <button id="save-int" class="btn btn--primary">${index == null ? t('create_interest') : t('save_interest')}</button>
     </div>`;
 
   wireMdSplit();
   document.getElementById('back-int').addEventListener('click', loadInterestsList);
   document.getElementById('back-int-2').addEventListener('click', loadInterestsList);
+  document.getElementById('open-preview').addEventListener('click', () => openPreviewOverlay('interest'));
+  ['i-title', 'i-summary'].forEach(id =>
+    document.getElementById(id).addEventListener('input', refreshPreviewIfOpen));
   document.getElementById('save-int').addEventListener('click', () => saveInterest(index));
   const ti = document.getElementById('tr-int');
   if (ti) ti.addEventListener('click', () => {
@@ -1326,7 +1640,7 @@ async function translatePost(baseName, overwrite, stats) {
     bodyEl.dispatchEvent(new Event('input')); // refresh the markdown preview
   }
   // Fixed fields stay identical across languages — copy them only if still empty.
-  if (!dateEl.value.trim() && s.fm.date) dateEl.value = s.fm.date;
+  if (!dateEl.value.trim() && s.fm.date) dateEl.value = String(s.fm.date).slice(0, 10);
   if (!tagsEl.value.trim() && Array.isArray(s.fm.tags)) tagsEl.value = s.fm.tags.join(', ');
 }
 
@@ -1353,6 +1667,7 @@ async function runTranslate(worker) {
 //  Routing / init
 // ===========================================================================
 function selectSection(section) {
+  closePreviewOverlay(); // don't leave a stale preview open across a section/list switch
   state.section = section;
   el.nav.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.dataset.section === section));
   // The content-language selector applies to content editors, not the shared settings.
@@ -1366,6 +1681,8 @@ function showApp() {
   el.login.classList.add('hidden');
   el.app.classList.remove('hidden');
   loadSiteChrome();   // mirror the site's favicon + palette (async, non-blocking)
+  restoreSessionBranch();
+  if (state.sessionBranch) lookupPr(state.sessionBranch).then(updatePrLink).catch(() => {});
   selectSection('blog');
 }
 
@@ -1391,6 +1708,10 @@ async function init() {
   // Warn before leaving with staged-but-uncommitted edits.
   window.addEventListener('beforeunload', e => {
     if (state.pending.size > 0) { e.preventDefault(); e.returnValue = ''; }
+  });
+  el.previewClose.addEventListener('click', closePreviewOverlay);
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && state.previewKind) closePreviewOverlay();
   });
   el.nav.querySelectorAll('.tab').forEach(tab =>
     tab.addEventListener('click', () => selectSection(tab.dataset.section)));

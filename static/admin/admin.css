@@ -69,6 +69,9 @@ code {
 .btn--primary:hover { background: var(--forest-dark); }
 .btn--ghost { border-color: var(--line); color: var(--carbon); }
 .btn--ghost:hover { border-color: var(--carbon); }
+/* A lighter shade of the primary color (not a faint tint) - solid fill, just brighter than .btn--primary. */
+.btn--soft { background: hsl(from var(--forest) h s calc(l + 18)); color: var(--porcelain); }
+.btn--soft:hover { background: var(--forest); }
 .btn--danger { color: #b00020; border-color: rgba(176, 0, 32, 0.3); }
 .btn--danger:hover { background: rgba(176, 0, 32, 0.08); }
 .btn--sm { padding: 0.3rem 0.65rem; font-size: 0.85rem; }
@@ -211,6 +214,7 @@ code {
 }
 .field input[type="text"],
 .field input[type="number"],
+.field input[type="date"],
 .field textarea,
 .field select {
   width: 100%;
@@ -221,6 +225,8 @@ code {
   background: var(--field-bg);
   color: var(--carbon);
 }
+.field input[type="date"] { color-scheme: light; }
+[data-theme="dark"] .field input[type="date"] { color-scheme: dark; }
 .field textarea { resize: vertical; }
 .field input:focus, .field textarea:focus, .field select:focus {
   outline: 2px solid rgb(from var(--forest) r g b / 0.35);
@@ -328,6 +334,20 @@ code {
   }
   .md-split .preview, .md-split .body-area { border-radius: 0; }
   .md-split .body-area { border-left: none; }
+  /* The panes bleed past the view's side padding (margin-left/right above) -
+     pull the label back in so it isn't flush against the viewport edge. */
+  .md-split-label { padding: 0 1.5rem; }
+}
+/* Each pane (preview / source) gets a label above it, so a div wraps the
+   label + the existing .preview / .body-area element. Sized like the
+   view's own h2 (e.g. "Edit post") so it reads as a heading, not a caption. */
+.md-split-pane { display: flex; flex-direction: column; min-height: 0; }
+.md-split .md-split-pane { height: 100%; }
+.md-split-label {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--carbon);
+  margin-bottom: 0.6rem;
 }
 /* The textarea lives outside a .field wrapper, so it styles itself to mirror
    the preview pane (same border, radius, padding) for a symmetric split. */
@@ -344,8 +364,8 @@ code {
   color: var(--carbon);
 }
 .body-area:focus { outline: 2px solid rgb(from var(--forest) r g b / 0.35); border-color: var(--forest); }
-.md-split .body-area { min-height: 0; height: 100%; resize: none; }
-.md-split .preview { height: 100%; }
+.md-split .body-area { min-height: 0; height: 100%; resize: none; flex: 1; }
+.md-split .preview { height: 100%; flex: 1; }
 .preview {
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -353,11 +373,111 @@ code {
   overflow-y: auto;
   background: var(--surface);
 }
-.preview h1, .preview h2, .preview h3 { margin: 1.2rem 0 0.6rem; }
-.preview p { margin-bottom: 0.9rem; }
-.preview pre { background: rgb(from var(--carbon) r g b / 0.05); padding: 0.85rem; border-radius: 6px; overflow-x: auto; }
-.preview blockquote { border-left: 3px solid var(--walnut); padding-left: 1rem; color: var(--muted); }
-.preview ul, .preview ol { padding-left: 1.3rem; margin-bottom: 0.9rem; }
+/* Mirrors the published post's typography (.post-content in assets/scss/_blog.scss)
+   so the preview is a stand-in for the real page, not a generic prose block. */
+.preview { font-size: 1.1rem; line-height: 1.7; }
+.preview h1, .preview h2, .preview h3, .preview h4 { margin-top: 2.5rem; color: var(--carbon); }
+.preview p { margin-bottom: 1.5rem; }
+.preview a { color: var(--forest); text-decoration: underline; text-underline-offset: 2px; }
+.preview a:hover { color: var(--forest-dark); }
+.preview blockquote { border-left: 4px solid var(--walnut); margin: 2rem 0; padding-left: 1.5rem; color: var(--muted); font-style: italic; }
+.preview pre { background: rgb(from var(--carbon) r g b / 0.05); padding: 1.5rem; border-radius: 8px; overflow-x: auto; font-size: 0.9rem; margin-bottom: 1.5rem; }
+.preview code { background: rgb(from var(--carbon) r g b / 0.05); padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+.preview pre code { background: transparent; padding: 0; }
+.preview ul, .preview ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+.preview li { margin-bottom: 0.5rem; }
+.preview img { display: block; width: 100%; height: auto; }
+/* The "give dividers more margin" ask: spacing for in-content `---` rules,
+   which previously fell back to the cramped browser default. */
+.preview hr { margin: 2rem 0; border: none; border-top: 1px solid var(--line); }
+
+/* ---- Real site tokens (verbatim values from assets/scss/_theme.scss) ----
+   Used only by the full-page preview overlay below, so a draft renders with
+   the actual deployed palette/theme rather than the dashboard's own
+   --carbon/--forest tokens. Scoped names (--c-*) don't collide with those. */
+:root {
+  --c-accent: #228B22;
+  --c-text:   #1B1B1B;
+  --c-bg:     #FFFEFC;
+  --c-warm:   #704214;
+  --c-text-05: rgb(from var(--c-text) r g b / 0.05);
+  --c-text-10: rgb(from var(--c-text) r g b / 0.1);
+  --c-text-60: rgb(from var(--c-text) r g b / 0.6);
+  --c-text-70: rgb(from var(--c-text) r g b / 0.7);
+  --c-accent-10: rgb(from var(--c-accent) r g b / 0.1);
+  --c-accent-dark: hsl(from var(--c-accent) h s calc(l - 10));
+  --c-warm-30: rgb(from var(--c-warm) r g b / 0.3);
+}
+[data-palette="slate"]   { --c-accent: #3b6ea5; --c-warm: #566072; }
+[data-palette="crimson"] { --c-accent: #a4243b; --c-warm: #7a3b2e; }
+[data-palette="plum"]    { --c-accent: #6b4e8f; --c-warm: #6d5a7a; }
+[data-theme="dark"] { --c-text: #ECEAE3; --c-bg: #1A1A18; }
+
+/* ---- Full-page preview overlay ----
+   Hand-ported markup/CSS mirroring layouts/partials/{nav,footer}.html and
+   layouts/blog|research-interests/single.html, so a draft can be sanity-
+   checked against the real deployed look. Chrome (nav/footer) is rendered
+   for fidelity but not meant to be interactive. */
+.preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow-y: auto;
+  background: var(--c-bg);
+}
+.preview-overlay-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.preview-page { display: flex; flex-direction: column; min-height: 100%; }
+.preview-overlay .site-header, .preview-overlay .footer { pointer-events: none; }
+
+.preview-overlay .container { max-width: 1024px; margin: 0 auto; padding: 0 24px; }
+.preview-overlay main.container { padding-top: 40px; flex: 1 0 auto; width: 100%; }
+
+.preview-overlay .site-header { background: var(--c-bg); border-bottom: 1px solid var(--c-text-10); }
+.preview-overlay .nav-container { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
+.preview-overlay .nav-brand { font-weight: 700; font-size: 1.25rem; color: var(--c-accent); }
+.preview-overlay .nav-links { display: flex; gap: 24px; align-items: center; }
+.preview-overlay .nav-links a { color: var(--c-text); font-weight: 400; text-decoration: none; }
+.preview-overlay .nav-links a.active { color: var(--c-accent); font-weight: 500; }
+.preview-overlay .lang-switch summary { list-style: none; color: var(--c-text); }
+.preview-overlay .lang-switch summary::after { content: " \25be"; }
+.preview-overlay .theme-toggle { background: none; border: none; font-size: 1.1rem; color: var(--c-text); }
+
+.preview-overlay .footer { background: var(--c-bg); padding: 40px 0; text-align: center; border-top: 1px solid var(--c-text-10); }
+.preview-overlay .footer-container { color: var(--c-text-60); font-size: 0.9rem; }
+
+.preview-overlay .blog-post { max-width: 720px; margin: 0 auto; }
+.preview-overlay .post-header { margin-bottom: 3rem; text-align: center; }
+.preview-overlay .post-title { font-size: 2.5rem; margin-bottom: 1rem; line-height: 1.2; color: var(--c-text); }
+.preview-overlay .post-meta { color: var(--c-text-60); font-size: 0.95rem; margin-bottom: 1.5rem; }
+.preview-overlay .post-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.preview-overlay .tag-pill { background-color: var(--c-accent-10); color: var(--c-accent); padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 500; text-decoration: none; }
+
+.preview-overlay .page-header h1 { color: var(--c-accent); margin-bottom: 16px; }
+.preview-overlay .interest-single { max-width: 720px; margin: 0 auto; }
+.preview-overlay .interest-lead { font-size: 1.15rem; color: var(--c-warm); font-style: italic; margin-bottom: 1.5rem; max-width: 65ch; }
+
+.preview-overlay .post-content { font-size: 1.1rem; line-height: 1.7; color: var(--c-text); }
+.preview-overlay .post-content h2, .preview-overlay .post-content h3, .preview-overlay .post-content h4 { margin-top: 2.5rem; color: var(--c-text); }
+.preview-overlay .post-content p { margin-bottom: 1.5rem; }
+.preview-overlay .post-content a { color: var(--c-accent); text-decoration: underline; text-underline-offset: 2px; }
+.preview-overlay .post-content a:hover { color: var(--c-accent-dark); }
+.preview-overlay .post-content blockquote { border-left: 4px solid var(--c-warm-30); margin: 2rem 0; padding-left: 1.5rem; color: var(--c-text-70); font-style: italic; }
+.preview-overlay .post-content pre { background-color: #f6f8fa; padding: 1.5rem; border-radius: 8px; overflow-x: auto; font-size: 0.9rem; margin-bottom: 1.5rem; border: 1px solid var(--c-text-05); }
+.preview-overlay .post-content code { background-color: var(--c-text-05); padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+.preview-overlay .post-content pre code { background-color: transparent; padding: 0; }
+.preview-overlay .post-content ul, .preview-overlay .post-content ol { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+.preview-overlay .post-content li { margin-bottom: 0.5rem; }
+.preview-overlay .post-content img { display: block; width: 100%; height: auto; }
+.preview-overlay .post-content hr { margin: 2rem 0; border: none; border-top: 1px solid var(--c-text-10); }
 
 .sticky-actions {
   position: sticky;

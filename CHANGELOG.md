@@ -3,6 +3,64 @@
 All notable changes to this template are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com).
 
+## [Unreleased]
+
+## [1.1.0] - Multi-session GitHub-mode dashboard + reliability fixes
+
+### Added
+- **Per-session branches + autosave (GitHub mode, issue #2).** Each open dashboard
+  tab now works on its own `dashboard/<id>` branch instead of committing straight to
+  `main`, so concurrent managers no longer race on the same ref. ~10s after any
+  staged edit, a silent autosave checkpoint is pushed to that branch (recovery if
+  the tab crashes or closes); the explicit **Commit** button pushes the latest
+  edits there too, then opens a pull request to `main` (or lets an existing one
+  pick up the new commits) - a **PR #N** link appears next to Commit once one
+  exists. Local mode (`cms-server.py`) is unchanged - no session branches, no
+  autosave, commits go straight to your local repo as before.
+- **Dashboard: full-page preview overlay.** An **Open preview** button on the
+  blog-post and research-interest editors opens a full-page, non-interactive replica
+  of the deployed page (real nav, footer, post/interest layout and typography),
+  live-updating as you type and themed via the dashboard's own palette/dark-mode
+  state. Hand-ported from the site's partials/SCSS since the standalone admin page
+  doesn't run Hugo's build.
+- **Permanent placeholder image.** `static/images/placeholder.jpg`, a real photo
+  downloaded from Unsplash, for reuse anywhere a stable demo image is needed.
+
+### Changed
+- **Markdown split editor.** Each pane (source / preview) is now labeled at heading
+  size, the source textarea has a placeholder, and the preview pane's typography
+  mirrors the real published post (prose sizing, headings, blockquote, code, images,
+  and proper margin around in-content `---` dividers).
+- **Blog post Date field.** Now a native date picker instead of free text; legacy
+  full-timestamp frontmatter (e.g. `2025-01-01T09:00:00Z`) is truncated to
+  `YYYY-MM-DD` on load.
+- **`second-post*.md` demo content.** Replaced the "Hello world!" stub with 7
+  paragraphs of placeholder copy and the new example image, so it's showcase-ready.
+- **GitHub-mode reads now follow the active session branch.** Once a tab has a
+  session branch, file lists and content reads come from it (not always `main`),
+  so the editor reflects your own in-progress work instead of looking stale right
+  after you commit.
+- **Required PAT permission (GitHub mode).** The login help text and the
+  "Authorize with GitHub" deep-link now also call for **Pull requests: Read and
+  write**, needed to open the PR your edits land in. Tokens saved before this
+  change will need to be regenerated with that permission added.
+
+### Fixed
+- **Session branch lost its prefix on reload (GitHub mode).** Reopening or
+  reloading a dashboard tab after its session branch already existed pointed
+  reads at a ref named after the bare session id instead of `dashboard/<id>`,
+  failing with "no commit found for the ref \<id\>".
+- **Commit could fail with "not a fast forward" and open no PR.** Pushing to the
+  session branch read its current tip and moved it in two separate steps with no
+  retry; if the branch moved in between (e.g. an autosave landing moments
+  earlier), the push failed outright. Now retries up to 3 times against the
+  branch's latest tip before giving up.
+- **Dashboard could keep running stale JS after a deploy.** `admin.js`/`admin.css`
+  aren't part of Hugo's asset pipeline, so they weren't fingerprinted like
+  `main.js` - GitHub Pages' default ~10min cache on them could leave an open tab
+  on outdated code with no visible sign anything was wrong. The deploy workflow
+  now tags both with the commit SHA as a `?v=` query string.
+
 ## [1.0.0] - First public distribution, Ready for alpha test
 
 ### Added
