@@ -13,6 +13,15 @@
     Being linguistically correct is a minimal requirement, as it guarantees that the thought is comprehensible by all the language speakers, which in turn means a thought is verified to be reachable by multiple persons. Linguistic expressibility is sometimes a big hurdle for a novel thought to pass, because the thought underneath might be never expressed in language before. Some ideas are hardly expressible, either it has not enough words to express and restore (like subjective taste experiences or newly made theories), or it is practically too delicate to elaborate in words (like expressing dance moves in words). Thus in some ways, language format itself is a bottleneck filter of thoughts when it comes to thought machines.
 
     We need to examine more on what makes two ideas coherent, and how do we induce the next with the given. We need to examine if a thought is discrete, comparable, sortable, decomposable, partial-modifiable, reusable. After that, we need to find what pathways makes the next coherent statements. 
+
+    ---
+    I want to distinguish a piece of thought apart from its corresponding linguistic expression. Current LLM models equate a model's thought to its linguistic form, and try to imitate the reasoning step by approximating the logical flow that can be found in linguistic pattern of documents. 
+
+    I argue that most of the semantic processing is omitted on the expressed text. We should consider those sentences are intermediate checkpoints of the thoughts. We externalize the meaningful checkpoints of thought process and use that as the next foundational step. In other words, there are a lot being processed between two consecutive sentences, which are not seen just by the checkpoints.
+
+    Rather, I want to percieve language as a reconstruction blueprint of thoughts. We are not thinking on linguistic patterns; it is simply note taking of thought processes, which are explained in a way a non-thinker (listener or oneself who lost track of the thought) can revive the checkpoint of thoughts. 
+
+    Therefore, I want to build a dynamic medium of thoughts, which are self-developable(morphable) to the next thought, and sometimes translated into linguistic form by a specific linguistic machine.
 - title: Reasoning & the Philosophy of Science
   summary: What the history of physics can teach us about interpreting learned representations.
   details: |
