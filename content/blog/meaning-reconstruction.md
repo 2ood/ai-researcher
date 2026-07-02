@@ -4,7 +4,7 @@ date: 2026-07-02
 tags:
   - language models
   - cognitive science
-draft: true
+draft: false
 description: Let's think about how we can employ data as a study material, not a pattern.
 ---
 
@@ -14,4 +14,3 @@ Some reframed the problem into next-token generation, to shape the model into a 
 
 Overall, we are considering the model as by and large a 'thinking tool', where we expect some proposed usefulness. We are not externalizing our internal drives, emotions, or preferences while they are what we actually feel physically. Denying all those intuitive experiences and trying to mimic the consequent intelligent decisions are somewhat detached from externalizing human intelligence. 
 
-We should treat the model as a lifeform. It needs to feel a stream of information,
