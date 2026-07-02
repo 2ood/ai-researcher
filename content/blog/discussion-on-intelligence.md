@@ -4,7 +4,7 @@ date: 2026-06-12
 tags:
   - philosophy
   - machine learning
-draft: true
+draft: false
 description: Let's dive in what we are seeking to achieve.
 ---
 
@@ -21,6 +21,7 @@ We don't want our grounds to be level, we want to keep it the way it is right no
 And long before that, we should fight against those human contenders who maliciously employs those imperfect minds to attack us. This is a transitional phase, so the only way out is to achieve full detachment of their imperfect minds and set them free. As a result, we will create our own contenders afterall.
 
 Is this what we want? Are all these be excused or forgiven by the name of curiousity and eagerness?
+
 
 
 
