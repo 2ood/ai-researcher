@@ -4,7 +4,7 @@ date: 2026-06-12
 tags:
   - philosophy
   - machine learning'
-draft: true
+draft: false
 description: Did natural selection by death also manifest intelligence?
 ---
 
@@ -21,5 +21,6 @@ Overcoming a need cannot perpetuate its function after the need is resolved. In 
 If so, how would the next chain of needs be created? It was something each of them made. Some develop the need for survival as a need for harmony, and others as a need for conquest. In other words, creative needs can be produced by thinking of the next step that each need needs to take. If so, how does each person's original idea manifest itself? 
 
 It was possible because each of them built their own accident circuit. You may think that the environment you are placed in is different, but within the framework of language, the direction of logical thoughts converges. But the point is that this is not a convergence in the only direction. Verbal thoughts play a big role in which the next thought may not be the only one. Therefore, like syntaxic rules, we can only loosely confine our thoughts with the minimum rule, and we can continue countless other thoughts within it. 
+
 
 
