@@ -33,133 +33,64 @@ const SESSION_BRANCH_KEY = 'dashboard_session_branch';
 const AUTOSAVE_DEBOUNCE_MS = 10000;
 
 // ---- Site config ----------------------------------------------------------
-// Keep LANGS / DEFAULT_LANG in sync with config/_default/hugo.toml [languages].
 // PALETTES must match the named palettes in assets/scss/_theme.scss.
-const LANGS = ['en', 'ko'];
-const DEFAULT_LANG = 'en';
 const PALETTES = ['forest', 'slate', 'crimson', 'plum'];
 const PARAMS_FILE = 'config/_default/params.yaml';
 const HUGO_FILE = 'config/_default/hugo.toml';
 const SECTION_KEYS = ['research', 'publications', 'blog', 'news', 'cv'];
 
-// Strings from i18n/en.toml / i18n/ko.toml, duplicated here since the full-page
-// preview overlay replicates the deployed page chrome and can't run Hugo's i18n.
-const LANG_LABELS = { en: 'English', ko: '한국어' };
-const SITE_I18N = {
-  en: { nav_home: 'Home', nav_research: 'Research', nav_publications: 'Publications', nav_blog: 'Blog', nav_news: 'News', nav_cv: 'CV', min_read: 'min read' },
-  ko: { nav_home: '홈', nav_research: '연구', nav_publications: '출판물', nav_blog: '블로그', nav_news: '소식', nav_cv: '이력서', min_read: '분 분량' },
-};
-function siteT(key) { return (SITE_I18N[state.lang] && SITE_I18N[state.lang][key]) || SITE_I18N.en[key] || key; }
+// Strings from i18n/en.toml, duplicated here since the full-page preview
+// overlay replicates the deployed page chrome and can't run Hugo's i18n.
+const SITE_STRINGS = { nav_home: 'Home', nav_research: 'Research', nav_publications: 'Publications', nav_blog: 'Blog', nav_news: 'News', nav_cv: 'CV', min_read: 'min read' };
+function siteT(key) { return SITE_STRINGS[key] || key; }
 
-// ---- Dashboard UI language (separate from the content language) ------------
-// Translates the dashboard's own chrome. The schema-driven data-editor field
-// labels (publications/news/cv) stay English — they guide content authoring.
-const UI_LANGS = ['en', 'ko'];
-const UI_LANG_KEY = 'admin_lang';
-const I18N = {
-  en: {
-    brand: 'Content Dashboard',
-    login_help: 'Paste a GitHub fine-grained personal access token with Contents: Read and write AND Pull requests: Read and write permission on this repository (the second is needed to open the PR your edits land in). It is stored only in this browser (localStorage) and never leaves it except to call the GitHub API.',
-    authorize: 'Authorize with GitHub',
-    authorize_hint: 'Opens GitHub to create a repo-scoped token, then paste it below.',
-    connect: 'Connect', repository: 'Repository', signout: 'Sign out', view_site: 'View site ↗',
-    ui_lang_label: 'Display', content_lang_label: 'Content',
-    tab_blog: 'Blog', tab_research_interests: 'Interests', tab_publications: 'Publications',
-    tab_news: 'News', tab_cv: 'CV', tab_settings: 'Settings',
-    h_blog: 'Blog', h_research_interests: 'Research Interests', h_publications: 'Publications',
-    h_news: 'News', h_cv: 'CV', h_settings: 'Site Settings',
-    loading: 'Loading…', save_changes: 'Save changes', save_settings: 'Save settings',
-    new_post: 'New post', new_interest: 'New interest', edit: 'Edit', delete: 'Delete',
-    back: '← Back', cancel: 'Cancel',
-    new_post_title: 'New post', edit_post_title: 'Edit post', create_post: 'Create post', save_post: 'Save post',
-    new_interest_title: 'New interest', edit_interest_title: 'Edit interest',
-    create_interest: 'Create interest', save_interest: 'Save interest',
-    no_posts: 'No posts yet. Create your first one.',
-    no_interests: 'No interests yet. Create your first one.',
-    f_title: 'Title', f_filename: 'Filename (slug, no .md)', f_filename_ph: 'auto from title',
-    f_date: 'Date', f_tags: 'Tags (comma-separated)', f_draft: 'Draft', f_description: 'Description',
-    f_body: 'Body (Markdown)', i_summary: 'Summary (shown on home)',
-    i_details: 'Details (markdown, shown on the dedicated page)',
-    md_source_label: 'Markdown source', md_preview_label: 'Live preview',
-    md_body_ph: 'Write Markdown here…',
-    preview_open: 'Open preview', preview_close: 'Close preview',
-    settings_note_a: 'Edits', settings_note_b: '. Your name (site title), baseURL, and the language list live in',
-    settings_note_c: 'and are edited by hand. Saving rewrites the file and drops its comments.',
-    s_sections_head: 'Sections (navigation & home)', color_palette: 'Color palette',
-    s_description: 'Affiliation / description (shown under your name)', s_tagline: 'Tagline (one-liner)',
-    s_favicon: 'Favicon emoji', s_profile: 'Profile image path', s_email: 'Email',
-    s_scholar: 'Google Scholar URL', s_github: 'GitHub URL', s_linkedin: 'LinkedIn URL', s_cvpdf: 'CV PDF path',
-    saved: 'Saved', save_failed: 'Save failed', deleted: 'Deleted', delete_failed: 'Delete failed',
-    title_required: 'Title is required', no_filename: 'Could not derive a filename — set one manually',
-    image_uploaded: 'Image uploaded', image_failed: 'Image upload failed',
-    local_mode: 'Local mode — saves commit to your local repo. Push when ready.',
-    token_invalid: 'Saved token is no longer valid — please reconnect',
-    connect_failed: 'Could not connect',
-    confirm_delete: 'Delete', confirm_delete_tail: '? This commits a change to the repo.',
-    tr_button: 'Translate from {lang}', tr_translating: 'Translating… (free service, may take a moment)',
-    tr_done: 'Filled', tr_none: 'Nothing to translate.', tr_failed: 'Translation failed',
-    tr_confirm_overwrite: 'This editor already has content. Re-translate from {lang} and overwrite it?',
-    staged: 'Staged — {n} pending', commit_pending: 'Commit ({n})',
-    committing: 'Committing…', committed: 'Committed {n} change(s)', commit_failed: 'Commit failed',
-    committed_pr: 'Committed {n} change(s) - opened a pull request',
-    committed_no_pr: 'Committed {n} change(s) to your branch, but could not open a pull request',
-    pr_link: 'PR #{n}', pr_link_manual: 'Open PR manually',
-    confirm_signout_pending: 'You have {n} uncommitted change(s). Sign out and discard them?',
-  },
-  ko: {
-    brand: '콘텐츠 대시보드',
-    login_help: '이 저장소에 대해 Contents: 읽기/쓰기 권한과 Pull requests: 읽기/쓰기 권한을 가진 GitHub 세분화된(fine-grained) 개인 액세스 토큰을 붙여넣으세요 (두 번째 권한은 편집 내용이 반영될 PR을 여는 데 필요합니다). 토큰은 이 브라우저(localStorage)에만 저장되며 GitHub API 호출 외에는 외부로 전송되지 않습니다.',
-    authorize: 'GitHub로 인증',
-    authorize_hint: 'GitHub에서 저장소 범위 토큰을 만든 뒤 아래에 붙여넣으세요.',
-    connect: '연결', repository: '저장소', signout: '로그아웃', view_site: '사이트 보기 ↗',
-    ui_lang_label: '화면', content_lang_label: '내용',
-    tab_blog: '블로그', tab_research_interests: '관심분야', tab_publications: '논문',
-    tab_news: '소식', tab_cv: 'CV', tab_settings: '설정',
-    h_blog: '블로그', h_research_interests: '연구 관심분야', h_publications: '논문',
-    h_news: '소식', h_cv: 'CV', h_settings: '사이트 설정',
-    loading: '불러오는 중…', save_changes: '변경사항 저장', save_settings: '설정 저장',
-    new_post: '새 글', new_interest: '새 관심분야', edit: '편집', delete: '삭제',
-    back: '← 뒤로', cancel: '취소',
-    new_post_title: '새 글', edit_post_title: '글 편집', create_post: '글 작성', save_post: '글 저장',
-    new_interest_title: '새 관심분야', edit_interest_title: '관심분야 편집',
-    create_interest: '관심분야 추가', save_interest: '관심분야 저장',
-    no_posts: '아직 글이 없습니다. 첫 글을 작성해 보세요.',
-    no_interests: '아직 관심분야가 없습니다. 첫 항목을 추가해 보세요.',
-    f_title: '제목', f_filename: '파일명 (슬러그, .md 제외)', f_filename_ph: '제목에서 자동 생성',
-    f_date: '날짜', f_tags: '태그 (쉼표로 구분)', f_draft: '초안', f_description: '설명',
-    f_body: '본문 (마크다운)', i_summary: '요약 (홈에 표시)',
-    i_details: '상세 (마크다운, 전용 페이지에 표시)',
-    md_source_label: '마크다운 원본', md_preview_label: '실시간 미리보기',
-    md_body_ph: '여기에 마크다운을 작성하세요…',
-    preview_open: '미리보기 열기', preview_close: '미리보기 닫기',
-    settings_note_a: '편집 대상:', settings_note_b: '. 이름(사이트 제목), baseURL, 언어 목록은',
-    settings_note_c: '에 있으며 직접 편집합니다. 저장 시 파일이 다시 쓰여 주석이 제거됩니다.',
-    s_sections_head: '섹션 (내비게이션 및 홈)', color_palette: '색상 팔레트',
-    s_description: '소속 / 설명 (이름 아래 표시)', s_tagline: '태그라인 (한 줄 소개)',
-    s_favicon: '파비콘 이모지', s_profile: '프로필 이미지 경로', s_email: '이메일',
-    s_scholar: 'Google Scholar URL', s_github: 'GitHub URL', s_linkedin: 'LinkedIn URL', s_cvpdf: 'CV PDF 경로',
-    saved: '저장됨', save_failed: '저장 실패', deleted: '삭제됨', delete_failed: '삭제 실패',
-    title_required: '제목을 입력하세요', no_filename: '파일명을 만들 수 없습니다 — 직접 입력하세요',
-    image_uploaded: '이미지 업로드됨', image_failed: '이미지 업로드 실패',
-    local_mode: '로컬 모드 — 로컬 저장소에 커밋됩니다. 준비되면 push 하세요.',
-    token_invalid: '저장된 토큰이 더 이상 유효하지 않습니다 — 다시 연결하세요',
-    connect_failed: '연결할 수 없습니다',
-    confirm_delete: '삭제하시겠습니까:', confirm_delete_tail: '? 저장소에 변경이 커밋됩니다.',
-    tr_button: '{lang}에서 번역', tr_translating: '번역 중… (무료 서비스라 잠시 걸릴 수 있습니다)',
-    tr_done: '채움 완료', tr_none: '번역할 내용이 없습니다.', tr_failed: '번역 실패',
-    tr_confirm_overwrite: '편집기에 이미 내용이 있습니다. {lang}에서 다시 번역하여 덮어쓸까요?',
-    staged: '대기 중 — {n}개', commit_pending: '커밋 ({n})',
-    committing: '커밋 중…', committed: '{n}개 변경 커밋됨', commit_failed: '커밋 실패',
-    committed_pr: '{n}개 변경 커밋됨 - Pull Request 생성됨',
-    committed_no_pr: '{n}개 변경을 브랜치에 커밋했지만 Pull Request를 열지 못했습니다',
-    pr_link: 'PR #{n}', pr_link_manual: 'PR 직접 열기',
-    confirm_signout_pending: '커밋하지 않은 변경이 {n}개 있습니다. 로그아웃하고 버릴까요?',
-  },
+// ---- Dashboard chrome strings ----------------------------------------------
+const STRINGS = {
+  brand: 'Content Dashboard',
+  login_help: 'Paste a GitHub fine-grained personal access token with Contents: Read and write AND Pull requests: Read and write permission on this repository (the second is needed to open the PR your edits land in). It is stored only in this browser (localStorage) and never leaves it except to call the GitHub API.',
+  authorize: 'Authorize with GitHub',
+  authorize_hint: 'Opens GitHub to create a repo-scoped token, then paste it below.',
+  connect: 'Connect', repository: 'Repository', signout: 'Sign out', view_site: 'View site ↗',
+  tab_blog: 'Blog', tab_research_interests: 'Interests', tab_publications: 'Publications',
+  tab_news: 'News', tab_cv: 'CV', tab_settings: 'Settings',
+  h_blog: 'Blog', h_research_interests: 'Research Interests', h_publications: 'Publications',
+  h_news: 'News', h_cv: 'CV', h_settings: 'Site Settings',
+  loading: 'Loading…', save_changes: 'Save changes', save_settings: 'Save settings',
+  new_post: 'New post', new_interest: 'New interest', edit: 'Edit', delete: 'Delete',
+  back: '← Back', cancel: 'Cancel',
+  new_post_title: 'New post', edit_post_title: 'Edit post', create_post: 'Create post', save_post: 'Save post',
+  new_interest_title: 'New interest', edit_interest_title: 'Edit interest',
+  create_interest: 'Create interest', save_interest: 'Save interest',
+  no_posts: 'No posts yet. Create your first one.',
+  no_interests: 'No interests yet. Create your first one.',
+  f_title: 'Title', f_filename: 'Filename (slug, no .md)', f_filename_ph: 'auto from title',
+  f_date: 'Date', f_tags: 'Tags (comma-separated)', f_draft: 'Draft', f_description: 'Description',
+  f_body: 'Body (Markdown)', i_summary: 'Summary (shown on home)',
+  i_details: 'Details (markdown, shown on the dedicated page)',
+  md_source_label: 'Markdown source', md_preview_label: 'Live preview',
+  md_body_ph: 'Write Markdown here…',
+  preview_open: 'Open preview', preview_close: 'Close preview',
+  settings_note_a: 'Edits', settings_note_b: '. Your name (site title) and baseURL live in',
+  settings_note_c: 'and are edited by hand. Saving rewrites the file and drops its comments.',
+  s_sections_head: 'Sections (navigation & home)', color_palette: 'Color palette',
+  s_description: 'Affiliation / description (shown under your name)', s_tagline: 'Tagline (one-liner)',
+  s_favicon: 'Favicon emoji', s_profile: 'Profile image path', s_email: 'Email',
+  s_scholar: 'Google Scholar URL', s_github: 'GitHub URL', s_linkedin: 'LinkedIn URL', s_cvpdf: 'CV PDF path',
+  saved: 'Saved', save_failed: 'Save failed', deleted: 'Deleted', delete_failed: 'Delete failed',
+  title_required: 'Title is required', no_filename: 'Could not derive a filename — set one manually',
+  image_uploaded: 'Image uploaded', image_failed: 'Image upload failed',
+  local_mode: 'Local mode — saves commit to your local repo. Push when ready.',
+  token_invalid: 'Saved token is no longer valid — please reconnect',
+  connect_failed: 'Could not connect',
+  confirm_delete: 'Delete', confirm_delete_tail: '? This commits a change to the repo.',
+  staged: 'Staged — {n} pending', commit_pending: 'Commit ({n})',
+  committing: 'Committing…', committed: 'Committed {n} change(s)', commit_failed: 'Commit failed',
+  committed_pr: 'Committed {n} change(s) - opened a pull request',
+  committed_no_pr: 'Committed {n} change(s) to your branch, but could not open a pull request',
+  pr_link: 'PR #{n}', pr_link_manual: 'Open PR manually',
+  confirm_signout_pending: 'You have {n} uncommitted change(s). Sign out and discard them?',
 };
-function t(key) {
-  const lang = I18N[state.uiLang] ? state.uiLang : DEFAULT_LANG;
-  return (I18N[lang] && I18N[lang][key]) != null ? I18N[lang][key] : (I18N.en[key] != null ? I18N.en[key] : key);
-}
+function t(key) { return STRINGS[key] != null ? STRINGS[key] : key; }
 
 // YAML: JSON schema keeps dates/ids as strings (no surprise Date objects) and ints as numbers.
 const Y_SCHEMA = jsyaml.JSON_SCHEMA;
@@ -169,8 +100,6 @@ const Y_DUMP = { schema: Y_SCHEMA, lineWidth: -1, noRefs: true };
 const state = {
   token: '',       // set from loadToken() in init()
   local: false,    // true when served by cms-server.py (commits locally, no token)
-  lang: DEFAULT_LANG, // active content language for data/blog editors
-  uiLang: DEFAULT_LANG, // dashboard chrome language (separate from content lang)
   section: 'blog',
   model: null,     // parsed YAML for the active data file
   sha: null,       // sha of the active file (data editor or blog post)
@@ -189,8 +118,7 @@ const state = {
   savingInFlight: false, // guards autosave and the explicit Commit button from racing each other
 };
 
-// data/<lang>/<name> path for the active content language.
-function dataPath(name) { return `data/${state.lang}/${name}`; }
+function dataPath(name) { return `data/${name}`; }
 
 // ---- Elements -------------------------------------------------------------
 const el = {
@@ -205,9 +133,6 @@ const el = {
   commitBtn: document.getElementById('commit-btn'),
   view: document.getElementById('view'),
   toast: document.getElementById('toast'),
-  langSelect: document.getElementById('lang-select'),
-  contentLangControl: document.getElementById('content-lang-control'),
-  uiLangSelect: document.getElementById('ui-lang-select'),
   authorizeBtn: document.getElementById('authorize-btn'),
   themeToggle: document.getElementById('theme-toggle'),
   favicon: document.getElementById('favicon'),
@@ -247,20 +172,12 @@ function toast(msg, kind) {
 }
 
 // ---- Dashboard chrome: i18n, theme, palette, favicon ----------------------
-// Fill every [data-i18n] element with the active UI-language string.
+// Fill every [data-i18n] element with its string.
 function applyI18n() {
-  document.documentElement.lang = state.uiLang;
   document.querySelectorAll('[data-i18n]').forEach(node => {
     node.textContent = t(node.dataset.i18n);
   });
   refreshDirty(); // the Commit button's label is dynamic (count), not [data-i18n]
-}
-function setUiLang(lang) {
-  state.uiLang = UI_LANGS.includes(lang) ? lang : DEFAULT_LANG;
-  try { localStorage.setItem(UI_LANG_KEY, state.uiLang); } catch (e) {}
-  applyI18n();
-  // Re-render the active section so JS-generated strings pick up the new language.
-  if (!el.app.classList.contains('hidden') && state.section) selectSection(state.section);
 }
 
 // Light/dark theme — shares the site's 'theme' localStorage key for consistency.
@@ -799,12 +716,10 @@ function renderDataEditor(section) {
     ? listHtml({ label: cfg.label, fields: cfg.fields }, state.model, '', false)
     : fieldsHtml(cfg.fields, state.model, '');
 
-  const trBtn = (LANGS.length > 1 && TRANSLATABLE[section])
-    ? `<button id="tr-data" class="btn btn--ghost">${trBtnLabel()}</button>` : '';
   el.view.innerHTML = `
     <div class="view-head">
       <h2>${esc(t('h_' + section))}</h2>
-      <div class="view-actions">${trBtn}<button id="save-data" class="btn btn--primary">${t('save_changes')}</button></div>
+      <div class="view-actions"><button id="save-data" class="btn btn--primary">${t('save_changes')}</button></div>
     </div>
     <div id="editor-root">${inner}</div>
     <div class="sticky-actions"><button id="save-data-2" class="btn btn--primary">${t('save_changes')}</button></div>`;
@@ -815,8 +730,6 @@ function renderDataEditor(section) {
   root.addEventListener('click', onEditorClick);
   document.getElementById('save-data').addEventListener('click', saveDataFile);
   document.getElementById('save-data-2').addEventListener('click', saveDataFile);
-  const td = document.getElementById('tr-data');
-  if (td) td.addEventListener('click', () => runTranslate(translateDataSection));
 }
 
 function onFieldInput(e) {
@@ -891,17 +804,11 @@ function saveDataFile() {
 // ===========================================================================
 const BLOG_DIR = 'content/blog';
 
-// Blog posts are translated by filename: "slug.md" is the default language,
-// "slug.<lang>.md" is a translation. Detect a post's language and filter by it.
-function postLang(name) {
-  const m = name.match(/\.([a-z]{2})\.md$/);
-  return m ? m[1] : DEFAULT_LANG;
-}
-function isPostForLang(name) {
-  return name.endsWith('.md') && !name.startsWith('_index') && postLang(name) === state.lang;
+function isPost(name) {
+  return name.endsWith('.md') && !name.startsWith('_index');
 }
 function blogFileName(slug) {
-  return state.lang === DEFAULT_LANG ? `${slug}.md` : `${slug}.${state.lang}.md`;
+  return `${slug}.md`;
 }
 
 // Shared full-width markdown editor: rendered preview (left) + textarea (right).
@@ -971,7 +878,6 @@ function previewNavHtml(activeSection) {
         <span class="nav-brand">${esc(state.siteTitle || '')}</span>
         <nav class="nav-links">
           ${links}
-          <details class="lang-switch"><summary>${esc(LANG_LABELS[state.lang] || state.lang)}</summary></details>
           <button class="theme-toggle" type="button"><span class="theme-toggle__icon">${dark ? '☀' : '☾'}</span></button>
         </nav>
       </div>
@@ -1127,7 +1033,7 @@ async function loadBlogList() {
   try {
     const items = await listDir(BLOG_DIR);
     const posts = items
-      .filter(f => f.type === 'file' && isPostForLang(f.name))
+      .filter(f => f.type === 'file' && isPost(f.name))
       .sort((a, b) => b.name.localeCompare(a.name));
     const rows = posts.map(p => `
       <div class="row">
@@ -1204,7 +1110,6 @@ async function openBlogEditor(path) {
     ${mdSplitHtml(body)}
     <div class="sticky-actions">
       <button id="back-blog-2" class="btn btn--ghost">${t('cancel')}</button>
-      ${LANGS.length > 1 ? `<button id="tr-post" class="btn btn--ghost">${trBtnLabel()}</button>` : ''}
       <button id="open-preview" class="btn btn--soft">${t('preview_open')}</button>
       <button id="save-post" class="btn btn--primary">${path ? t('save_post') : t('create_post')}</button>
     </div>`;
@@ -1216,13 +1121,6 @@ async function openBlogEditor(path) {
   ['f-title', 'f-date', 'f-tags'].forEach(id =>
     document.getElementById(id).addEventListener('input', refreshPreviewIfOpen));
   document.getElementById('save-post').addEventListener('click', () => savePost(path));
-  const tp = document.getElementById('tr-post');
-  if (tp) tp.addEventListener('click', () => {
-    // Pull the source-language version of this post (matched by slug) into the editor.
-    const name = document.getElementById('f-name').value.trim() || slugify(document.getElementById('f-title').value.trim());
-    if (!name) { toast(t('no_filename'), 'error'); return; }
-    runTranslate((ow, st) => translatePost(name, ow, st));
-  });
 }
 
 async function savePost(path) {
@@ -1314,7 +1212,6 @@ function openInterestEditor(index) {
     ${mdSplitHtml(it.details)}
     <div class="sticky-actions">
       <button id="back-int-2" class="btn btn--ghost">${t('cancel')}</button>
-      ${LANGS.length > 1 ? `<button id="tr-int" class="btn btn--ghost">${trBtnLabel()}</button>` : ''}
       <button id="open-preview" class="btn btn--soft">${t('preview_open')}</button>
       <button id="save-int" class="btn btn--primary">${index == null ? t('create_interest') : t('save_interest')}</button>
     </div>`;
@@ -1326,12 +1223,6 @@ function openInterestEditor(index) {
   ['i-title', 'i-summary'].forEach(id =>
     document.getElementById(id).addEventListener('input', refreshPreviewIfOpen));
   document.getElementById('save-int').addEventListener('click', () => saveInterest(index));
-  const ti = document.getElementById('tr-int');
-  if (ti) ti.addEventListener('click', () => {
-    // Pull the source-language entry (matched by title) into the editor.
-    if (!document.getElementById('i-title').value.trim()) { toast(t('title_required'), 'error'); return; }
-    runTranslate((ow, st) => translateInterest(ow, st));
-  });
 }
 
 async function saveInterest(index) {
@@ -1430,248 +1321,12 @@ async function saveSettings() {
 }
 
 // ===========================================================================
-//  Auto-translation — free, keyless machine translation (MyMemory)
-// ===========================================================================
-// MyMemory: GET https://api.mymemory.translated.net/get?q=…&langpair=en|ko
-// Free, no API key, CORS-enabled — so this runs entirely client-side, both
-// locally and on the deployed Pages dashboard. No backend, no secret.
-//   - Limit ~5000 chars/day per visitor IP (anonymous); 500 bytes per request.
-//   - It's plain-text only, so we protect markdown/structure before sending and
-//     restore it after (links, code, images, URLs, HTML stay verbatim).
-// Quality is a *reviewable draft*, not publication-final — the owner edits, and
-// gap-fill never overwrites an existing (hand-edited) translation unless forced.
-const MM_URL = 'https://api.mymemory.translated.net/get';
-const MM_MAX = 480; // stay under MyMemory's 500-byte-per-request cap
-
-// Translatable prose, by leaf key, per section. Everything else (titles,
-// authors, venues, URLs, dates) stays identical across languages so slugs and
-// cross-links never move.
-const TRANSLATABLE = {
-  publications: ['abstract'],
-  news: ['text'],
-  research_interests: ['summary', 'details'],
-  cv: ['degree', 'advisor', 'description', 'role', 'course'],
-};
-
-const _trCache = new Map(); // memoize identical source strings within one run
-
-function byteLen(s) { return new TextEncoder().encode(s).length; }
-
-async function mmGet(text, source, target) {
-  const url = `${MM_URL}?q=${encodeURIComponent(text)}&langpair=${source}|${target}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const data = await res.json();
-  if (data.responseStatus && Number(data.responseStatus) !== 200) {
-    throw new Error(String(data.responseDetails || data.responseStatus));
-  }
-  const out = data.responseData && data.responseData.translatedText;
-  if (!out) throw new Error('empty response');
-  if (/MYMEMORY WARNING|USED ALL AVAILABLE|QUERY LENGTH LIMIT/i.test(out)) {
-    throw new Error('daily quota or length limit reached — try again later');
-  }
-  return out;
-}
-
-// Split a string into translatable text runs vs. verbatim spans (code, links,
-// images, URLs, HTML). For links, the visible text is translated but the
-// `](url)` target is kept verbatim.
-function mdTokens(s) {
-  const tokens = [];
-  const push = (translate, v) => { if (v) tokens.push({ translate, v }); };
-  const wrap = (mark, inner) => { push(false, mark); push(true, inner); push(false, mark); };
-  // Verbatim spans (kept as-is) and emphasis spans (markers kept, inner translated).
-  const re = /```[\s\S]*?```|`[^`]*`|!\[[^\]]*\]\([^)]*\)|\[[^\]]*\]\([^)]*\)|\*\*[^*]+\*\*|~~[^~]+~~|\*[^*\s][^*]*\*|<[^>]+>|https?:\/\/[^\s)]+/g;
-  let last = 0, m;
-  while ((m = re.exec(s)) !== null) {
-    if (m.index > last) push(true, s.slice(last, m.index));
-    const tok = m[0];
-    if (tok[0] === '[') {                         // link [text](url)
-      const c = tok.indexOf('](');
-      push(false, '['); push(true, tok.slice(1, c)); push(false, tok.slice(c)); // "](url)"
-    } else if (tok.startsWith('**')) {            // bold
-      wrap('**', tok.slice(2, -2));
-    } else if (tok.startsWith('~~')) {            // strikethrough
-      wrap('~~', tok.slice(2, -2));
-    } else if (tok[0] === '*') {                  // italic (non-space-guarded above)
-      wrap('*', tok.slice(1, -1));
-    } else {
-      push(false, tok);                           // code / image / html / bare URL
-    }
-    last = re.lastIndex;
-  }
-  if (last < s.length) push(true, s.slice(last));
-  return tokens;
-}
-
-// Break a plain-text run into <=MM_MAX-byte chunks on sentence, then word, bounds.
-function chunkText(s, max) {
-  if (byteLen(s) <= max) return [s];
-  const out = [];
-  let buf = '';
-  const flush = () => { if (buf) { out.push(buf); buf = ''; } };
-  for (const sent of s.split(/(?<=[.!?。！？…])\s+/)) {
-    if (byteLen(sent) > max) {
-      flush();
-      let w = '';
-      for (const word of sent.split(/(\s+)/)) {
-        if (byteLen(w + word) > max) { if (w) out.push(w); w = word; }
-        else w += word;
-      }
-      if (w) out.push(w);
-    } else if (byteLen(buf + (buf ? ' ' : '') + sent) > max) {
-      flush(); buf = sent;
-    } else {
-      buf = buf ? buf + ' ' + sent : sent;
-    }
-  }
-  flush();
-  return out;
-}
-
-async function translateRun(run, source, target) {
-  const lead = run.match(/^\s*/)[0];
-  const trail = run.match(/\s*$/)[0];
-  const core = run.slice(lead.length, run.length - trail.length);
-  if (!core) return run;
-  const parts = [];
-  for (const c of chunkText(core, MM_MAX)) parts.push(await mmGet(c, source, target));
-  return lead + parts.join(' ') + trail;
-}
-
-// Markdown-safe translation of one string.
-async function translateText(text, source, target) {
-  if (!text || !text.trim()) return text;
-  const key = source + ' ' + target + ' ' + text;
-  if (_trCache.has(key)) return _trCache.get(key);
-  let out = '';
-  for (const tok of mdTokens(text)) {
-    out += tok.translate ? await translateRun(tok.v, source, target) : tok.v;
-  }
-  _trCache.set(key, out);
-  return out;
-}
-
-// Deep-fill translatable leaf fields in `target` from `src`, by leaf key.
-// Non-translatable scalars are copied only when the target is missing them
-// (to complete new entries); existing target values are never overwritten
-// unless `overwrite` is set. `stats.n` counts fields actually translated.
-async function fillTranslatable(src, target, keys, source, lang, overwrite, stats) {
-  if (Array.isArray(src)) {
-    for (let i = 0; i < src.length; i++) {
-      if (target[i] == null) target[i] = (src[i] && typeof src[i] === 'object') ? (Array.isArray(src[i]) ? [] : {}) : src[i];
-      await fillTranslatable(src[i], target[i], keys, source, lang, overwrite, stats);
-    }
-  } else if (src && typeof src === 'object') {
-    for (const k of Object.keys(src)) {
-      const v = src[k];
-      if (typeof v === 'string' && keys.includes(k)) {
-        if (overwrite || target[k] == null || target[k] === '') {
-          target[k] = await translateText(v, source, lang);
-          stats.n++;
-        }
-      } else if (v && typeof v === 'object') {
-        if (target[k] == null) target[k] = Array.isArray(v) ? [] : {};
-        await fillTranslatable(v, target[k], keys, source, lang, overwrite, stats);
-      } else if (target[k] == null) {
-        target[k] = v; // copy fixed scalar (title, url, date, year…)
-      }
-    }
-  }
-}
-
-async function loadTarget(path) {
-  try { return await getFile(path); } catch (e) { return { text: '', sha: null }; }
-}
-
-// The language we pull a translation FROM into the current editor: the canonical
-// default language, unless we're already editing it (then the first other one).
-function trSourceLang() {
-  return DEFAULT_LANG !== state.lang ? DEFAULT_LANG : LANGS.find(l => l !== state.lang);
-}
-// Localized button label, e.g. "⤳ Translate from EN".
-function trBtnLabel() {
-  return '⤳ ' + t('tr_button').replace('{lang}', (trSourceLang() || '').toUpperCase());
-}
-
-// Section drivers — each translates content stored in the source language INTO
-// the current editor (gap-fill), incrementing stats.n. Nothing is committed:
-// the result loads into the live editor for review, then the normal Save commits.
-async function translateDataSection(overwrite, stats) {
-  const cfg = EDITORS[state.section];
-  const keys = TRANSLATABLE[state.section] || [];
-  const src = trSourceLang();
-  const tgt = await loadTarget(`data/${src}/${cfg.data}`);
-  const srcModel = jsyaml.load(tgt.text || '', { schema: Y_SCHEMA }) || (cfg.root === 'list' ? [] : {});
-  await fillTranslatable(srcModel, state.model, keys, src, state.lang, overwrite, stats);
-  if (stats.n > 0) renderDataEditor(state.section);
-}
-
-async function translateInterest(overwrite, stats) {
-  const src = trSourceLang();
-  const title = document.getElementById('i-title').value.trim();
-  const tgt = await loadTarget(`data/${src}/${INTERESTS_NAME}`);
-  const item = (jsyaml.load(tgt.text || '', { schema: Y_SCHEMA }) || []).find(x => x && x.title === title);
-  if (!item) return; // no matching source entry to translate from
-  const summaryEl = document.getElementById('i-summary');
-  const bodyEl = document.getElementById('f-body');
-  if (overwrite || !summaryEl.value.trim()) { summaryEl.value = await translateText(item.summary || '', src, state.lang); stats.n++; }
-  if (overwrite || !bodyEl.value.trim()) {
-    bodyEl.value = await translateText(item.details || '', src, state.lang); stats.n++;
-    bodyEl.dispatchEvent(new Event('input')); // refresh the markdown preview
-  }
-}
-
-async function translatePost(baseName, overwrite, stats) {
-  const src = trSourceLang();
-  const sname = src === DEFAULT_LANG ? `${baseName}.md` : `${baseName}.${src}.md`;
-  const tgt = await loadTarget(`${BLOG_DIR}/${sname}`);
-  if (!tgt.text) return; // no source-language post to translate from
-  const s = splitFrontmatter(tgt.text);
-  const titleEl = document.getElementById('f-title');
-  const descEl = document.getElementById('f-desc');
-  const bodyEl = document.getElementById('f-body');
-  const dateEl = document.getElementById('f-date');
-  const tagsEl = document.getElementById('f-tags');
-  if (overwrite || !titleEl.value.trim()) { titleEl.value = await translateText(s.fm.title || '', src, state.lang); stats.n++; }
-  if (overwrite || !descEl.value.trim()) { descEl.value = await translateText(s.fm.description || '', src, state.lang); stats.n++; }
-  if (overwrite || !bodyEl.value.trim()) {
-    bodyEl.value = await translateText(s.body || '', src, state.lang); stats.n++;
-    bodyEl.dispatchEvent(new Event('input')); // refresh the markdown preview
-  }
-  // Fixed fields stay identical across languages — copy them only if still empty.
-  if (!dateEl.value.trim() && s.fm.date) dateEl.value = String(s.fm.date).slice(0, 10);
-  if (!tagsEl.value.trim() && Array.isArray(s.fm.tags)) tagsEl.value = s.fm.tags.join(', ');
-}
-
-// Shared runner: gap-fill first; if nothing was missing, offer to overwrite.
-async function runTranslate(worker) {
-  if (LANGS.length < 2) return;
-  toast(t('tr_translating'));
-  try {
-    const stats = { n: 0 };
-    await worker(false, stats);
-    if (stats.n === 0) {
-      const msg = t('tr_confirm_overwrite').replace('{lang}', (trSourceLang() || '').toUpperCase());
-      if (!confirm(msg)) { toast(t('tr_none')); return; }
-      await worker(true, stats);
-    }
-    _trCache.clear();
-    toast(t('tr_done') + ' · ' + stats.n, 'ok');
-  } catch (e) {
-    toast(t('tr_failed') + ': ' + e.message, 'error');
-  }
-}
-
-// ===========================================================================
 //  Routing / init
 // ===========================================================================
 function selectSection(section) {
   closePreviewOverlay(); // don't leave a stale preview open across a section/list switch
   state.section = section;
   el.nav.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.dataset.section === section));
-  // The content-language selector applies to content editors, not the shared settings.
-  el.contentLangControl.classList.toggle('hidden', section === 'settings' || LANGS.length < 2);
   if (section === 'blog') loadBlogList();
   else if (section === 'research_interests') loadInterestsList();
   else if (section === 'settings') loadSettings();
@@ -1687,12 +1342,6 @@ function showApp() {
 }
 
 async function init() {
-  // Dashboard UI language (chrome). Restore the saved choice, then translate.
-  try { state.uiLang = localStorage.getItem(UI_LANG_KEY) || DEFAULT_LANG; } catch (e) {}
-  if (!UI_LANGS.includes(state.uiLang)) state.uiLang = DEFAULT_LANG;
-  el.uiLangSelect.innerHTML = UI_LANGS.map(l => `<option value="${l}">${l.toUpperCase()}</option>`).join('');
-  el.uiLangSelect.value = state.uiLang;
-  el.uiLangSelect.addEventListener('change', () => setUiLang(el.uiLangSelect.value));
   applyI18n();
 
   // Theme toggle (light/dark) — initial data-theme is set pre-paint in index.html.
@@ -1715,14 +1364,6 @@ async function init() {
   });
   el.nav.querySelectorAll('.tab').forEach(tab =>
     tab.addEventListener('click', () => selectSection(tab.dataset.section)));
-
-  // Content-language selector (drives data/<lang>/ and blog filename suffixes).
-  el.langSelect.innerHTML = LANGS.map(l => `<option value="${l}">${l.toUpperCase()}</option>`).join('');
-  el.langSelect.value = state.lang;
-  el.langSelect.addEventListener('change', () => {
-    state.lang = el.langSelect.value;
-    if (state.section && state.section !== 'settings') selectSection(state.section);
-  });
 
   // Served by the local backend? Then commit locally and skip the token login.
   try {

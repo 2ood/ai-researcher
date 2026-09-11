@@ -237,23 +237,7 @@ code {
 .field-row { display: flex; gap: 1rem; flex-wrap: wrap; }
 .field-row > .field { flex: 1; min-width: 160px; }
 
-/* ---- Language selectors (display vs content) + Site Settings ---- */
-.lang-control { display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; }
-.lang-control__label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.lang-select {
-  font: inherit;
-  padding: 0.25rem 0.4rem;
-  border: 1px solid rgb(from var(--carbon) r g b / 0.2);
-  border-radius: 4px;
-  background: var(--porcelain);
-  color: var(--carbon);
-}
+/* ---- Site Settings ---- */
 .settings-note { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
 .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.25rem; }
 .settings-grid .field:first-child { grid-column: 1 / -1; }
@@ -447,8 +431,6 @@ code {
 .preview-overlay .nav-links { display: flex; gap: 24px; align-items: center; }
 .preview-overlay .nav-links a { color: var(--c-text); font-weight: 400; text-decoration: none; }
 .preview-overlay .nav-links a.active { color: var(--c-accent); font-weight: 500; }
-.preview-overlay .lang-switch summary { list-style: none; color: var(--c-text); }
-.preview-overlay .lang-switch summary::after { content: " \25be"; }
 .preview-overlay .theme-toggle { background: none; border: none; font-size: 1.1rem; color: var(--c-text); }
 
 .preview-overlay .footer { background: var(--c-bg); padding: 40px 0; text-align: center; border-top: 1px solid var(--c-text-10); }

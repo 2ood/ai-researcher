@@ -10,7 +10,7 @@
   {{ with .Params.summary }}<p class="interest-lead">{{ . }}</p>{{ end }}
   {{ with .Content }}<div class="interest-body post-content">{{ . }}</div>{{ end }}
 
-  {{ with where (index hugo.Data site.Language.Lang).publications "interest" .Title }}
+  {{ with where hugo.Data.publications "interest" .Title }}
   <section class="related-pubs">
     <h2>{{ i18n "related_publications" }}</h2>
     <ul>

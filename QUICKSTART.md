@@ -1,7 +1,5 @@
 # Quickstart & Walkthroughs
 
-**English** · [한국어](QUICKSTART.ko.md)
-
 Hand-held, step-by-step guides for the common tasks. The
 [README](README.md#quickstart-5-minutes) has the 30-second version; this is the
 detailed one. New here? Start with **First deploy**.
@@ -12,9 +10,8 @@ detailed one. New here? Start with **First deploy**.
 2. [How `python init.py` works](#2-how-python-initpy-works)
 3. [Write a blog post](#3-write-a-blog-post)
 4. [Edit publications, news & CV](#4-edit-publications-news--cv)
-5. [Add a language](#5-add-a-language)
-6. [Configure from the dashboard](#6-configure-from-the-dashboard)
-7. [Common mistakes & gotchas](#7-common-mistakes--gotchas)
+5. [Configure from the dashboard](#5-configure-from-the-dashboard)
+6. [Common mistakes & gotchas](#6-common-mistakes--gotchas)
 
 ---
 
@@ -43,8 +40,8 @@ fails). Git, a GitHub account, and Python 3 if you want the browser dashboard.
    ```
 
 4. **Replace the demo content** (the *Joomo Makguli* persona). At minimum:
-   - `content/_index.md` - your bio (and `_index.<lang>.md` per language)
-   - `data/<lang>/*.yml` - publications, news, cv, research_interests
+   - `content/_index.md` - your bio
+   - `data/*.yml` - publications, news, cv, research_interests
    - `static/images/profile.svg` - your photo (any image; update `profileImage`)
    - `static/cv.pdf` - your CV PDF
    Edit these by hand, or use the dashboard ([§3](#3-write-a-blog-post),
@@ -103,16 +100,14 @@ keep it**:
 | Color palette | `params.yaml` `palette` | `forest` / `slate` / `crimson` / `plum` |
 
 Because the edits are surgical and Enter-to-keep, you can run it again any time to
-change one value without disturbing the rest. It does **not** touch content,
-languages, or per-language overrides - those stay manual (see
-[§5](#5-add-a-language)).
+change one value without disturbing the rest. It does **not** touch content -
+that stays manual.
 
 ---
 
 ## 3. Write a blog post
 
-Posts live in `content/blog/`. A post is `slug.md` in the default language and
-`slug.<lang>.md` for each translation (e.g. `welcome.md` + `welcome.ko.md`).
+Posts live in `content/blog/`; a post is `slug.md`.
 
 ### Using the dashboard (recommended)
 
@@ -120,16 +115,15 @@ Posts live in `content/blog/`. A post is `slug.md` in the default language and
 python cms-server.py     # then open http://localhost:8787/
 ```
 
-1. Pick the **Content** language (top-right) you're writing in.
-2. **Blog → New post.** Fill in title, filename (slug; auto-derived from the title
+1. **Blog → New post.** Fill in title, filename (slug; auto-derived from the title
    if left blank), date, tags, draft flag, and description.
-3. Write in the **split Markdown editor** - source on the right, live preview on
+2. Write in the **split Markdown editor** - source on the right, live preview on
    the left.
-4. **Paste images with `Ctrl+V`.** The image is hashed, uploaded to
+3. **Paste images with `Ctrl+V`.** The image is hashed, uploaded to
    `static/images/uploads/`, and a root-relative `![](/images/uploads/…)` link is
    inserted at the cursor. On your site it opens in a click-to-zoom lightbox.
    (Pasted images commit immediately; text edits stage - see below.)
-5. **Save post** - this *stages* the change. When you're done editing, click the
+4. **Save post** - this *stages* the change. When you're done editing, click the
    **Commit (N)** button in the nav bar to flush everything as **one** commit.
    In local mode that commits to your local repo; remember to `git push`.
 
@@ -152,18 +146,16 @@ with reasonable typography.
 ```
 
 Set `draft: true` to hide a post from the production build (`hugo server -D`
-shows drafts locally). For a translation, copy to `<slug>.<lang>.md` and translate
-the prose - keep the same slug so the language switcher links the two.
+shows drafts locally).
 
 ---
 
 ## 4. Edit publications, news & CV
 
-These sections are **data files** under `data/<lang>/`, edited either by hand or
-through the dashboard's schema-driven editors (which write the same YAML). Each is
-per-language, so switch the **Content** selector before editing.
+These sections are **data files** under `data/`, edited either by hand or
+through the dashboard's schema-driven editors (which write the same YAML).
 
-### Publications (`data/<lang>/publications.yml`)
+### Publications (`data/publications.yml`)
 
 A list of entries. Wrap **your own name** in `**double asterisks**` to bold it in
 the author line.
@@ -187,10 +179,9 @@ the author line.
 - `type` drives the filter tabs on the Publications page.
 - `selected: true` surfaces the paper on the home page shortlist.
 - `interest` cross-links the paper onto a research-interest page - the value must
-  **exactly** match that interest's `title` (see [§5](#5-add-a-language) about
-  keeping titles stable across languages).
+  **exactly** match that interest's `title`.
 
-### News (`data/<lang>/news.yml`)
+### News (`data/news.yml`)
 
 Newest-first is handled by the template (sorted by date). `text` supports inline
 Markdown links.
@@ -201,7 +192,7 @@ Markdown links.
   text: Our paper was accepted to [BrewNIPS 2025](https://example.com).
 ```
 
-### CV (`data/<lang>/cv.yml`)
+### CV (`data/cv.yml`)
 
 Four optional sections - `education`, `awards`, `service`, `teaching` - each
 rendered only if present:
@@ -227,7 +218,7 @@ teaching:
 
 The downloadable PDF is `static/cv.pdf` (path set by `cvPdf` in `params.yaml`).
 
-### Research interests (`data/<lang>/research_interests.yml`)
+### Research interests (`data/research_interests.yml`)
 
 Each entry becomes a page at `/research-interests/<slugified-title>/`. `details`
 is Markdown and renders as the page body; publications whose `interest` matches the
@@ -246,37 +237,7 @@ editor as the blog.
 
 ---
 
-## 5. Add a language
-
-The template ships English (default) + a Korean demo. To add `<lang>`:
-
-1. **Declare it** in `config/_default/hugo.toml` under `[languages]`:
-   ```toml
-   [languages.<lang>]
-     label = "Native name"     # shown in the header dropdown
-     locale = "<lang>"
-     weight = 3
-     [languages.<lang>.params]
-       description = "…"        # optional per-language overrides
-       tagline = "…"
-   ```
-2. **Translate the UI strings:** copy `i18n/en.toml` to `i18n/<lang>.toml` and
-   translate the values.
-3. **Add the data:** copy `data/en/` to `data/<lang>/` and translate the prose.
-   **Keep the `title` keys identical** to the default language - slugs and the
-   `interest` cross-links are matched by title, so changing them breaks the links.
-4. **Add content siblings:** for each page, add `<name>.<lang>.md`
-   (e.g. `_index.<lang>.md`, `content/blog/<slug>.<lang>.md`), plus a
-   `_content.<lang>.gotmpl` for the publications and research-interests sections
-   (copy the existing one and keep the logic, swap the `data/<lang>` path).
-5. **Tell the dashboard:** add `<lang>` to the `LANGS` array in
-   `static/admin/admin.js` so the Content selector offers it.
-
-Preview with `hugo server` and use the header dropdown to switch languages.
-
----
-
-## 6. Configure from the dashboard
+## 5. Configure from the dashboard
 
 The dashboard's **Settings** tab edits `config/_default/params.yaml` without
 hand-editing YAML. It covers:
@@ -289,11 +250,11 @@ hand-editing YAML. It covers:
   this gates both the nav tabs and the home-page sections.
 
 What the Settings tab **cannot** change (edit `config/_default/hugo.toml` by hand):
-your **name/site title**, the **baseURL**, and the **language list**. Saving
-Settings rewrites `params.yaml` and **drops its comments** - that's expected.
+your **name/site title** and the **baseURL**. Saving Settings rewrites
+`params.yaml` and **drops its comments** - that's expected.
 
-> The dashboard's own chrome - palette, light/dark, and UI language - is set from
-> its header and is independent of the site's visitor theme.
+> The dashboard's own chrome - palette and light/dark - is set from its header
+> and is independent of the site's visitor theme.
 
 **Local vs. Pages mode.** Run `python cms-server.py` locally and it commits to your
 local git repo over loopback (no token). If you instead serve the dashboard from
@@ -304,7 +265,7 @@ token after 2 days.
 
 ---
 
-## 7. Common mistakes & gotchas
+## 6. Common mistakes & gotchas
 
 - **Deploy with GitHub Actions, not a branch.** Pages **Source** must be
   *GitHub Actions* (Settings → Pages). Choosing *Deploy from a branch* serves raw
@@ -316,9 +277,6 @@ token after 2 days.
   errors out. Need ≥ 0.146 for content adapters.
 - **Saving in the local dashboard is not deploying.** Local edits commit to your
   **local** repo - you still have to `git push` to trigger the build.
-- **Keep `title` keys identical across languages.** Slugs and the
-  publication↔interest cross-links match by title; translating a title silently
-  breaks those links. Translate the prose, not the keys. ([§5](#5-add-a-language))
 - **`interest` must match a research-interest `title` exactly** to link a paper to
   its interest page (case- and whitespace-sensitive).
 - **Settings saves drop YAML comments.** The dashboard rewrites `params.yaml`; if

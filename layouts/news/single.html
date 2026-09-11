@@ -7,7 +7,7 @@
     <h1>{{ i18n "news" }}</h1>
   </header>
   <div class="news-list full-list">
-    {{ range sort (index hugo.Data site.Language.Lang).news "date" "desc" }}
+    {{ range sort hugo.Data.news "date" "desc" }}
       {{ partial "news-entry.html" (dict "news" .) }}
     {{ end }}
   </div>

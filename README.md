@@ -1,14 +1,10 @@
 # Academic Portfolio: a No-Code Hugo template for researchers
 
-**English** · [한국어](README.ko.md)
-
 A clean, professional home for your academic life - your bio, publications, research
 interests, news, CV, and a blog, all in one place. You add your own content through a
 simple editor in your browser, with no code to write and nothing technical to learn,
-and put it online for free. It comes ready for more than one language - English and
-Korean to start, each shown with equal care - and looks right on phones and laptops
-alike. The quiet, paper-like design keeps the attention on your work, not on the
-website.
+and put it online for free. It looks right on phones and laptops alike. The quiet,
+paper-like design keeps the attention on your work, not on the website.
 
 **[▶ Live demo](https://2ood.github.io/hugo-academic-portfolio/)** &nbsp;·&nbsp;
 MIT-licensed &nbsp;·&nbsp; static + free to host on GitHub Pages
@@ -22,8 +18,6 @@ MIT-licensed &nbsp;·&nbsp; static + free to host on GitHub Pages
   named color palette, and which sections appear all live in one YAML file -
   editable by hand or from the dashboard. No need to learn frontend whatsoever.
 - **Native Mobile Support : Responsive layout.** You can read the contents beautifully on small viewports. 
-- **Multilingual out of the box.** English + a Korean demo, a header language
-  dropdown, per-language content and UI strings. Add or drop languages in config.
 - **Free to host.** Minified static output to GitHub Pages via GitHub Actions on
   every push to `main`.
 - **A browser content dashboard.** Schema-driven editors for publications, news,
@@ -44,9 +38,9 @@ MIT-licensed &nbsp;·&nbsp; static + free to host on GitHub Pages
 | **Publications** | Filterable list (Conference / Workshop / Journal / Preprint) with paper, code, data, and project links, plus awards |
 | **News** | Dated, emoji-tagged announcements |
 | **CV** | Education, awards, academic service, and teaching - plus a downloadable PDF |
-| **Blog** | Markdown posts with tags, drafts, per-language siblings, and an image lightbox |
+| **Blog** | Markdown posts with tags, drafts, and an image lightbox |
 
-Every section can be toggled off in config, and each is bilingual-ready.
+Every section can be toggled off in config.
 
 ## Quickstart (≈5 minutes)
 
@@ -61,7 +55,7 @@ Theming uses CSS relative-color syntax, so visitors need a 2023+ browser
    ```
 2. **Personalize** - one prompt rewrites `hugo.toml` + `params.yaml` for you
    (name, affiliation, social links, palette, Pages URL). No dependencies, and your
-   comments and language list are preserved:
+   comments are preserved:
    ```bash
    python init.py
    ```
@@ -74,7 +68,7 @@ Theming uses CSS relative-color syntax, so visitors need a 2023+ browser
    ```bash
    python cms-server.py   # then open http://localhost:8787/
    ```
-   Swap the demo bio in `content/_index.md`, the data in `data/en/*.yml`,
+   Swap the demo bio in `content/_index.md`, the data in `data/*.yml`,
    `static/images/profile.svg`, and `static/cv.pdf`.
 5. **Deploy** - set `baseURL` to your Pages URL, then push. GitHub Actions builds
    with Hugo and publishes automatically:
@@ -86,17 +80,17 @@ Result: a live academic site at `https://<you>.github.io/<repo>/`.
 
 > 📖 Want the hand-held version? **[QUICKSTART.md](QUICKSTART.md)** has full
 > walkthroughs - first deploy, writing a post, editing publications/news/CV,
-> adding a language, configuring from the dashboard, and the common gotchas
-> (like *deploy with GitHub Actions, not a branch*).
+> configuring from the dashboard, and the common gotchas (like *deploy with
+> GitHub Actions, not a branch*).
 
 ## Make it yours
 
 For a hand-edited setup, or to go beyond what `init.py` covers:
 
-1. **Identity & structure** - in `config/_default/hugo.toml` set `baseURL`,
-   `title` (your name), and the language list. In `config/_default/params.yaml`
-   set `description`, `tagline`, social links, `palette`, and the `sections` toggles.
-2. **Content** - replace the placeholder data in `data/<lang>/*.yml`
+1. **Identity & structure** - in `config/_default/hugo.toml` set `baseURL` and
+   `title` (your name). In `config/_default/params.yaml` set `description`,
+   `tagline`, social links, `palette`, and the `sections` toggles.
+2. **Content** - replace the placeholder data in `data/*.yml`
    (publications, news, cv, research_interests), the bio in `content/_index.md`,
    and the demo posts in `content/blog/`. Swap `static/images/profile.svg` and
    `static/cv.pdf` for your own.
@@ -114,20 +108,6 @@ For a hand-edited setup, or to go beyond what `init.py` covers:
 | `cvPdf` | Path under `static/` to your CV PDF |
 | `palette` | `forest` · `slate` · `crimson` · `plum` (see `assets/scss/_theme.scss`) |
 | `sections` | Per-section booleans: `research`, `publications`, `blog`, `news`, `cv` |
-
-Per-language overrides for `description`/`tagline` go in
-`config/_default/hugo.toml` under `[languages.<lang>.params]`.
-
-### Adding a language
-
-1. Add a `[languages.<lang>]` block in `config/_default/hugo.toml`.
-2. Copy `i18n/en.toml` to `i18n/<lang>.toml` and translate the values.
-3. Add `data/<lang>/*.yml` (copy from `data/en/`; keep `title` keys identical so
-   slugs and cross-links stay stable, then translate the prose).
-4. Add `<name>.<lang>.md` content siblings (e.g. `_index.<lang>.md`) and a
-   `_content.<lang>.gotmpl` for the publications and research-interests sections.
-5. Update `LANGS` in `static/admin/admin.js` so the dashboard can edit the new
-   language's content.
 
 ### Colors & theme
 
@@ -160,8 +140,7 @@ Two ways to edit content:
    python cms-server.py     # then open http://localhost:8787/
    ```
 
-   Use the **content-language selector** (top right) to edit each language's data and
-   posts. The **Settings** tab edits `config/_default/params.yaml` (palette, sections,
+   The **Settings** tab edits `config/_default/params.yaml` (palette, sections,
    social links). The local server only accepts loopback requests.
 
    Edits are **staged in the browser**, not committed one-by-one: each editor's Save
@@ -169,15 +148,6 @@ Two ways to edit content:
    flushes the whole batch as **one** commit (it appears only when there are pending
    changes). The editor always reflects staged-but-uncommitted work, and you're warned
    before leaving or signing out with pending changes - keeping history clean.
-
-   Each content editor has a **⤳ Translate from …** button that pulls the content
-   from another language and loads a translation *into the editor you're in* (so
-   you review it and save like any other edit - it never commits on its own),
-   using the free, keyless [MyMemory](https://mymemory.translated.net) service
-   (client-side; works locally and on Pages). It translates only prose - titles,
-   authors, venues, URLs, and slugs stay fixed - protects markdown, and fills only
-   *empty* fields so your hand-edits are never overwritten. Treat the output as a
-   draft to review (conventional MT, not an LLM).
 
    The blog-post and research-interest editors split into a live-rendered preview
    next to the Markdown source (typography mirrors the real post page), plus an
@@ -199,8 +169,7 @@ Two ways to edit content:
    opens (or updates) a pull request to `main`, linked from a **PR #N** button next
    to Commit - merging it is a normal GitHub PR review, not an automatic publish.
 
-   The dashboard's palette, light/dark mode, and UI language are
-   adjustable from its header.
+   The dashboard's palette and light/dark mode are adjustable from its header.
 
 ## Deployment
 
@@ -212,9 +181,9 @@ Extended and publishes `public/` to GitHub Pages. Set `baseURL` in
 
 ```
 config/_default/  hugo.toml (structural) + params.yaml (owner-editable)
-content/          Markdown pages + posts; data-driven sections via _content.<lang>.gotmpl
-data/<lang>/      Per-language structured content (publications, news, cv, interests)
-i18n/             UI string bundles (en.toml, ko.toml, …)
+content/          Markdown pages + posts; data-driven sections via _content.gotmpl
+data/             Structured content (publications, news, cv, interests)
+i18n/             UI string bundle (en.toml)
 layouts/          Go templates - shell, per-section views, partials, render hooks
 assets/scss/      main.scss entry, _variables.scss, _theme.scss tokens, per-component partials
 assets/js/        main.js (fingerprinted at build for cache-busting)
