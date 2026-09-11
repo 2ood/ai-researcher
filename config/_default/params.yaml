@@ -14,4 +14,4 @@ sections:
   blog: true
   news: true
   cv: true
-font: serif
+font: grotesk
