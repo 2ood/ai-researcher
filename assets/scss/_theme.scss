@@ -10,10 +10,14 @@
 */
 
 :root {
+  /* Typography (default = "serif"). Fonts below override the pairing. */
+  --font-heading: 'Newsreader', Georgia, serif;
+  --font-body: 'Inter', 'Roboto', sans-serif;
+
   /* Base palette (default = "forest"). Palettes below override the accents. */
   --c-accent: #228B22;   /* links, heading accents, primary buttons */
   --c-text:   #1B1B1B;   /* body text */
-  --c-bg:     #FFFEFC;   /* page background */
+  --c-bg:     #FDFDFD;   /* page background */
   --c-warm:   #704214;   /* warm accent: badges, section labels */
   --c-hot:    #FF8000;   /* hot accent: awards, hover states */
 
@@ -53,6 +57,11 @@
 [data-palette="slate"]   { --c-accent: #3b6ea5; --c-warm: #566072; --c-hot: #d98324; }
 [data-palette="crimson"] { --c-accent: #a4243b; --c-warm: #7a3b2e; --c-hot: #e07a5f; }
 [data-palette="plum"]    { --c-accent: #6b4e8f; --c-warm: #6d5a7a; --c-hot: #d08a5e; }
+
+/* ---- Owner fonts (override the pairing) ---- */
+[data-font="grotesk"]   { --font-heading: 'Archivo', 'Roboto', sans-serif; --font-body: 'Inter', 'Roboto', sans-serif; }
+[data-font="literary"]  { --font-heading: 'Fraunces', Georgia, serif; --font-body: 'Source Serif 4', Georgia, serif; }
+[data-font="technical"] { --font-heading: 'IBM Plex Mono', ui-monospace, monospace; --font-body: 'IBM Plex Sans', 'Roboto', sans-serif; }
 
 /* ---- Dark mode (flip surfaces; derived translucents follow automatically) ---- */
 [data-theme="dark"] {
