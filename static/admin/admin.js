@@ -35,6 +35,15 @@ const AUTOSAVE_DEBOUNCE_MS = 10000;
 // ---- Site config ----------------------------------------------------------
 // PALETTES must match the named palettes in assets/scss/_theme.scss.
 const PALETTES = ['forest', 'slate', 'crimson', 'plum'];
+// Keep in sync with the [data-font=…] blocks in assets/scss/_theme.scss and
+// static/admin/admin.css, and the font query map in layouts/partials/head.html.
+const FONTS = ['serif', 'grotesk', 'literary', 'technical'];
+const FONT_LABELS = {
+  serif: 'Serif + Sans (Newsreader / Inter)',
+  grotesk: 'Modern Grotesk (Archivo / Inter)',
+  literary: 'Literary Serif (Fraunces / Source Serif)',
+  technical: 'Technical Mono (IBM Plex Mono / Sans)',
+};
 const PARAMS_FILE = 'config/_default/params.yaml';
 const HUGO_FILE = 'config/_default/hugo.toml';
 const SECTION_KEYS = ['research', 'publications', 'blog', 'news', 'cv'];
@@ -72,7 +81,7 @@ const STRINGS = {
   preview_open: 'Open preview', preview_close: 'Close preview',
   settings_note_a: 'Edits', settings_note_b: '. Your name (site title) and baseURL live in',
   settings_note_c: 'and are edited by hand. Saving rewrites the file and drops its comments.',
-  s_sections_head: 'Sections (navigation & home)', color_palette: 'Color palette',
+  s_sections_head: 'Sections (navigation & home)', color_palette: 'Color palette', font_choice: 'Font pairing',
   s_description: 'Affiliation / description (shown under your name)', s_tagline: 'Tagline (one-liner)',
   s_favicon: 'Favicon emoji', s_profile: 'Profile image path', s_email: 'Email',
   s_scholar: 'Google Scholar URL', s_github: 'GitHub URL', s_linkedin: 'LinkedIn URL', s_cvpdf: 'CV PDF path',
@@ -207,6 +216,7 @@ async function loadSiteChrome() {
     const p = jsyaml.load(text, { schema: Y_SCHEMA }) || {};
     if (p.faviconEmoji) setFavicon(p.faviconEmoji);
     if (PALETTES.includes(p.palette)) document.documentElement.setAttribute('data-palette', p.palette);
+    if (FONTS.includes(p.font)) document.documentElement.setAttribute('data-font', p.font);
   } catch (e) { /* non-fatal: keep the defaults already in the page */ }
   try {
     const { text } = await getFile(HUGO_FILE);
@@ -497,7 +507,7 @@ async function flushPending() {
         toast(t('committed_no_pr').replace('{n}', n) + ': ' + e.message, 'error');
       }
     }
-    if (state.section) selectSection(state.section); // reload the view from committed state
+    if (state.section) navigate('#' + state.section); // reload the view from committed state
   } catch (e) {
     refreshDirty(); // restore the button so the user can retry
     toast(t('commit_failed') + ': ' + e.message, 'error');
@@ -857,6 +867,12 @@ function formatPostDate(iso) {
   if (isNaN(d)) return iso || '';
   return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
+// Matches the real blog list's `.Date.Format "Jan 2, 2006"` (abbreviated month).
+function formatListDate(iso) {
+  const d = new Date(`${iso || ''}T00:00:00`);
+  if (isNaN(d)) return iso || '';
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
 // Rough approximation of Hugo's .ReadingTime (word count / wpm, rounded up).
 // Exact parity isn't the point - this is a visual draft check, not a metric.
 function estimateReadingTime(text) {
@@ -1032,18 +1048,29 @@ async function loadBlogList() {
   el.view.innerHTML = `<p class="loading">${t('loading')}</p>`;
   try {
     const items = await listDir(BLOG_DIR);
-    const posts = items
+    const files = items
       .filter(f => f.type === 'file' && isPost(f.name))
       .sort((a, b) => b.name.localeCompare(a.name));
+    // Read each post's frontmatter so cards mirror the real blog list: date,
+    // title, description, and tags - not the filename/path.
+    const posts = await Promise.all(files.map(async f => {
+      try {
+        const { fm } = splitFrontmatter((await getFile(f.path)).text);
+        return {
+          ...f, title: fm.title || f.name, summary: fm.description || '',
+          date: fm.date || '', tags: Array.isArray(fm.tags) ? fm.tags : [],
+        };
+      } catch (e) {
+        return { ...f, title: f.name, summary: '', date: '', tags: [] };
+      }
+    }));
     const rows = posts.map(p => `
-      <div class="row">
+      <div class="row row--clickable" data-open="${esc(p.path)}" role="button" tabindex="0">
         <div class="row-main">
-          <div class="row-title">${esc(p.name)}</div>
-          <div class="row-meta">${esc(p.path)}</div>
-        </div>
-        <div class="row-actions">
-          <button class="btn btn--ghost btn--sm" data-edit="${esc(p.path)}" data-sha="${esc(p.sha)}">${t('edit')}</button>
-          <button class="btn btn--danger btn--sm" data-del="${esc(p.path)}" data-name="${esc(p.name)}">${t('delete')}</button>
+          ${p.date ? `<div class="row-date">${esc(formatListDate(p.date))}</div>` : ''}
+          <div class="row-title">${esc(p.title)}</div>
+          <div class="row-meta">${esc(p.summary || p.name)}</div>
+          ${p.tags.length ? `<div class="row-tags">${p.tags.map(tag => `<span class="row-tag">${esc(tag)}</span>`).join('')}</div>` : ''}
         </div>
       </div>`).join('') || `<p class="empty">${t('no_posts')}</p>`;
 
@@ -1054,11 +1081,12 @@ async function loadBlogList() {
       </div>
       <div class="row-list">${rows}</div>`;
 
-    document.getElementById('new-post').addEventListener('click', () => openBlogEditor(null));
-    el.view.querySelectorAll('[data-edit]').forEach(b =>
-      b.addEventListener('click', () => openBlogEditor(b.dataset.edit)));
-    el.view.querySelectorAll('[data-del]').forEach(b =>
-      b.addEventListener('click', () => removePost(b.dataset.del, b.dataset.name)));
+    document.getElementById('new-post').addEventListener('click', () => navigate('#blog/new'));
+    el.view.querySelectorAll('[data-open]').forEach(row => {
+      const open = () => navigate('#blog/edit/' + encodeURIComponent(row.dataset.open));
+      row.addEventListener('click', open);
+      row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
   } catch (e) {
     el.view.innerHTML = `<p class="error">Failed to load posts: ${esc(e.message)}</p>`;
   }
@@ -1110,17 +1138,21 @@ async function openBlogEditor(path) {
     ${mdSplitHtml(body)}
     <div class="sticky-actions">
       <button id="back-blog-2" class="btn btn--ghost">${t('cancel')}</button>
+      ${path ? `<button id="delete-post" class="btn btn--danger">${t('delete')}</button>` : ''}
       <button id="open-preview" class="btn btn--soft">${t('preview_open')}</button>
       <button id="save-post" class="btn btn--primary">${path ? t('save_post') : t('create_post')}</button>
     </div>`;
 
   wireMdSplit();
-  document.getElementById('back-blog').addEventListener('click', loadBlogList);
-  document.getElementById('back-blog-2').addEventListener('click', loadBlogList);
+  document.getElementById('back-blog').addEventListener('click', () => navigate('#blog'));
+  document.getElementById('back-blog-2').addEventListener('click', () => navigate('#blog'));
   document.getElementById('open-preview').addEventListener('click', () => openPreviewOverlay('blog'));
   ['f-title', 'f-date', 'f-tags'].forEach(id =>
     document.getElementById(id).addEventListener('input', refreshPreviewIfOpen));
   document.getElementById('save-post').addEventListener('click', () => savePost(path));
+  const deleteBtn = document.getElementById('delete-post');
+  if (deleteBtn) deleteBtn.addEventListener('click', () =>
+    removePost(path, document.getElementById('f-title').value.trim() || filename));
 }
 
 async function savePost(path) {
@@ -1143,14 +1175,14 @@ async function savePost(path) {
   const filePath = path || `${BLOG_DIR}/${blogFileName(name)}`;
   stagePut(filePath, buildPost(fm, body), `content(admin): ${path ? 'update' : 'add'} blog/${name}`);
   toast(stagedMsg(), 'ok');
-  loadBlogList();
+  navigate('#blog');
 }
 
 function removePost(path, name) {
   if (!confirm(t('confirm_delete') + ' "' + name + '"' + t('confirm_delete_tail'))) return;
   stageDelete(path, `content(admin): delete blog/${name}`);
   toast(stagedMsg(), 'ok');
-  loadBlogList();
+  navigate('#blog');
 }
 
 // ===========================================================================
@@ -1188,9 +1220,9 @@ async function loadInterestsList() {
     </div>
     <div class="row-list">${rows}</div>`;
 
-  document.getElementById('new-interest').addEventListener('click', () => openInterestEditor(null));
+  document.getElementById('new-interest').addEventListener('click', () => navigate('#research_interests/new'));
   el.view.querySelectorAll('[data-edit]').forEach(b =>
-    b.addEventListener('click', () => openInterestEditor(Number(b.dataset.edit))));
+    b.addEventListener('click', () => navigate('#research_interests/edit/' + b.dataset.edit)));
   el.view.querySelectorAll('[data-del]').forEach(b =>
     b.addEventListener('click', () => removeInterest(Number(b.dataset.del))));
 }
@@ -1217,8 +1249,8 @@ function openInterestEditor(index) {
     </div>`;
 
   wireMdSplit();
-  document.getElementById('back-int').addEventListener('click', loadInterestsList);
-  document.getElementById('back-int-2').addEventListener('click', loadInterestsList);
+  document.getElementById('back-int').addEventListener('click', () => navigate('#research_interests'));
+  document.getElementById('back-int-2').addEventListener('click', () => navigate('#research_interests'));
   document.getElementById('open-preview').addEventListener('click', () => openPreviewOverlay('interest'));
   ['i-title', 'i-summary'].forEach(id =>
     document.getElementById(id).addEventListener('input', refreshPreviewIfOpen));
@@ -1238,7 +1270,7 @@ async function saveInterest(index) {
   const path = dataPath(INTERESTS_NAME);
   stagePut(path, jsyaml.dump(state.interests, Y_DUMP), `content(admin): update ${path}`);
   toast(stagedMsg(), 'ok');
-  loadInterestsList();
+  navigate('#research_interests');
 }
 
 function removeInterest(index) {
@@ -1288,6 +1320,9 @@ function renderSettings() {
   const palette = `<div class="field"><label>${t('color_palette')}</label>
     <select data-skey="palette">${PALETTES.map(p =>
       `<option value="${p}"${p === (m.palette || 'forest') ? ' selected' : ''}>${esc(p)}</option>`).join('')}</select></div>`;
+  const font = `<div class="field"><label>${t('font_choice')}</label>
+    <select data-skey="font">${FONTS.map(f =>
+      `<option value="${f}"${f === (m.font || 'serif') ? ' selected' : ''}>${esc(FONT_LABELS[f] || f)}</option>`).join('')}</select></div>`;
   const sec = m.sections || {};
   const sections = SECTION_KEYS.map(k =>
     `<div class="field field--inline">
@@ -1301,7 +1336,7 @@ function renderSettings() {
     </div>
     <p class="settings-note">${esc(t('settings_note_a'))} <code>${esc(PARAMS_FILE)}</code>${esc(t('settings_note_b'))}
       <code>config/_default/hugo.toml</code> ${esc(t('settings_note_c'))}</p>
-    <div class="settings-grid">${text}${palette}</div>
+    <div class="settings-grid">${text}${palette}${font}</div>
     <h3 class="settings-subhead">${esc(t('s_sections_head'))}</h3>
     <div class="settings-sections">${sections}</div>
     <div class="sticky-actions"><button id="save-settings-2" class="btn btn--primary">${t('save_settings')}</button></div>`;
@@ -1323,14 +1358,42 @@ async function saveSettings() {
 // ===========================================================================
 //  Routing / init
 // ===========================================================================
-function selectSection(section) {
-  closePreviewOverlay(); // don't leave a stale preview open across a section/list switch
+function activateTab(section) {
   state.section = section;
   el.nav.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.dataset.section === section));
+}
+function selectSection(section) {
+  activateTab(section);
   if (section === 'blog') loadBlogList();
   else if (section === 'research_interests') loadInterestsList();
   else if (section === 'settings') loadSettings();
   else loadDataEditor(section);
+}
+
+// ---- Hash-based routing ----------------------------------------------------
+// Every view (a section's list, an editor, settings) gets its own #hash, so the
+// browser's own Back/Forward buttons move between dashboard views instead of
+// leaving the page. navigate() changes the hash (pushing a history entry, or
+// re-running the route if the hash is already current); onHashChange renders
+// whatever the hash now points to and runs on both navigate() and the
+// browser's Back/Forward.
+function parseHash() {
+  const parts = (location.hash || '#blog').slice(1).split('/');
+  return { section: parts[0] || 'blog', view: parts[1] || null, arg: parts[2] != null ? decodeURIComponent(parts[2]) : null };
+}
+function navigate(hash) {
+  if (location.hash === hash) onHashChange(); // same route requested again: just re-render
+  else location.hash = hash;
+}
+function onHashChange() {
+  closePreviewOverlay(); // don't leave a stale preview open across a view switch
+  const { section, view, arg } = parseHash();
+  activateTab(section);
+  if (section === 'blog' && view === 'new') openBlogEditor(null);
+  else if (section === 'blog' && view === 'edit' && arg) openBlogEditor(arg);
+  else if (section === 'research_interests' && view === 'new') openInterestEditor(null);
+  else if (section === 'research_interests' && view === 'edit' && arg != null) openInterestEditor(Number(arg));
+  else selectSection(section); // list views, settings, and data editors
 }
 function showApp() {
   el.login.classList.add('hidden');
@@ -1338,7 +1401,8 @@ function showApp() {
   loadSiteChrome();   // mirror the site's favicon + palette (async, non-blocking)
   restoreSessionBranch();
   if (state.sessionBranch) lookupPr(state.sessionBranch).then(updatePrLink).catch(() => {});
-  selectSection('blog');
+  if (!location.hash) history.replaceState(null, '', '#blog'); // no event fires from this - dispatch manually below
+  onHashChange();
 }
 
 async function init() {
@@ -1363,7 +1427,10 @@ async function init() {
     if (e.key === 'Escape' && state.previewKind) closePreviewOverlay();
   });
   el.nav.querySelectorAll('.tab').forEach(tab =>
-    tab.addEventListener('click', () => selectSection(tab.dataset.section)));
+    tab.addEventListener('click', () => navigate('#' + tab.dataset.section)));
+  window.addEventListener('hashchange', () => {
+    if (!el.app.classList.contains('hidden')) onHashChange();
+  });
 
   // Served by the local backend? Then commit locally and skip the token login.
   try {

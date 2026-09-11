@@ -4,9 +4,12 @@
    CSS relative-color syntax so flipping a base color cascades (2023+ browsers). */
 
 :root {
+  /* Typography (default = "serif") - values match assets/scss/_theme.scss. */
+  --font-heading: 'Newsreader', Georgia, serif;
+  --font-body: 'Inter', 'Roboto', sans-serif;
   /* Surfaces + text (flipped in dark mode below). */
   --carbon: #1B1B1B;       /* text */
-  --porcelain: #FEFEFA;    /* page background */
+  --porcelain: #FDFDFD;    /* page background */
   --surface: #ffffff;      /* cards, popovers, inputs */
   /* Accents (overridden per palette). Default = "forest". */
   --forest: #228B22;
@@ -24,6 +27,11 @@
 [data-palette="crimson"] { --forest: #a4243b; --walnut: #7a3b2e; --tangerine: #e07a5f; }
 [data-palette="plum"]    { --forest: #6b4e8f; --walnut: #6d5a7a; --tangerine: #d08a5e; }
 
+/* Owner fonts - values match assets/scss/_theme.scss. */
+[data-font="grotesk"]   { --font-heading: 'Archivo', 'Roboto', sans-serif; --font-body: 'Inter', 'Roboto', sans-serif; }
+[data-font="literary"]  { --font-heading: 'Fraunces', Georgia, serif; --font-body: 'Source Serif 4', Georgia, serif; }
+[data-font="technical"] { --font-heading: 'IBM Plex Mono', ui-monospace, monospace; --font-body: 'IBM Plex Sans', 'Roboto', sans-serif; }
+
 /* Dark mode - flip surfaces; derived translucents follow automatically. */
 [data-theme="dark"] {
   --carbon: #ECEAE3;
@@ -34,7 +42,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Chiron GoRound TC', 'Roboto', sans-serif;
+  font-family: var(--font-body);
   color: var(--carbon);
   background: var(--porcelain);
   line-height: 1.55;
@@ -42,7 +50,7 @@ body {
 
 .hidden { display: none !important; }
 
-h1, h2, h3 { color: var(--carbon); line-height: 1.25; }
+h1, h2, h3 { font-family: var(--font-heading); color: var(--carbon); line-height: 1.25; }
 
 a { color: var(--forest); }
 
@@ -189,9 +197,24 @@ code {
   border-radius: 8px;
 }
 .row-main { flex: 1; min-width: 0; }
-.row-title { font-weight: 500; }
-.row-meta { font-size: 0.85rem; color: var(--muted); }
+.row-date { font-size: 0.78rem; color: var(--muted); }
+.row-title { font-weight: 500; margin-top: 0.15rem; }
+.row-meta { font-size: 0.85rem; color: var(--muted); margin-top: 0.15rem; }
+.row-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+.row-tag {
+  background: var(--field-bg);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 0.1rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
 .row-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+.row--clickable { cursor: pointer; }
+.row--clickable:hover, .row--clickable:focus-visible {
+  border-color: var(--forest);
+  background: rgb(from var(--carbon) r g b / 0.03);
+}
 .badge {
   font-size: 0.7rem;
   font-weight: 600;
