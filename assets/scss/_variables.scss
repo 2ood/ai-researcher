@@ -1,5 +1,8 @@
-// Typography
-$primary-font: 'Chiron GoRound TC', 'Roboto', sans-serif;
+// Typography - aliases to the theme tokens defined in _theme.scss (CSS custom
+// properties), so the owner's font choice (data-font, from params.font) works
+// at runtime, the same way palette colors do.
+$primary-font: var(--font-body);
+$heading-font: var(--font-heading);
 $mono-font: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
 
 // Colors - aliases to the theme tokens defined in _theme.scss (CSS custom

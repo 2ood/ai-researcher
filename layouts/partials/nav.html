@@ -2,8 +2,6 @@
   Sticky top navigation. Active state: Home is exact (.IsHome); every other link
   is active when the current page URL is under that link's URL (hasPrefix).
   Each section link renders unless params.sections.<name> is explicitly false.
-  The language switcher (partials/lang-switch.html) renders only when more than
-  one language is configured.
 */}}
 {{ $cur := .RelPermalink }}
 {{ $research := "research-interests/" | relLangURL }}
@@ -24,7 +22,6 @@
       {{ if ne (index $s "blog") false }}<a href="{{ $blog }}" {{ if hasPrefix $cur $blog }}class="active"{{ end }}>{{ i18n "nav_blog" }}</a>{{ end }}
       {{ if ne (index $s "news") false }}<a href="{{ $news }}" {{ if hasPrefix $cur $news }}class="active"{{ end }}>{{ i18n "nav_news" }}</a>{{ end }}
       {{ if ne (index $s "cv") false }}<a href="{{ $cv }}" {{ if hasPrefix $cur $cv }}class="active"{{ end }}>{{ i18n "nav_cv" }}</a>{{ end }}
-      {{ partial "lang-switch.html" . }}
       {{ partial "theme-toggle.html" . }}
     </nav>
 
@@ -40,7 +37,6 @@
     {{ if ne (index $s "blog") false }}<a href="{{ $blog }}" {{ if hasPrefix $cur $blog }}class="active"{{ end }}>{{ i18n "nav_blog" }}</a>{{ end }}
     {{ if ne (index $s "news") false }}<a href="{{ $news }}" {{ if hasPrefix $cur $news }}class="active"{{ end }}>{{ i18n "nav_news" }}</a>{{ end }}
     {{ if ne (index $s "cv") false }}<a href="{{ $cv }}" {{ if hasPrefix $cur $cv }}class="active"{{ end }}>{{ i18n "nav_cv" }}</a>{{ end }}
-    {{ partial "lang-switch.html" . }}
     {{ partial "theme-toggle.html" . }}
   </nav>
 </header>

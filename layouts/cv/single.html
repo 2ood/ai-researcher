@@ -10,7 +10,7 @@
     {{ end }}
   </header>
 
-  {{ $cv := (index hugo.Data site.Language.Lang).cv }}
+  {{ $cv := hugo.Data.cv }}
   {{ with $cv.education }}
     {{ partial "cv-section.html" (dict "title" (i18n "education") "items" .) }}
   {{ end }}

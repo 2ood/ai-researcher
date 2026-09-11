@@ -6,7 +6,7 @@
     - condensed CV: education + awards (data/cv.yml)
 */}}
 {{ define "main" }}
-{{ $data := index hugo.Data site.Language.Lang }}
+{{ $data := hugo.Data }}
 {{ $s := site.Params.sections | default dict }}
 
 {{/* ---- Profile hero ---- */}}

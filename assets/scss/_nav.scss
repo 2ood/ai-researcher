@@ -74,30 +74,6 @@
   }
 }
 
-/* Language switcher (markup: layouts/partials/lang-switch.html) */
-.lang-switch {
-  position: relative;
-
-  summary {
-    list-style: none;
-    cursor: pointer;
-    color: $carbon;
-    font-weight: 400;
-
-    &::-webkit-details-marker { display: none; }
-    &::after { content: " ▾"; }
-    &:hover { color: $forest; }
-  }
-
-  .lang-menu {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
-  }
-
-  a.active { color: $forest; font-weight: 500; }
-}
-
 /* Light/dark toggle (markup: layouts/partials/theme-toggle.html) */
 .theme-toggle {
   background: none;
@@ -110,20 +86,6 @@
   color: $carbon;
 
   &:hover { color: $forest; }
-}
-
-/* Desktop: float the dropdown menu below the summary */
-@media (min-width: $mobile) {
-  .lang-switch .lang-menu {
-    position: absolute;
-    right: 0;
-    margin-top: $spacing-xs;
-    background: $porcelain;
-    border: 1px solid var(--c-text-10);
-    padding: $spacing-sm;
-    min-width: 7rem;
-    z-index: 110;
-  }
 }
 
 @media (max-width: $mobile) {

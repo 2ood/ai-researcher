@@ -1,10 +1,9 @@
 # Structural site configuration. Owner-editable settings (identity, social links,
 # palette, enabled sections) live in params.yaml so the /admin dashboard can edit
-# them as YAML. Per-language param overrides stay here under [languages.<lang>.params].
+# them as YAML.
 baseURL = "https://2ood.github.io/ai-researcher/"
 locale = "en"
 title = "Kyungmin Choi"
-defaultContentLanguage = "en"
 
 [taxonomies]
   tag = "tags"
@@ -17,17 +16,3 @@ defaultContentLanguage = "en"
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
-
-# Languages. The default (defaultContentLanguage above) lives at /, others at /<lang>/.
-[languages]
-  [languages.en]
-    label = "English"
-    locale = "en"
-    weight = 1
-  [languages.ko]
-    label = "한국어"
-    locale = "ko"
-    weight = 2
-    [languages.ko.params]
-      description = "GIST 데이터사이언스 연구실 · AI 연구자"
-      tagline = "추상적 추론과 유추를 통해 일반 지능으로"
