@@ -8,9 +8,15 @@ draft: false
 description: Let's think about how we can deal with a piece of thought.
 ---
 
-I will first denote some premises I believe in right now. First, linguistic brain process is different from the naive thought process alone. Although thinking out loud or thinking with writing is an efficient way of structurizing a piece of thought, it is merely a strategy to think clearly. Kids can think before one sufficiently learn its mother tongue. Animals show intelligent behaviors (that implies thinking under the hood) without any linguistic structure. We selectively verbalize(externally and internally) some thoughts; we call the ones we can as logical thoughts, the ones we can't we call it feelings. I argue that a sensation or feelings are in the same level of logical thoughts, when it comes to a brain sensation. The difference is the difficulty of verbalizing it. All in all, language is a tool, not a requisite for thought process. As a side note, the thoughts that can be verbalized are those which can be understood by all other language speakers. 
+I am trying to come up with the universal format to express any sort of thought. Something like a language to express and handle the content. For logical statements,  it would be first order logic, for mathematical statements it would be LEAN. Humans somehow constructed it as a natural language, but I feel natural language is designed specifically focusing on transferability, not for manipulative purpose. So I feel we are bearing with some sacrifice on the content, which sometimes causes bottlenecks in communications.
 
-Second, 
+I feel like we humans have a logical format of storing/stacking a piece of knowledge/thoughts, and we sometimes convert and verbalize it in natural language format. I am trying to come up with a rich, symbolic approach on how to hold conceptual things. Conceptual things have relationship, which implies a structure. Conceptual things are also analyzable - philosophers disect a concept and try to clarify things more - which implies there's a level of details we are putting in to utilize that concept. The properties goes on and on..
+
+My preliminary work was about employing graph pattern as the language of thought, and use substructures to express the relations. For instance, the graph of 'apple' will contain a subgraph of 'fruit'.. this way we can spot the hierarchical relationship between concepts.
+
+---
+
+I will first denote some premises I believe in right now. First, linguistic brain process is different from the naive thought process alone. Although thinking out loud or thinking with writing is an efficient way of structurizing a piece of thought, it is merely a strategy to think clearly. Kids can think before one sufficiently learn its mother tongue. Animals show intelligent behaviors (that implies thinking under the hood) without any linguistic structure. We selectively verbalize(externally and internally) some thoughts; we call the ones we can as logical thoughts, the ones we can't we call it feelings. I argue that a sensation or feelings are in the same level of logical thoughts, when it comes to a brain sensation. The difference is the difficulty of verbalizing it. All in all, language is a tool, not a requisite for thought process. As a side note, the thoughts that can be verbalized are those which can be understood by all other language speakers. 
 
 ---
 
@@ -26,3 +32,4 @@ I argue that we listen to other's talk try to think in a way they want us to. Sp
 When we learn a language, we get to know how we can reconstruct the thought from its linguistic form. We have a lot of heuristics to 'guess' or 'deduct' the corresponding meaning of the sentence, and in turn learn the mapping from a thought to its novel linguistic expression. We then analyze and disect how such expression was constructed in the first place from that thought. This is the reverse engineering of language aquisition. 
 
 Let's suppose there's a specific thing that we call a thought, which can also be expressed to and reconstructed from its corresponding linguistic form. Just like its linguistic form is discrete, should the thought also be discrete? I personally feel that the 'length' of a thought is bound to our mental context window, the extent we can think at the same time. Its threshold can be fuzzily defined, and it can also be stretched and assisted from mental training or note taking. 
+
