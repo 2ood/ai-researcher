@@ -4,6 +4,48 @@ High-level direction for the template. Notable changes live in
 [CHANGELOG.md](CHANGELOG.md).
 
 ## Recently shipped
+**2026-09-12**
+- **Multilingual support dropped entirely.** The owner found the per-language
+  dashboard workflow (switch the Content selector, open each file, click
+  Translate) too burdensome to keep maintaining alongside real content. Removed,
+  not just hidden: all `*.ko.md` content, `data/ko/` (with `data/en/` flattened
+  to `data/`), `i18n/ko.toml`, Hugo's `[languages]` block and the header
+  language-switcher partial, and the dashboard's content-language selector, UI
+  chrome language toggle, and entire MyMemory auto-translate subsystem. Templates
+  now read the flattened data via plain `hugo.Data` (dropping the deprecated
+  `site.Data` / per-language `hugo.Data site.Language.Lang` indirection). One
+  Korean-only post (`on-research-communications`) was kept as an English-slot
+  draft for manual translation later, rather than deleted.
+- **Dashboard UX overhaul.**
+  - **Owner-selectable font pairing.** Replaced the site-wide `Chiron GoRound TC`
+    font (read as generic "AI-landing-page" styling) with a considered default
+    (Newsreader/Inter) and a **Font pairing** picker in dashboard Settings - same
+    mechanism as the palette selector (`data-font` on `<html>`, resolved from
+    `params.font` at Hugo build time; the public site fetches only the selected
+    pairing's Google Fonts, the dashboard preloads all four since it can't
+    build-time-select). Four curated options: Serif+Sans, Modern Grotesk,
+    Literary Serif, Technical Mono.
+  - **Background retuned** from `#FFFEFC` to `#FDFDFD` after a few rounds of
+    live iteration with the owner (`#FAFAFA` read as cool/blue-tinted, `#FAF9F6`
+    as too warm) - applied to both the site and the dashboard chrome.
+  - **Blog post cards redesigned.** Cards now show the post's real title, date,
+    description, and tags (fetched from frontmatter, mirroring the real
+    `blog-entry.html` list layout) instead of the raw filename and file path.
+    The whole card is now the click target to open the editor (keyboard
+    reachable) instead of a separate Edit button; the per-row Delete button
+    moved into the editor's sticky action bar, next to Cancel, shown only when
+    editing an existing post.
+  - **Hash-based view routing for Back/Forward.** Every dashboard view (a
+    section's list, an editor, Settings) now has its own `#hash`
+    (`#blog`, `#blog/edit/<path>`, `#research_interests/new`, …), so the
+    browser's own Back/Forward buttons move between dashboard views instead of
+    leaving the page entirely.
+- **GitHub-mode 403s traced to a missing PAT scope.** Diagnosed with the owner:
+  the `Pull requests: Read and write` permission (added as a requirement in
+  v1.1.0) is easy to miss on a token, and its absence surfaces as a 403 on
+  every Commit's auto-PR step. Regenerating the token with that scope resolved
+  it; no code change was needed.
+
 **2026-06-22 (on branch `iss#002`, verified live, pending PR + merge)**
 - **Per-session branches + autosave for multi-manager GitHub-mode use (issue #2).**
   Each dashboard tab gets its own `dashboard/<id>` branch (created lazily off
@@ -79,35 +121,46 @@ High-level direction for the template. Notable changes live in
 - **Themed demo persona** - *Joomo Makguli* makgeolli-research demo content (EN/KO).
 
 ## Next up (next session)
-Issue #2 is verified live on `iss#002` (see Recently shipped) and merging to
-`main` now. No other committed item yet for after that - see **Open threads**
-and **Ideas** below for candidates.
+No committed item yet - see **Open threads** and **Ideas** below for candidates.
+The Research Interests list still has the old per-row Edit/Delete-button pattern
+(pre-dating the blog list's redesign to clickable cards); worth asking whether to
+unify it the same way.
 
 ## Shelved
 - **Grammar-check button** - *Gave up.* No good keyless/free path: LanguageTool's
   public API effectively needs an account/API key for reliable use, and the only
   strong free Korean checker (bareun.ai) is a manual copy-paste round-trip - not
   worth the UX cost. Revisit only if a genuinely free, CORS-friendly option appears.
+- **Language-scaffolding script** (was: "a scaffolding script / `hugo new` for
+  adding a language end-to-end", under Ideas). Moot - multilingual support was
+  dropped entirely on 2026-09-12 (see Recently shipped).
 
 ## Open threads
-- Live demo is deployed from this repo (`baseURL` → `2ood.github.io/hugo-academic-portfolio/`,
-  themed demo persona). When packaging the template for reuse, reset `baseURL`,
-  `params.yaml` identity, and `data/`+`content/` back to neutral placeholders (or
-  document that `init.py` + the dashboard are the intended reset path).
+- Live demo is deployed from this repo (`baseURL` → `2ood.github.io/hugo-academic-portfolio/`).
+  **Resolved 2026-09-12**: the themed demo persona (*Joomo Makguli*) has been
+  fully replaced with the owner's real identity and content - CV, publications,
+  and blog all carry real data now. Still open: when packaging the template for
+  *someone else's* reuse, reset `baseURL`, `params.yaml` identity, and
+  `data/`+`content/` back to neutral placeholders (or document that `init.py` +
+  the dashboard are the intended reset path).
 - `content/blog/first-post*.md` were cleaned up in an earlier session (garbled MT
   prose removed via the dashboard); `second-post*.md` was filled in on 2026-06-22
   (see Recently shipped). Both demo posts are showcase-ready now.
-  (Lesson: translating single-word emphasis fragments like "italic" through
-  MyMemory yields junk - a future refinement could skip too-short runs.)
+  (Lesson, now historical: translating single-word emphasis fragments like
+  "italic" through MyMemory yielded junk. Moot since 2026-09-12 - the
+  auto-translate feature was removed along with multilingual support.)
 
 ## Ideas / possible improvements
 - [ ] More built-in palettes, and a small palette preview in the Settings dashboard.
 - [ ] Optional live palette preview / per-visitor palette override.
-- [ ] Dashboard support for editing `config/_default/hugo.toml` (title, baseURL,
-      language list) without hand-editing TOML.
-- [ ] RSS/sitemap polish and per-language feeds.
-- [ ] A scaffolding script (or `hugo new`) for adding a language end-to-end.
+- [ ] Dashboard support for editing `config/_default/hugo.toml` (title, baseURL)
+      without hand-editing TOML.
+- [ ] RSS/sitemap polish.
+- [ ] Unify the Research Interests list onto the same clickable-card pattern
+      (title/summary, no per-row buttons, Delete moved into the editor) that the
+      blog list got on 2026-09-12.
 
 ## Non-goals
+- No multilingual support (dropped 2026-09-12 - see Recently shipped).
 - No hosted/third-party CMS, no JS framework, no Node/Tailwind/PostCSS pipeline.
 - No database, accounts, or comments. The build is the Hugo binary alone.

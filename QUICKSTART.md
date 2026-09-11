@@ -244,7 +244,7 @@ hand-editing YAML. It covers:
 
 - **Identity & social:** `description`, `tagline`, `email`, `googleScholar`,
   `github`, `linkedin`.
-- **Appearance:** `faviconEmoji`, `profileImage`, `palette`.
+- **Appearance:** `faviconEmoji`, `profileImage`, `palette`, `font`.
 - **`cvPdf`:** path to your CV under `static/`.
 - **Sections:** toggle `research`, `publications`, `blog`, `news`, `cv` on/off -
   this gates both the nav tabs and the home-page sections.
@@ -253,8 +253,9 @@ What the Settings tab **cannot** change (edit `config/_default/hugo.toml` by han
 your **name/site title** and the **baseURL**. Saving Settings rewrites
 `params.yaml` and **drops its comments** - that's expected.
 
-> The dashboard's own chrome - palette and light/dark - is set from its header
-> and is independent of the site's visitor theme.
+> The dashboard's own chrome mirrors the site's palette and font (from Settings)
+> plus its own light/dark toggle, independent of the site's visitor theme.
+> Palette/font changes take effect on the next deploy, same as any Settings save.
 
 **Local vs. Pages mode.** Run `python cms-server.py` locally and it commits to your
 local git repo over loopback (no token). If you instead serve the dashboard from

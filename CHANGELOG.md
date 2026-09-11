@@ -5,6 +5,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 ## [Unreleased]
 
+### Removed
+- **Multilingual support, entirely.** Not just disabled - removed. Korean content
+  (`*.ko.md`), `data/ko/` (with `data/en/` flattened to `data/`), `i18n/ko.toml`,
+  Hugo's `[languages]` config block, the header language-switcher partial, and
+  the dashboard's content-language selector, dashboard-chrome language toggle,
+  and MyMemory auto-translate subsystem are all gone. `README.ko.md` /
+  `QUICKSTART.ko.md` deleted; both English docs had their language-related
+  sections removed. One Korean-only draft post was kept and moved into the
+  English slot for manual translation later, rather than deleted.
+
+### Added
+- **Font pairing picker (dashboard Settings).** A `font` param, editable the same
+  way as `palette`, with four curated pairings: Serif+Sans (default), Modern
+  Grotesk, Literary Serif, Technical Mono. Resolved into `data-font` on `<html>`
+  at Hugo build time; the public site's `<link>` for Google Fonts fetches only
+  the selected pairing, the dashboard (a static page) preloads all four.
+- **Hash-based routing in the dashboard**, so the browser's Back/Forward buttons
+  move between dashboard views (list ↔ editor ↔ Settings) instead of leaving the
+  page - previously Back just navigated away from the whole dashboard.
+
+### Changed
+- **Default site font.** Replaced `Chiron GoRound TC` + Roboto with Newsreader
+  (headings) + Inter (body) everywhere - site and dashboard.
+- **Page background** tuned from `#FFFEFC` to `#FDFDFD` (site + dashboard).
+- **Blog post cards (dashboard).** Now show the post's title, date, description,
+  and tags (read from frontmatter) instead of the raw filename and file path -
+  mirroring the real public blog list's layout. The whole card is the click
+  target to open the editor (keyboard-reachable); the per-row Delete button was
+  removed from the list and moved into the editor's action bar next to Cancel,
+  shown only when editing an existing post.
+- Templates reading `data/*.yml` moved from the deprecated `site.Data` /
+  per-language `hugo.Data site.Language.Lang` indirection to plain `hugo.Data`.
+
 ## [1.1.0] - Multi-session GitHub-mode dashboard + reliability fixes
 
 ### Added

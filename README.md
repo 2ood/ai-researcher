@@ -25,8 +25,10 @@ MIT-licensed &nbsp;·&nbsp; static + free to host on GitHub Pages
   images - staged and flushed as clean, single commits to your repo.
 - **Dependency-light.** The build is the Hugo binary alone - no Node, no bundler,
   no PostCSS. The optional content editor is a single zero-dependency Python file.
-- **Light/dark + named palettes.** A visitor toggle remembered per browser, no
-  flash on load, respecting the OS preference; four palettes via CSS custom properties.
+- **Light/dark + named palettes and fonts.** A visitor light/dark toggle remembered
+  per browser, no flash on load, respecting the OS preference; four color palettes
+  and four font pairings, both owner-selectable from the dashboard via CSS custom
+  properties.
 
 
 ## What's inside
@@ -107,14 +109,18 @@ For a hand-edited setup, or to go beyond what `init.py` covers:
 | `email`, `googleScholar`, `github`, `linkedin` | Social links |
 | `cvPdf` | Path under `static/` to your CV PDF |
 | `palette` | `forest` · `slate` · `crimson` · `plum` (see `assets/scss/_theme.scss`) |
+| `font` | `serif` · `grotesk` · `literary` · `technical` (see `assets/scss/_theme.scss`) |
 | `sections` | Per-section booleans: `research`, `publications`, `blog`, `news`, `cv` |
 
-### Colors & theme
+### Colors, fonts & theme
 
-Palettes are defined in `assets/scss/_theme.scss` as sets of CSS custom properties.
-The owner-selected `palette` sets `data-palette` on `<html>`; the visitor's light/dark
-choice sets `data-theme`. Add a palette by adding a `[data-palette="name"]` block and
-listing the name in `PALETTES` in `static/admin/admin.js`.
+Palettes and font pairings are defined in `assets/scss/_theme.scss` as sets of CSS
+custom properties. The owner-selected `palette`/`font` set `data-palette`/`data-font`
+on `<html>` (resolved at build time, so a Settings change takes effect on the next
+deploy); the visitor's light/dark choice sets `data-theme` at runtime. Add a palette
+or font by adding a `[data-palette="name"]`/`[data-font="name"]` block, listing the
+name in `PALETTES`/`FONTS` in `static/admin/admin.js`, and - for a font - adding its
+Google Fonts query to the map in `layouts/partials/head.html`.
 
 Predefined options are :
 
@@ -169,7 +175,8 @@ Two ways to edit content:
    opens (or updates) a pull request to `main`, linked from a **PR #N** button next
    to Commit - merging it is a normal GitHub PR review, not an automatic publish.
 
-   The dashboard's palette and light/dark mode are adjustable from its header.
+   The dashboard's palette, font, and light/dark mode mirror the site's (palette
+   and font from Settings; light/dark from a header toggle).
 
 ## Deployment
 
